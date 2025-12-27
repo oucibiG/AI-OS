@@ -1,0 +1,2276 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS-OS Simulator | JavaScript Operating System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --terminal-green: #3fb950;
+            --terminal-dim: #238636;
+            --system-blue: #2f81f7;
+            --error-red: #f85149;
+            --warning-yellow: #d29922;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --border-color: #30363d;
+            --accent-cyan: #39c5cf;
+            --accent-purple: #a371f7;
+            --accent-pink: #db61a2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .os-container {
+            display: flex;
+            height: 100vh;
+            gap: 0;
+        }
+
+        /* Terminal Section */
+        .terminal-section {
+            flex: 1.5;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-primary);
+            border-right: 1px solid var(--border-color);
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .terminal-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .terminal-control {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .control-close { background: #ff5f56; }
+        .control-minimize { background: #ffbd2e; }
+        .control-maximize { background: #27c93f; }
+
+        .terminal-title {
+            flex: 1;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .terminal-body {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            font-family: 'Fira Code', 'Roboto Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .boot-sequence {
+            color: var(--terminal-green);
+            margin-bottom: 16px;
+        }
+
+        .boot-line {
+            opacity: 0;
+            animation: fadeIn 0.1s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .terminal-output {
+            min-height: 200px;
+            margin-bottom: 8px;
+        }
+
+        .terminal-line {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 4px;
+        }
+
+        .terminal-prompt {
+            color: var(--system-blue);
+            font-weight: 500;
+            white-space: nowrap;
+            margin-right: 8px;
+        }
+
+        .terminal-input-line {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+
+        .terminal-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: 'Fira Code', 'Roboto Mono', monospace;
+            font-size: 14px;
+            outline: none;
+            caret-color: var(--terminal-green);
+        }
+
+        .cursor-blink {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .command-output {
+            color: var(--text-secondary);
+            margin: 8px 0;
+            padding-left: 24px;
+        }
+
+        .command-output.success { color: var(--terminal-green); }
+        .command-output.error { color: var(--error-red); }
+        .command-output.info { color: var(--system-blue); }
+        .command-output.warning { color: var(--warning-yellow); }
+
+        /* Dashboard Section */
+        .dashboard-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-secondary);
+            overflow-y: auto;
+        }
+
+        .dashboard-header {
+            padding: 16px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .dashboard-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .dashboard-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .dashboard-content {
+            flex: 1;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow-y: auto;
+        }
+
+        .panel {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .panel-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .panel-body {
+            padding: 12px;
+        }
+
+        /* System Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .metric-card {
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            padding: 12px;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 20px;
+            font-weight: 600;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .metric-value.green { color: var(--terminal-green); }
+        .metric-value.blue { color: var(--system-blue); }
+        .metric-value.yellow { color: var(--warning-yellow); }
+        .metric-value.red { color: var(--error-red); }
+
+        /* Process Table */
+        .process-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .process-table th {
+            text-align: left;
+            padding: 8px;
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
+            font-weight: 500;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .process-table td {
+            padding: 8px;
+            border-bottom: 1px solid var(--border-color);
+            font-family: 'Fira Code', monospace;
+        }
+
+        .process-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .process-table tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        .state-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .state-running {
+            background: rgba(63, 185, 80, 0.15);
+            color: var(--terminal-green);
+        }
+
+        .state-ready {
+            background: rgba(47, 129, 247, 0.15);
+            color: var(--system-blue);
+        }
+
+        .state-waiting {
+            background: rgba(210, 153, 34, 0.15);
+            color: var(--warning-yellow);
+        }
+
+        .state-terminated {
+            background: rgba(248, 81, 73, 0.15);
+            color: var(--error-red);
+        }
+
+        .state-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .state-running .state-dot { background: var(--terminal-green); }
+        .state-ready .state-dot { background: var(--system-blue); }
+        .state-waiting .state-dot { background: var(--warning-yellow); }
+        .state-terminated .state-dot { background: var(--error-red); }
+
+        /* Memory Visualizer */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(16, 1fr);
+            gap: 2px;
+            margin-top: 8px;
+        }
+
+        .memory-block {
+            aspect-ratio: 1;
+            border-radius: 2px;
+            transition: all 0.2s ease;
+        }
+
+        .memory-block.free {
+            background: var(--bg-tertiary);
+        }
+
+        .memory-block.allocated {
+            background: var(--terminal-green);
+        }
+
+        .memory-block.allocated.kernel {
+            background: var(--system-blue);
+        }
+
+        .memory-block.allocated.process {
+            background: var(--accent-purple);
+        }
+
+        .memory-block:hover {
+            transform: scale(1.2);
+            z-index: 10;
+        }
+
+        .memory-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 12px;
+            font-size: 11px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        /* File System Tree */
+        .file-tree {
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+        }
+
+        .tree-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 0;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+        }
+
+        .tree-item:hover {
+            color: var(--text-primary);
+        }
+
+        .tree-item.folder {
+            color: var(--accent-cyan);
+        }
+
+        .tree-indent {
+            width: 16px;
+        }
+
+        .tree-icon {
+            width: 16px;
+            text-align: center;
+        }
+
+        /* CPU Visualization */
+        .cpu-meter {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            height: 24px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .cpu-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--terminal-green), var(--accent-cyan));
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+        }
+
+        .cpu-text {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-primary);
+            z-index: 1;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Help Modal */
+        .help-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .help-section h4 {
+            font-size: 12px;
+            color: var(--system-blue);
+            margin-bottom: 8px;
+        }
+
+        .help-command {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 12px;
+        }
+
+        .cmd-name {
+            color: var(--terminal-green);
+            font-family: 'Fira Code', monospace;
+        }
+
+        .cmd-desc {
+            color: var(--text-muted);
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--bg-tertiary);
+            border-top-color: var(--terminal-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 13px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success { border-left: 3px solid var(--terminal-green); }
+        .toast.error { border-left: 3px solid var(--error-red); }
+        .toast.info { border-left: 3px solid var(--system-blue); }
+        .toast.warning { border-left: 3px solid var(--warning-yellow); }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .os-container {
+                flex-direction: column;
+            }
+
+            .terminal-section {
+                flex: 1;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .dashboard-section {
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .help-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="os-container">
+        <!-- Terminal Section -->
+        <section class="terminal-section">
+            <div class="terminal-header">
+                <div class="terminal-controls">
+                    <div class="terminal-control control-close"></div>
+                    <div class="terminal-control control-minimize"></div>
+                    <div class="terminal-control control-maximize"></div>
+                </div>
+                <div class="terminal-title">JS-OS Terminal — Bash</div>
+            </div>
+            <div class="terminal-body" id="terminalBody">
+                <div class="boot-sequence" id="bootSequence"></div>
+                <div class="terminal-output" id="terminalOutput"></div>
+                <div class="terminal-input-line">
+                    <span class="terminal-prompt" id="terminalPrompt">guest@js-os:~$</span>
+                    <input type="text" class="terminal-input" id="terminalInput" autofocus autocomplete="off" spellcheck="false">
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section class="dashboard-section">
+            <div class="dashboard-header">
+                <div class="dashboard-title">🖥️ JS-OS Dashboard</div>
+                <div class="dashboard-subtitle">Real-time System Monitoring</div>
+            </div>
+            <div class="dashboard-content">
+                <!-- System Metrics -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <span class="panel-title">📊 System Metrics</span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-label">CPU Usage</div>
+                                <div class="metric-value green" id="cpuUsage">0%</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-label">Memory Used</div>
+                                <div class="metric-value blue" id="memoryUsage">0%</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-label">Active Processes</div>
+                                <div class="metric-value yellow" id="processCount">0</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-label">Uptime</div>
+                                <div class="metric-value" id="uptime">00:00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CPU Meter -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <span class="panel-title">⚡ CPU Load</span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="cpu-meter">
+                            <div class="cpu-fill" id="cpuFill" style="width: 0%"></div>
+                            <span class="cpu-text" id="cpuText">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Process Table -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <span class="panel-title">📋 Process Table</span>
+                        <span id="processCountBadge">0 processes</span>
+                    </div>
+                    <div class="panel-body" style="padding: 0;">
+                        <table class="process-table">
+                            <thead>
+                                <tr>
+                                    <th>PID</th>
+                                    <th>Name</th>
+                                    <th>State</th>
+                                    <th>CPU Time</th>
+                                    <th>Memory</th>
+                                </tr>
+                            </thead>
+                            <tbody id="processTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Memory Visualizer -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <span class="panel-title">🧠 Memory Map (1024 bytes)</span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="memory-grid" id="memoryGrid"></div>
+                        <div class="memory-legend">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: var(--bg-tertiary);"></div>
+                                <span>Free</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: var(--system-blue);"></div>
+                                <span>Kernel</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: var(--accent-purple);"></div>
+                                <span>Process</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- File System -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <span class="panel-title">📁 Virtual File System</span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="file-tree" id="fileTree"></div>
+                    </div>
+                </div>
+
+                <!-- Help -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <span class="panel-title">❓ Available Commands</span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="help-grid">
+                            <div class="help-section">
+                                <h4>File Operations</h4>
+                                <div class="help-command"><span class="cmd-name">ls</span><span class="cmd-desc">List directory</span></div>
+                                <div class="help-command"><span class="cmd-name">cd [dir]</span><span class="cmd-desc">Change directory</span></div>
+                                <div class="help-command"><span class="cmd-name">pwd</span><span class="cmd-desc">Print working dir</span></div>
+                                <div class="help-command"><span class="cmd-name">mkdir [name]</span><span class="cmd-desc">Create directory</span></div>
+                                <div class="help-command"><span class="cmd-name">touch [name]</span><span class="cmd-desc">Create file</span></div>
+                                <div class="help-command"><span class="cmd-name">rm [name]</span><span class="cmd-desc">Remove file/dir</span></div>
+                            </div>
+                            <div class="help-section">
+                                <h4>File Content</h4>
+                                <div class="help-command"><span class="cmd-name">cat [file]</span><span class="cmd-desc">Read file</span></div>
+                                <div class="help-command"><span class="cmd-name">write [file] "text"</span><span class="cmd-desc">Write to file</span></div>
+                                <div class="help-command"><span class="cmd-name">head [file]</span><span class="cmd-desc">First 10 lines</span></div>
+                                <div class="help-command"><span class="cmd-name">tail [file]</span><span class="cmd-desc">Last 10 lines</span></div>
+                            </div>
+                            <div class="help-section">
+                                <h4>Process Control</h4>
+                                <div class="help-command"><span class="cmd-name">ps</span><span class="cmd-desc">List processes</span></div>
+                                <div class="help-command"><span class="cmd-name">kill [pid]</span><span class="cmd-desc">Terminate process</span></div>
+                                <div class="help-command"><span class="cmd-name">exec [prog]</span><span class="cmd-desc">Run program</span></div>
+                            </div>
+                            <div class="help-section">
+                                <h4>System Info</h4>
+                                <div class="help-command"><span class="cmd-name">mem</span><span class="cmd-desc">Memory status</span></div>
+                                <div class="help-command"><span class="cmd-name">df</span><span class="cmd-desc">Disk usage</span></div>
+                                <div class="help-command"><span class="cmd-name">whoami</span><span class="cmd-desc">Current user</span></div>
+                                <div class="help-command"><span class="cmd-name">clear</span><span class="cmd-desc">Clear terminal</span></div>
+                                <div class="help-command"><span class="cmd-name">help</span><span class="cmd-desc">Show help</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        /**
+         * JS-OS: JavaScript Operating System Simulator
+         * 
+         * This is a comprehensive educational simulator that demonstrates
+         * real operating system concepts including:
+         * - Process management with scheduling
+         * - Virtual memory management
+         * - File system operations
+         * - System call interface
+         * - CPU scheduling algorithms
+         */
+
+        // ============================================
+        // CONFIGURATION
+        // ============================================
+        const CONFIG = {
+            MEMORY_SIZE: 1024,
+            TIME_SLICE: 100, // ms per time slice
+            KERNEL_MEMORY: 128,
+            MAX_PROCESSES: 50,
+            PROCESS_NAMES: ['init', 'systemd', 'networkd', 'dbus', 'X11', 'gnome-shell', 'firefox', 'code', 'terminal', 'file-manager']
+        };
+
+        // ============================================
+        // KERNEL - Core of the Operating System
+        // ============================================
+        class Kernel {
+            constructor() {
+                this.bootTime = Date.now();
+                this.interruptsEnabled = true;
+                this.scheduler = null;
+                this.memoryManager = null;
+                this.fileSystem = null;
+                this.processManager = null;
+                this.systemCalls = null;
+                this.isRunning = false;
+            }
+
+            async boot() {
+                // Simulate BIOS POST
+                await this.postSequence();
+
+                // Initialize subsystems in correct order
+                this.memoryManager = new MemoryManager(CONFIG.MEMORY_SIZE, CONFIG.KERNEL_MEMORY);
+                this.fileSystem = new FileSystem();
+                this.processManager = new ProcessManager(this);
+                this.scheduler = new Scheduler(this);
+                this.systemCalls = new SystemCalls(this);
+
+                // Register kernel processes
+                this.memoryManager.allocate(CONFIG.KERNEL_MEMORY, 'kernel');
+
+                // Create init process (PID 1)
+                this.processManager.createProcess('init', ProcessType.KERNEL, null, 
+                    'while true; do maintenance; sleep 1; done');
+
+                // Start scheduler
+                this.isRunning = true;
+                this.scheduler.start();
+
+                console.log('✅ Kernel booted successfully');
+                return true;
+            }
+
+            async postSequence() {
+                const bootLines = [
+                    'BIOS Version 1.0.0 - JS-OS Simulator',
+                    'CPU: Virtual JavaScript Processor @ 3.14 THz',
+                    'Memory Test: 1024K OK',
+                    'Initializing Kernel...',
+                    'Loading modules...',
+                    '  ✓ Memory Manager',
+                    '  ✓ File System',
+                    '  ✓ Process Manager',
+                    '  ✓ Scheduler',
+                    'Mounting file system...',
+                    'Starting system services...',
+                    'Welcome to JS-OS v1.0.0',
+                    'Kernel initialized successfully'
+                ];
+
+                for (let i = 0; i < bootLines.length; i++) {
+                    await this.delay(100);
+                    this.printBootLine(bootLines[i], i);
+                }
+            }
+
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            printBootLine(text, index) {
+                const bootSeq = document.getElementById('bootSequence');
+                const line = document.createElement('div');
+                line.className = 'boot-line';
+                line.textContent = `[${(index * 0.1).toFixed(1)}s] ${text}`;
+                line.style.animationDelay = `${index * 0.05}s`;
+                bootSeq.appendChild(line);
+            }
+
+            shutdown() {
+                this.isRunning = false;
+                this.scheduler.stop();
+                console.log('System shutdown initiated...');
+            }
+
+            getUptime() {
+                const seconds = Math.floor((Date.now() - this.bootTime) / 1000);
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+        }
+
+        // ============================================
+        // PROCESS MANAGEMENT
+        // ============================================
+        
+        // Process states
+        const ProcessState = {
+            NEW: 'new',
+            READY: 'ready',
+            RUNNING: 'running',
+            WAITING: 'waiting',
+            TERMINATED: 'terminated'
+        };
+
+        // Process types
+        const ProcessType = {
+            KERNEL: 'kernel',
+            USER: 'user',
+            DAEMON: 'daemon'
+        };
+
+        // Process Control Block (PCB)
+        class ProcessControlBlock {
+            constructor(pid, name, type, parent, program) {
+                this.pid = pid;
+                this.name = name;
+                this.type = type;
+                this.parent = parent;
+                this.program = program;
+                this.state = ProcessState.NEW;
+                this.priority = type === ProcessType.KERNEL ? 0 : 1;
+                this.cpuTime = 0;
+                this.memoryUsage = 0;
+                this.programCounter = 0;
+                this.registers = {};
+                this.openFiles = [];
+                this.children = [];
+                this.startTime = Date.now();
+                this.generator = null;
+                this.exitCode = 0;
+            }
+        }
+
+        // Process Manager
+        class ProcessManager {
+            constructor(kernel) {
+                this.kernel = kernel;
+                this.processes = new Map();
+                this.nextPid = 1;
+                this.initProcess = null;
+            }
+
+            createProcess(name, type, parent, program) {
+                if (this.processes.size >= CONFIG.MAX_PROCESSES) {
+                    throw new Error('Maximum process limit reached');
+                }
+
+                const pid = this.nextPid++;
+                const pcb = new ProcessControlBlock(pid, name, type, parent, program);
+                
+                this.processes.set(pid, pcb);
+                
+                if (parent) {
+                    parent.children.push(pid);
+                }
+
+                // Create generator for process execution
+                pcb.generator = this.createProcessGenerator(pcb);
+
+                // Transition to ready state
+                pcb.state = ProcessState.READY;
+
+                console.log(`Process created: ${name} (PID: ${pid})`);
+                return pcb;
+            }
+
+            createProcessGenerator(pcb) {
+                // Simulate process execution with yield points
+                function* processGenerator() {
+                    let counter = 0;
+                    const maxIterations = pcb.type === ProcessType.KERNEL ? 1000 : 100;
+
+                    while (counter < maxIterations) {
+                        // Simulate CPU work
+                        pcb.cpuTime += CONFIG.TIME_SLICE;
+                        counter++;
+
+                        // Periodically yield
+                        if (counter % 5 === 0) {
+                            yield { type: 'tick', cpuTime: pcb.cpuTime };
+                        }
+
+                        // Simulate I/O wait occasionally
+                        if (Math.random() < 0.05) {
+                            pcb.state = ProcessState.WAITING;
+                            yield { type: 'io_wait' };
+                            pcb.state = ProcessState.READY;
+                        }
+                    }
+
+                    pcb.state = ProcessState.TERMINATED;
+                    pcb.exitCode = 0;
+                    return { type: 'exit', code: 0 };
+                }
+
+                return processGenerator();
+            }
+
+            getProcess(pid) {
+                return this.processes.get(pid);
+            }
+
+            getAllProcesses() {
+                return Array.from(this.processes.values());
+            }
+
+            getActiveProcesses() {
+                return this.getAllProcesses().filter(p => 
+                    p.state !== ProcessState.TERMINATED
+                );
+            }
+
+            killProcess(pid) {
+                const pcb = this.processes.get(pid);
+                if (!pcb) {
+                    return { success: false, error: 'Process not found' };
+                }
+
+                if (pid === 1) {
+                    return { success: false, error: 'Cannot kill init process' };
+                }
+
+                pcb.state = ProcessState.TERMINATED;
+                pcb.exitCode = 130;
+
+                // Free allocated memory
+                if (pcb.memoryUsage > 0) {
+                    this.kernel.memoryManager.freeByOwner(pcb.pid);
+                }
+
+                console.log(`Process killed: ${pcb.name} (PID: ${pid})`);
+                return { success: true, name: pcb.name };
+            }
+
+            executeProgram(programName) {
+                const programs = {
+                    'counter': {
+                        code: `let count = 0; while(count < 50) { count++; print(count); }`,
+                        description: 'Counts from 1 to 50'
+                    },
+                    'fibonacci': {
+                        code: `function fib(n) { return n <= 1 ? n : fib(n-1) + fib(n-2); } for(let i=0; i<10; i++) { print(fib(i)); }`,
+                        description: 'Calculates Fibonacci sequence'
+                    },
+                    'stress': {
+                        code: `let result = 0; for(let i=0; i<1000; i++) { result += Math.sqrt(i); } print("Stress test complete: " + result.toFixed(2));`,
+                        description: 'CPU stress test'
+                    },
+                    'primes': {
+                        code: `function isPrime(n) { if(n < 2) return false; for(let i=2; i<=Math.sqrt(n); i++) { if(n % i === 0) return false; } return true; } let primes = []; for(let i=2; i<50; i++) { if(isPrime(i)) primes.push(i); } print(primes.join(", "));`,
+                        description: 'Find prime numbers up to 50'
+                    },
+                    'hello': {
+                        code: `print("Hello from JS-OS!"); print("This is a sample program.");`,
+                        description: 'Simple Hello World program'
+                    },
+                    'allocator': {
+                        code: `print("Testing memory allocation..."); let ptr1 = malloc(64); let ptr2 = malloc(128); print("Allocated 64 and 128 bytes"); free(ptr1); free(ptr2); print("Memory freed");`,
+                        description: 'Memory allocation test'
+                    }
+                };
+
+                const program = programs[programName.toLowerCase()];
+                if (!program) {
+                    throw new Error(`Program '${programName}' not found. Available: ${Object.keys(programs).join(', ')}`);
+                }
+
+                const pcb = this.createProcess(programName, ProcessType.USER, null, program.code);
+                return pcb;
+            }
+
+            nextTick(pcb) {
+                try {
+                    const result = pcb.generator.next();
+                    if (result.done) {
+                        pcb.state = ProcessState.TERMINATED;
+                        return { done: true, value: result.value };
+                    }
+                    return { done: false, value: result.value };
+                } catch (error) {
+                    pcb.state = ProcessState.TERMINATED;
+                    return { done: true, error: error.message };
+                }
+            }
+        }
+
+        // ============================================
+        // SCHEDULER - CPU Scheduling Algorithm
+        // ============================================
+        class Scheduler {
+            constructor(kernel) {
+                this.kernel = kernel;
+                this.readyQueue = [];
+                this.currentProcess = null;
+                this.tickCount = 0;
+                this.isRunning = false;
+                this.intervalId = null;
+            }
+
+            start() {
+                this.isRunning = true;
+                this.addKernelProcesses();
+                this.scheduleLoop();
+            }
+
+            stop() {
+                this.isRunning = false;
+                if (this.intervalId) {
+                    clearInterval(this.intervalId);
+                }
+            }
+
+            addKernelProcesses() {
+                const kernelProcs = ['systemd', 'networkd', 'dbus'];
+                kernelProcs.forEach(name => {
+                    const pcb = this.kernel.processManager.createProcess(
+                        name, ProcessType.DAEMON, null, `daemon process: ${name}`
+                    );
+                    this.readyQueue.push(pcb);
+                });
+            }
+
+            addToReadyQueue(pcb) {
+                if (pcb.state === ProcessState.READY) {
+                    this.readyQueue.push(pcb);
+                }
+            }
+
+            scheduleLoop() {
+                this.intervalId = setInterval(() => {
+                    if (!this.isRunning) return;
+
+                    // Add processes that became ready
+                    const activeProcs = this.kernel.processManager.getActiveProcesses();
+                    activeProcs.forEach(p => {
+                        if (p.state === ProcessState.READY && 
+                            !this.readyQueue.includes(p) && 
+                            p.pid !== 1) {
+                            this.readyQueue.push(p);
+                        }
+                    });
+
+                    // Round-robin scheduling
+                    if (this.readyQueue.length > 0) {
+                        // Move current process to end of queue if still running
+                        if (this.currentProcess && 
+                            this.currentProcess.state === ProcessState.RUNNING) {
+                            this.currentProcess.state = ProcessState.READY;
+                            this.readyQueue.push(this.currentProcess);
+                        }
+
+                        // Get next process
+                        this.currentProcess = this.readyQueue.shift();
+                        if (this.currentProcess) {
+                            this.currentProcess.state = ProcessState.RUNNING;
+                            this.executeProcess();
+                        }
+                    }
+
+                    // Clean up terminated processes
+                    this.cleanupTerminatedProcesses();
+
+                    // Update UI
+                    this.updateDashboard();
+
+                    this.tickCount++;
+                }, CONFIG.TIME_SLICE);
+            }
+
+            executeProcess() {
+                if (!this.currentProcess) return;
+
+                const result = this.kernel.processManager.nextTick(this.currentProcess);
+
+                if (result.done) {
+                    this.currentProcess.state = ProcessState.TERMINATED;
+                    this.currentProcess = null;
+                }
+            }
+
+            cleanupTerminatedProcesses() {
+                const terminated = this.kernel.processManager.getAllProcesses()
+                    .filter(p => p.state === ProcessState.TERMINATED && 
+                                 Date.now() - p.startTime > 5000);
+
+                terminated.forEach(p => {
+                    const idx = this.readyQueue.indexOf(p);
+                    if (idx > -1) {
+                        this.readyQueue.splice(idx, 1);
+                    }
+                });
+            }
+
+            updateDashboard() {
+                // Update process table
+                const tbody = document.getElementById('processTableBody');
+                const processes = this.kernel.processManager.getActiveProcesses()
+                    .slice(0, 10);
+
+                tbody.innerHTML = processes.map(p => `
+                    <tr>
+                        <td>${p.pid}</td>
+                        <td>${p.name}</td>
+                        <td><span class="state-badge state-${p.state}">
+                            <span class="state-dot"></span>${p.state}
+                        </span></td>
+                        <td>${(p.cpuTime / 1000).toFixed(2)}s</td>
+                        <td>${p.memoryUsage}B</td>
+                    </tr>
+                `).join('');
+
+                document.getElementById('processCount').textContent = processes.length;
+                document.getElementById('processCountBadge').textContent = 
+                    `${processes.length} processes`;
+
+                // Update CPU usage (simulated based on active processes)
+                const cpuUsage = Math.min(100, (this.readyQueue.length + 
+                    (this.currentProcess ? 1 : 0)) * 10 + 
+                    Math.random() * 5);
+                document.getElementById('cpuUsage').textContent = `${cpuUsage.toFixed(0)}%`;
+                document.getElementById('cpuFill').style.width = `${cpuUsage}%`;
+                document.getElementById('cpuText').textContent = `${cpuUsage.toFixed(0)}%`;
+
+                // Update uptime
+                document.getElementById('uptime').textContent = this.kernel.getUptime();
+            }
+        }
+
+        // ============================================
+        // MEMORY MANAGEMENT
+        // ============================================
+        class MemoryManager {
+            constructor(totalSize, kernelReserved) {
+                this.totalSize = totalSize;
+                this.kernelReserved = kernelReserved;
+                this.memory = new Array(totalSize).fill(0);
+                this.freeBlocks = [{ start: 0, end: totalSize }];
+                this.allocatedBlocks = [];
+                this.usageHistory = [];
+            }
+
+            allocate(size, owner, ownerId = 'kernel') {
+                // Find first fit
+                let bestBlock = null;
+                let bestIndex = -1;
+
+                for (let i = 0; i < this.freeBlocks.length; i++) {
+                    const block = this.freeBlocks[i];
+                    const blockSize = block.end - block.start;
+                    if (blockSize >= size && 
+                        (bestBlock === null || blockSize < bestBlock.end - bestBlock.start)) {
+                        bestBlock = block;
+                        bestIndex = i;
+                    }
+                }
+
+                if (!bestBlock) {
+                    throw new Error('Out of memory');
+                }
+
+                // Allocate block
+                const allocated = {
+                    start: bestBlock.start,
+                    end: bestBlock.start + size,
+                    size: size,
+                    owner: owner,
+                    ownerId: ownerId,
+                    timestamp: Date.now()
+                };
+
+                // Update free blocks list
+                if (bestBlock.end - bestBlock.start === size) {
+                    this.freeBlocks.splice(bestIndex, 1);
+                } else {
+                    bestBlock.start += size;
+                }
+
+                this.allocatedBlocks.push(allocated);
+
+                // Initialize memory
+                for (let i = allocated.start; i < allocated.end; i++) {
+                    this.memory[i] = Math.floor(Math.random() * 256);
+                }
+
+                console.log(`Memory allocated: ${size} bytes to ${owner}`);
+                return allocated.start;
+            }
+
+            free(pointer) {
+                const index = this.allocatedBlocks.findIndex(b => b.start === pointer);
+                if (index === -1) {
+                    throw new Error('Invalid pointer');
+                }
+
+                const block = this.allocatedBlocks[index];
+
+                // Add to free blocks
+                this.freeBlocks.push({
+                    start: block.start,
+                    end: block.end
+                });
+
+                // Merge adjacent free blocks
+                this.freeBlocks.sort((a, b) => a.start - b.start);
+                this.mergeFreeBlocks();
+
+                // Remove from allocated
+                this.allocatedBlocks.splice(index, 1);
+
+                console.log(`Memory freed: ${block.size} bytes`);
+                return true;
+            }
+
+            freeByOwner(ownerId) {
+                const toFree = this.allocatedBlocks
+                    .filter(b => b.ownerId === ownerId)
+                    .map(b => b.start);
+
+                toFree.forEach(p => this.free(p));
+            }
+
+            mergeFreeBlocks() {
+                for (let i = this.freeBlocks.length - 1; i > 0; i--) {
+                    const current = this.freeBlocks[i];
+                    const previous = this.freeBlocks[i - 1];
+
+                    if (previous.end >= current.start) {
+                        previous.end = Math.max(previous.end, current.end);
+                        this.freeBlocks.splice(i, 1);
+                    }
+                }
+            }
+
+            getUsage() {
+                const used = this.totalSize - this.getFreeMemory();
+                return {
+                    total: this.totalSize,
+                    used: used,
+                    free: this.getFreeMemory(),
+                    percent: ((used / this.totalSize) * 100).toFixed(1)
+                };
+            }
+
+            getFreeMemory() {
+                return this.freeBlocks.reduce((sum, b) => sum + (b.end - b.start), 0);
+            }
+
+            getMemoryMap() {
+                const map = new Array(this.totalSize).fill('free');
+                
+                this.allocatedBlocks.forEach(block => {
+                    const type = block.owner === 'kernel' ? 'kernel' : 'process';
+                    for (let i = block.start; i < block.end; i++) {
+                        map[i] = type;
+                    }
+                });
+
+                return map;
+            }
+
+            updateVisualization() {
+                const grid = document.getElementById('memoryGrid');
+                const memoryMap = this.getMemoryMap();
+
+                grid.innerHTML = memoryMap.map((block, i) => {
+                    let className = 'memory-block free';
+                    if (block === 'kernel') className += ' kernel';
+                    else if (block === 'process') className += ' process';
+                    return `<div class="${className}" title="Address: ${i}"></div>`;
+                }).join('');
+
+                const usage = this.getUsage();
+                document.getElementById('memoryUsage').textContent = `${usage.percent}%`;
+            }
+        }
+
+        // ============================================
+        // FILE SYSTEM (Virtual File System)
+        // ============================================
+        class FileSystemNode {
+            constructor(name, type, parent = null) {
+                this.name = name;
+                this.type = type; // 'file' or 'directory'
+                this.parent = parent;
+                this.children = new Map();
+                this.content = '';
+                this.permissions = { read: true, write: true };
+                this.createdAt = new Date();
+                this.modifiedAt = new Date();
+            }
+
+            getPath() {
+                if (!this.parent) return '/';
+                const parentPath = this.parent.getPath();
+                return parentPath === '/' ? `/${this.name}` : `${parentPath}/${this.name}`;
+            }
+        }
+
+        class FileSystem {
+            constructor() {
+                this.root = new FileSystemNode('/', 'directory');
+                this.currentPath = '/';
+                this.openFiles = new Map();
+
+                // Initialize with default structure
+                this.initializeFileSystem();
+            }
+
+            initializeFileSystem() {
+                const dirs = ['bin', 'etc', 'home', 'usr', 'var', 'tmp'];
+                dirs.forEach(dir => this.mkdirSync(dir, this.root));
+
+                // Create some default files
+                const homeDir = this.getNode('/home');
+                this.writeFileSync('readme.txt', 'Welcome to JS-OS!\nThis is a simple virtual file system.\n', homeDir);
+                this.writeFileSync('notes.txt', 'My notes\n============\n', homeDir);
+            }
+
+            // Path resolution
+            resolvePath(path) {
+                if (!path) return this.getCurrentNode();
+                
+                const normalizedPath = path.replace(/\/+/g, '/').replace(/\/$/, '');
+                const parts = normalizedPath.split('/').filter(p => p && p !== '.');
+                
+                let current = this.root;
+                
+                for (const part of parts) {
+                    if (part === '..') {
+                        if (current.parent) current = current.parent;
+                    } else if (current.children.has(part)) {
+                        current = current.children.get(part);
+                    } else {
+                        return null;
+                    }
+                }
+                
+                return current;
+            }
+
+            getCurrentNode() {
+                return this.resolvePath(this.currentPath);
+            }
+
+            // Directory operations
+            ls(path = null) {
+                const node = path ? this.resolvePath(path) : this.getCurrentNode();
+                if (!node || node.type !== 'directory') {
+                    throw new Error(`Directory not found: ${path}`);
+                }
+
+                const items = [];
+                node.children.forEach((child, name) => {
+                    items.push({
+                        name: name,
+                        type: child.type,
+                        size: child.content.length,
+                        modified: child.modifiedAt.toLocaleTimeString()
+                    });
+                });
+
+                return items;
+            }
+
+            cd(path) {
+                if (!path || path === '~') {
+                    this.currentPath = '/home';
+                    return;
+                }
+
+                if (path === '/') {
+                    this.currentPath = '/';
+                    return;
+                }
+
+                const node = this.resolvePath(path);
+                if (!node || node.type !== 'directory') {
+                    throw new Error(`Directory not found: ${path}`);
+                }
+
+                this.currentPath = node.getPath();
+            }
+
+            pwd() {
+                return this.currentPath;
+            }
+
+            mkdirSync(name, parent = null) {
+                const dir = new FileSystemNode(name, 'directory', parent || this.getCurrentNode());
+                (parent || this.getCurrentNode()).children.set(name, dir);
+                return dir;
+            }
+
+            mkdir(name, path = null) {
+                const parent = path ? this.resolvePath(path) : this.getCurrentNode();
+                if (!parent || parent.type !== 'directory') {
+                    throw new Error(`Parent directory not found`);
+                }
+                if (parent.children.has(name)) {
+                    throw new Error(`Directory already exists: ${name}`);
+                }
+                return this.mkdirSync(name, parent);
+            }
+
+            // File operations
+            touchSync(name, parent = null) {
+                const file = new FileSystemNode(name, 'file', parent || this.getCurrentNode());
+                (parent || this.getCurrentNode()).children.set(name, file);
+                return file;
+            }
+
+            touch(name) {
+                const parent = this.getCurrentNode();
+                if (parent.children.has(name) && parent.children.get(name).type === 'directory') {
+                    throw new Error(`Cannot create file: ${name} is a directory`);
+                }
+                return this.touchSync(name, parent);
+            }
+
+            writeFileSync(name, content, parent = null) {
+                const parentNode = parent || this.getCurrentNode();
+                let file = parentNode.children.get(name);
+                
+                if (!file) {
+                    file = this.touchSync(name, parentNode);
+                }
+                
+                file.content = content;
+                file.modifiedAt = new Date();
+                return file;
+            }
+
+            write(name, content) {
+                const parent = this.getCurrentNode();
+                this.writeFileSync(name, content, parent);
+            }
+
+            readFileSync(name, parent = null) {
+                const parentNode = parent || this.getCurrentNode();
+                const file = parentNode.children.get(name);
+                
+                if (!file || file.type === 'directory') {
+                    throw new Error(`File not found: ${name}`);
+                }
+                
+                return file.content;
+            }
+
+            read(name) {
+                return this.readFileSync(name);
+            }
+
+            head(name, lines = 10) {
+                const content = this.read(name);
+                return content.split('\n').slice(0, lines).join('\n');
+            }
+
+            tail(name, lines = 10) {
+                const content = this.read(name);
+                return content.split('\n').slice(-lines).join('\n');
+            }
+
+            rm(name) {
+                const parent = this.getCurrentNode();
+                const node = parent.children.get(name);
+                
+                if (!node) {
+                    throw new Error(`File not found: ${name}`);
+                }
+                
+                if (node.type === 'directory' && node.children.size > 0) {
+                    throw new Error(`Directory not empty: ${name}`);
+                }
+                
+                parent.children.delete(name);
+                return true;
+            }
+
+            // Tree visualization
+            renderTree(node = this.root, prefix = '', isLast = true) {
+                const lines = [];
+                const connector = isLast ? '└── ' : '├── ';
+                const newPrefix = prefix + (isLast ? '    ' : '│   ');
+
+                lines.push(`${prefix}${connector}${node.name}${node.type === 'directory' ? '/' : ''}`);
+
+                if (node.type === 'directory') {
+                    const children = Array.from(node.children.values());
+                    children.forEach((child, index) => {
+                        lines.push(...this.renderTree(child, newPrefix, index === children.length - 1));
+                    });
+                }
+
+                return lines;
+            }
+
+            getTreeString() {
+                return this.renderTree(this.root).slice(1).join('\n');
+            }
+
+            getDiskUsage() {
+                const totalSize = this.calculateSize(this.root);
+                return {
+                    total: totalSize,
+                    units: 'bytes'
+                };
+            }
+
+            calculateSize(node) {
+                let size = node.content ? node.content.length : 0;
+                if (node.type === 'directory') {
+                    node.children.forEach(child => {
+                        size += this.calculateSize(child);
+                    });
+                }
+                return size;
+            }
+        }
+
+        // ============================================
+        // SYSTEM CALLS - Interface between user and kernel
+        // ============================================
+        class SystemCalls {
+            constructor(kernel) {
+                this.kernel = kernel;
+                this.fdCounter = 3; // 0, 1, 2 reserved for stdin, stdout, stderr
+                this.openFiles = new Map();
+            }
+
+            // File descriptor operations
+            sys_open(path, flags = 'r') {
+                const node = this.kernel.fileSystem.resolvePath(path);
+                if (!node) {
+                    throw new Error(`File not found: ${path}`);
+                }
+                
+                const fd = this.fdCounter++;
+                this.openFiles.set(fd, {
+                    node: node,
+                    position: 0,
+                    flags: flags
+                });
+                
+                return fd;
+            }
+
+            sys_read(fd, size = 1024) {
+                const file = this.openFiles.get(fd);
+                if (!file) {
+                    throw new Error(`Invalid file descriptor: ${fd}`);
+                }
+                
+                const remaining = file.node.content.length - file.position;
+                const toRead = Math.min(size, remaining);
+                const content = file.node.content.substring(file.position, file.position + toRead);
+                file.position += toRead;
+                
+                return content;
+            }
+
+            sys_write(fd, data) {
+                if (fd === 1 || fd === 2) { // stdout/stderr
+                    return data;
+                }
+                
+                const file = this.openFiles.get(fd);
+                if (!file) {
+                    throw new Error(`Invalid file descriptor: ${fd}`);
+                }
+                
+                file.node.content += data;
+                return data.length;
+            }
+
+            sys_close(fd) {
+                if (this.openFiles.has(fd)) {
+                    this.openFiles.delete(fd);
+                    return 0;
+                }
+                return -1;
+            }
+
+            // Process operations
+            sys_fork(program) {
+                const parentPid = this.kernel.processManager.currentProcess?.pid || 1;
+                const pcb = this.kernel.processManager.createProcess(
+                    program, ProcessType.USER, parentPid, program
+                );
+                this.kernel.scheduler.addToReadyQueue(pcb);
+                return pcb.pid;
+            }
+
+            sys_exec(programName) {
+                const pcb = this.kernel.processManager.executeProgram(programName);
+                this.kernel.scheduler.addToReadyQueue(pcb);
+                return pcb.pid;
+            }
+
+            sys_exit(code) {
+                const pcb = this.kernel.processManager.currentProcess;
+                if (pcb) {
+                    pcb.exitCode = code;
+                    pcb.state = ProcessState.TERMINATED;
+                }
+                return code;
+            }
+
+            sys_kill(pid) {
+                return this.kernel.processManager.killProcess(pid);
+            }
+
+            // Memory operations
+            sys_malloc(size) {
+                const pcb = this.kernel.processManager.currentProcess;
+                const ownerId = pcb ? pcb.pid : 'shell';
+                const ptr = this.kernel.memoryManager.allocate(size, 'process', ownerId);
+                if (pcb) pcb.memoryUsage += size;
+                return ptr;
+            }
+
+            sys_free(ptr) {
+                const pcb = this.kernel.processManager.currentProcess;
+                if (pcb) pcb.memoryUsage = 0;
+                return this.kernel.memoryManager.free(ptr);
+            }
+
+            // Information
+            sys_getpid() {
+                return this.kernel.processManager.currentProcess?.pid || 0;
+            }
+
+            sys_getuid() {
+                return 1000; // Simulated user ID
+            }
+
+            sys_uname() {
+                return {
+                    sysname: 'JS-OS',
+                    nodename: 'js-os-simulator',
+                    release: '1.0.0',
+                    version: 'Simulator',
+                    machine: 'Virtual JavaScript'
+                };
+            }
+        }
+
+        // ============================================
+        // SHELL - Command Line Interface
+        // ============================================
+        class Shell {
+            constructor(kernel) {
+                this.kernel = kernel;
+                this.history = [];
+                this.historyIndex = -1;
+                this.output = [];
+            }
+
+            async execute(command) {
+                const parts = this.parseCommand(command);
+                if (parts.length === 0) return null;
+
+                const cmdName = parts[0];
+                const args = parts.slice(1);
+
+                this.history.push(command);
+                this.historyIndex = this.history.length;
+
+                try {
+                    const result = await this.runCommand(cmdName, args);
+                    return result;
+                } catch (error) {
+                    return { type: 'error', message: error.message };
+                }
+            }
+
+            parseCommand(input) {
+                const tokens = [];
+                let current = '';
+                let inQuotes = false;
+                let quoteChar = '';
+
+                for (let i = 0; i < input.length; i++) {
+                    const char = input[i];
+                    
+                    if ((char === '"' || char === "'") && !inQuotes) {
+                        inQuotes = true;
+                        quoteChar = char;
+                    } else if (char === quoteChar && inQuotes) {
+                        inQuotes = false;
+                        quoteChar = '';
+                    } else if (char === ' ' && !inQuotes) {
+                        if (current) {
+                            tokens.push(current);
+                            current = '';
+                        }
+                    } else {
+                        current += char;
+                    }
+                }
+
+                if (current) {
+                    tokens.push(current);
+                }
+
+                return tokens;
+            }
+
+            async runCommand(cmdName, args) {
+                const commands = {
+                    // File operations
+                    'ls': () => this.cmdLs(args),
+                    'cd': () => this.cmdCd(args),
+                    'pwd': () => this.cmdPwd(),
+                    'mkdir': () => this.cmdMkdir(args),
+                    'touch': () => this.cmdTouch(args),
+                    'rm': () => this.cmdRm(args),
+                    
+                    // File content
+                    'cat': () => this.cmdCat(args),
+                    'head': () => this.cmdHead(args),
+                    'tail': () => this.cmdTail(args),
+                    'write': () => this.cmdWrite(args),
+                    
+                    // Process control
+                    'ps': () => this.cmdPs(),
+                    'kill': () => this.cmdKill(args),
+                    'exec': () => this.cmdExec(args),
+                    
+                    // System info
+                    'mem': () => this.cmdMem(),
+                    'df': () => this.cmdDf(),
+                    'whoami': () => this.cmdWhoami(),
+                    'uname': () => this.cmdUname(),
+                    'clear': () => this.cmdClear(),
+                    'help': () => this.cmdHelp()
+                };
+
+                const command = commands[cmdName.toLowerCase()];
+                if (!command) {
+                    throw new Error(`Command not found: ${cmdName}`);
+                }
+
+                return await command();
+            }
+
+            // Command implementations
+            cmdLs(args) {
+                const path = args[0] || null;
+                try {
+                    const items = this.kernel.fileSystem.ls(path);
+                    if (items.length === 0) {
+                        return { type: 'output', message: '(empty directory)' };
+                    }
+
+                    const output = items.map(item => {
+                        const type = item.type === 'directory' ? '📁' : '📄';
+                        const size = item.size > 0 ? ` ${item.size}B` : '';
+                        return `${type} ${item.name}${size}`;
+                    }).join('\n');
+
+                    return { type: 'output', message: output };
+                } catch (error) {
+                    throw error;
+                }
+            }
+
+            cmdCd(args) {
+                const path = args[0];
+                if (!path) {
+                    this.kernel.fileSystem.cd('~');
+                } else {
+                    this.kernel.fileSystem.cd(path);
+                }
+                return { type: 'success', message: '' };
+            }
+
+            cmdPwd() {
+                return { type: 'output', message: this.kernel.fileSystem.pwd() };
+            }
+
+            cmdMkdir(args) {
+                if (args.length === 0) {
+                    throw new Error('Missing directory name');
+                }
+                this.kernel.fileSystem.mkdir(args[0]);
+                return { type: 'success', message: `Directory created: ${args[0]}` };
+            }
+
+            cmdTouch(args) {
+                if (args.length === 0) {
+                    throw new Error('Missing file name');
+                }
+                this.kernel.fileSystem.touch(args[0]);
+                return { type: 'success', message: `File created: ${args[0]}` };
+            }
+
+            cmdRm(args) {
+                if (args.length === 0) {
+                    throw new Error('Missing file/directory name');
+                }
+                this.kernel.fileSystem.rm(args[0]);
+                return { type: 'success', message: `Removed: ${args[0]}` };
+            }
+
+            cmdCat(args) {
+                if (args.length === 0) {
+                    throw new Error('Missing file name');
+                }
+                const content = this.kernel.fileSystem.read(args[0]);
+                return { type: 'output', message: content };
+            }
+
+            cmdHead(args) {
+                if (args.length === 0) {
+                    throw new Error('Missing file name');
+                }
+                const content = this.kernel.fileSystem.head(args[0]);
+                return { type: 'output', message: content };
+            }
+
+            cmdTail(args) {
+                if (args.length === 0) {
+                    throw new Error('Missing file name');
+                }
+                const content = this.kernel.fileSystem.tail(args[0]);
+                return { type: 'output', message: content };
+            }
+
+            cmdWrite(args) {
+                if (args.length < 2) {
+                    throw new Error('Usage: write [file] "text"');
+                }
+                const content = args.slice(1).join(' ').replace(/^"|"$/g, '');
+                this.kernel.fileSystem.write(args[0], content);
+                return { type: 'success', message: `Written to ${args[0]}` };
+            }
+
+            cmdPs() {
+                const processes = this.kernel.processManager.getActiveProcesses();
+                const output = processes.map(p => {
+                    const state = p.state.toUpperCase().slice(0, 4);
+                    return `${p.pid.toString().padStart(5)} ${p.name.padEnd(12)} ${state} ${(p.cpuTime / 1000).toFixed(2)}s`;
+                }).join('\n');
+                
+                return { type: 'output', message: `  PID NAME           STAT   TIME\n${output}` };
+            }
+
+            cmdKill(args) {
+                if (args.length === 0) {
+                    throw new Error('Missing process ID');
+                }
+                const pid = parseInt(args[0]);
+                if (isNaN(pid)) {
+                    throw new Error('Invalid process ID');
+                }
+                const result = this.kernel.processManager.killProcess(pid);
+                if (result.success) {
+                    return { type: 'success', message: `Process ${pid} (${result.name}) terminated` };
+                }
+                throw new Error(result.error);
+            }
+
+            cmdExec(args) {
+                if (args.length === 0) {
+                    throw new Error('Missing program name');
+                }
+                const pid = this.kernel.systemCalls.sys_exec(args[0]);
+                return { type: 'info', message: `Started program '${args[0]}' with PID ${pid}` };
+            }
+
+            cmdMem() {
+                const mem = this.kernel.memoryManager.getUsage();
+                return { 
+                    type: 'output', 
+                    message: `Memory Usage:\n  Total:    ${mem.total} bytes\n  Used:     ${mem.used} bytes (${mem.percent}%)\n  Free:     ${mem.free} bytes`
+                };
+            }
+
+            cmdDf() {
+                const disk = this.kernel.fileSystem.getDiskUsage();
+                return { 
+                    type: 'output', 
+                    message: `Disk Usage:\n  Total: ${disk.total} bytes`
+                };
+            }
+
+            cmdWhoami() {
+                return { type: 'output', message: 'guest' };
+            }
+
+            cmdUname() {
+                const info = this.kernel.systemCalls.sys_uname();
+                return { 
+                    type: 'output', 
+                    message: `${info.sysname} ${info.nodename} ${info.release} ${info.version} ${info.machine}`
+                };
+            }
+
+            cmdClear() {
+                return { type: 'clear' };
+            }
+
+            cmdHelp() {
+                return { type: 'help' };
+            }
+
+            getPrompt() {
+                const path = this.kernel.fileSystem.currentPath;
+                const displayPath = path === '/home' ? '~' : path;
+                return `guest@js-os:${displayPath}$`;
+            }
+        }
+
+        // ============================================
+        // TERMINAL UI - User Interface Controller
+        // ============================================
+        class TerminalUI {
+            constructor() {
+                this.terminalOutput = document.getElementById('terminalOutput');
+                this.terminalInput = document.getElementById('terminalInput');
+                this.terminalPrompt = document.getElementById('terminalPrompt');
+                this.terminalBody = document.getElementById('terminalBody');
+                this.bootSequence = document.getElementById('bootSequence');
+            }
+
+            clearOutput() {
+                this.terminalOutput.innerHTML = '';
+            }
+
+            printOutput(message, type = 'output') {
+                const line = document.createElement('div');
+                line.className = `command-output ${type}`;
+                line.textContent = message;
+                this.terminalOutput.appendChild(line);
+                this.scrollToBottom();
+            }
+
+            printLines(lines, type = 'output') {
+                lines.forEach(line => this.printOutput(line, type));
+            }
+
+            scrollToBottom() {
+                this.terminalBody.scrollTop = this.terminalBody.scrollHeight;
+            }
+
+            updatePrompt() {
+                this.terminalPrompt.textContent = 'guest@js-os:~$';
+            }
+
+            setFocus() {
+                this.terminalInput.focus();
+            }
+
+            getInput() {
+                return this.terminalInput.value;
+            }
+
+            clearInput() {
+                this.terminalInput.value = '';
+            }
+
+            setInput(value) {
+                this.terminalInput.value = value;
+            }
+
+            addHistoryItem(value) {
+                // History is managed by Shell class
+            }
+        }
+
+        // ============================================
+        // MAIN OS CLASS - Orchestrates all components
+        // ============================================
+        class OperatingSystem {
+            constructor() {
+                this.kernel = new Kernel();
+                this.shell = new Shell(this.kernel);
+                this.ui = new TerminalUI();
+                this.isInitialized = false;
+            }
+
+            async boot() {
+                // Start boot sequence
+                await this.kernel.boot();
+                this.isInitialized = true;
+
+                // Initialize UI
+                this.setupEventListeners();
+                this.updateFileSystemTree();
+                this.updateMemoryVisualization();
+
+                // Start dashboard updates
+                this.startDashboardUpdates();
+
+                // Show welcome message
+                setTimeout(() => {
+                    this.ui.printOutput('Welcome to JS-OS v1.0.0', 'info');
+                    this.ui.printOutput('Type "help" for available commands.', 'info');
+                    this.ui.printOutput('', 'output');
+                }, 2500);
+
+                console.log('Operating System ready');
+            }
+
+            setupEventListeners() {
+                const input = this.ui.terminalInput;
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        this.handleCommand(input.value);
+                        input.value = '';
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        this.navigateHistory('up');
+                    } else if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        this.navigateHistory('down');
+                    } else if (e.key === 'Tab') {
+                        e.preventDefault();
+                        this.handleTabCompletion(input.value);
+                    }
+                });
+
+                // Keep focus on input
+                document.addEventListener('click', () => {
+                    if (this.isInitialized) {
+                        this.ui.setFocus();
+                    }
+                });
+            }
+
+            async handleCommand(commandText) {
+                if (!commandText.trim()) return;
+
+                // Print command line
+                this.printCommandLine(commandText);
+
+                // Execute command
+                const result = await this.shell.execute(commandText);
+
+                // Handle result
+                if (result) {
+                    switch (result.type) {
+                        case 'output':
+                            this.ui.printOutput(result.message);
+                            break;
+                        case 'success':
+                            this.ui.printOutput(result.message, 'success');
+                            break;
+                        case 'error':
+                            this.ui.printOutput(result.message, 'error');
+                            break;
+                        case 'info':
+                            this.ui.printOutput(result.message, 'info');
+                            break;
+                        case 'warning':
+                            this.ui.printOutput(result.message, 'warning');
+                            break;
+                        case 'clear':
+                            this.ui.clearOutput();
+                            break;
+                        case 'help':
+                            this.showHelp();
+                            break;
+                    }
+                }
+
+                // Update UI components
+                this.updateFileSystemTree();
+                this.updateMemoryVisualization();
+            }
+
+            printCommandLine(text) {
+                const line = document.createElement('div');
+                line.className = 'terminal-line';
+                line.innerHTML = `<span class="terminal-prompt">${this.shell.getPrompt()}</span> ${text}`;
+                this.ui.terminalOutput.appendChild(line);
+                this.ui.scrollToBottom();
+            }
+
+            navigateHistory(direction) {
+                const history = this.shell.history;
+                if (history.length === 0) return;
+
+                if (direction === 'up') {
+                    if (this.shell.historyIndex > 0) {
+                        this.shell.historyIndex--;
+                        this.ui.setInput(history[this.shell.historyIndex]);
+                    }
+                } else {
+                    if (this.shell.historyIndex < history.length - 1) {
+                        this.shell.historyIndex++;
+                        this.ui.setInput(history[this.shell.historyIndex]);
+                    } else {
+                        this.shell.historyIndex = history.length;
+                        this.ui.setInput('');
+                    }
+                }
+            }
+
+            handleTabCompletion(text) {
+                const parts = text.split(' ');
+                const lastWord = parts[parts.length - 1];
+
+                // Get current directory contents
+                try {
+                    const items = this.kernel.fileSystem.ls();
+                    const matches = items
+                        .filter(item => item.name.startsWith(lastWord))
+                        .map(item => item.name);
+
+                    if (matches.length === 1) {
+                        parts[parts.length - 1] = matches[0];
+                        this.ui.setInput(parts.join(' '));
+                    } else if (matches.length > 1) {
+                        this.ui.printOutput(matches.join('  '), 'info');
+                    }
+                } catch (e) {
+                    // Ignore errors during tab completion
+                }
+            }
+
+            showHelp() {
+                const helpText = `
+Available Commands:
+═══════════════════════════════════════
+
+FILE OPERATIONS
+  ls [path]           List directory contents
+  cd [dir]            Change directory
+  pwd                 Print working directory
+  mkdir <name>        Create directory
+  touch <name>        Create empty file
+  rm <name>           Remove file/directory
+
+FILE CONTENT
+  cat <file>          Display file content
+  head <file>         Show first 10 lines
+  tail <file>         Show last 10 lines
+  write <file> "text" Write text to file
+
+PROCESS CONTROL
+  ps                  List running processes
+  kill <pid>          Terminate process
+  exec <program>      Execute program
+
+SYSTEM INFO
+  mem                 Memory usage
+  df                  Disk usage
+  whoami              Current user
+  uname               System information
+  clear               Clear terminal
+  help                Show this help
+
+BUILT-IN PROGRAMS
+  counter             Count from 1 to 50
+  fibonacci           Calculate Fibonacci sequence
+  stress              CPU stress test
+  primes              Find prime numbers
+  hello               Simple Hello World
+  allocator           Memory allocation test
+
+═══════════════════════════════════════
+                `;
+                this.ui.printOutput(helpText.trim());
+            }
+
+            updateFileSystemTree() {
+                const treeContainer = document.getElementById('fileTree');
+                const tree = this.kernel.fileSystem.renderTree();
+                // Show limited tree for dashboard
+                const limitedTree = tree.slice(1, 15).join('\n');
+                treeContainer.textContent = limitedTree || '(empty)';
+            }
+
+            updateMemoryVisualization() {
+                this.kernel.memoryManager.updateVisualization();
+            }
+
+            startDashboardUpdates() {
+                setInterval(() => {
+                    this.updateMemoryVisualization();
+                }, 1000);
+            }
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('Initializing JS-OS...');
+            const os = new OperatingSystem();
+            window.os = os; // Make accessible for debugging
+            
+            try {
+                await os.boot();
+                console.log('JS-OS booted successfully');
+            } catch (error) {
+                console.error('Failed to boot OS:', error);
+            }
+        });
+    </script>
+</body>
+</html>
