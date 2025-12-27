@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Android Emulator | AI-OS</title>
+    
+    <!-- AI-OS Design System -->
+    <link rel="stylesheet" href="../css/ai-os-design-system.css">
+    
+    <!-- AI-OS Core Integration -->
+    <script src="../js/ai-os-core.js"></script>
+    <script src="../js/ai-os-app-integration.js"></script>
+    <script src="../js/ai-os-utils.js"></script>
+    
+    <!-- AI-OS SVG Icons -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="icon-smartphone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="5" y="2" width="14" height="20" rx="2"></rect>
+            <line x1="12" y1="18" x2="12" y2="18"></line>
+        </symbol>
+        <symbol id="icon-robot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+            <circle cx="9" cy="10" r="1.5"></circle>
+            <circle cx="15" cy="10" r="1.5"></circle>
+            <line x1="8" y1="20" x2="16" y2="20"></line>
+            <line x1="8" y1="14" x2="8" y2="16"></line>
+            <line x1="16" y1="14" x2="16" y2="16"></line>
+        </symbol>
+        <symbol id="icon-package" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12.89 1.45l8 4A2 2 0 0 1 22 7.24v9.53a2 2 0 0 1-1.11 1.79l-8 4a2 2 0 0 1-1.79 0l-8-4a2 2 0 0 1-1.1-1.8V7.24a2 2 0 0 1 1.11-1.79l8-4a2 2 0 0 1 1.78 0z"></path>
+            <polyline points="2.32 6.16 12 11 21.68 6.16"></polyline>
+            <line x1="12" y1="22.76" x2="12" y2="11"></line>
+        </symbol>
+        <symbol id="icon-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </symbol>
+        <symbol id="icon-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </symbol>
+        <symbol id="icon-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </symbol>
+        <symbol id="icon-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </symbol>
+        <symbol id="icon-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+        </symbol>
+        <symbol id="icon-plug" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v6"></path>
+            <path d="M12 22v-6"></path>
+            <path d="M4.93 4.93l4.24 4.24"></path>
+            <path d="M14.83 14.83l4.24 4.24"></path>
+            <path d="M2 12h6"></path>
+            <path d="M22 12h-6"></path>
+            <path d="M4.93 19.07l4.24-4.24"></path>
+            <path d="M14.83 9.17l4.24-4.24"></path>
+            <circle cx="12" cy="12" r="4"></circle>
+        </symbol>
+        <symbol id="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </symbol>
+        <symbol id="icon-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+        </symbol>
+        <symbol id="icon-clean" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 20H7L3 16c-.8-.8-.8-2 0-2.8L13.4 2.8c.8-.8 2-.8 2.8 0L21 7.7c.8.8.8 2 0 2.8L11 20"></path>
+            <path d="M6 11l4 4"></path>
+        </symbol>
+        <symbol id="icon-status-online" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="6"></circle>
+            <circle cx="12" cy="12" r="2" fill="currentColor"></circle>
+        </symbol>
+        <symbol id="icon-status-offline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="6"></circle>
+            <circle cx="12" cy="12" r="2" fill="currentColor"></circle>
+            <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+        </symbol>
+        <symbol id="icon-status-connecting" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="6"></circle>
+            <path d="M12 6v6l4 2" fill="none" stroke-dasharray="2 2"></path>
+        </symbol>
+        <symbol id="icon-android" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17.6 3.6a2.4 2.4 0 0 0-1.8-1.1c-1.3 0-2.4.9-2.8 2.1A6.4 6.4 0 0 0 6 10c0 .4.1.8.2 1.1H5a2.4 2.4 0 0 0-2.4 2.4v5.6A2.4 2.4 0 0 0 5 22h14a2.4 2.4 0 0 0 2.4-2.4V13.6a2.4 2.4 0 0 0-2.4-2.4h-.8c.1-.3.2-.7.2-1.1a6.4 6.4 0 0 0-3.4-5.4z"></path>
+            <circle cx="6.5" cy="14.5" r="1.5"></circle>
+            <circle cx="17.5" cy="14.5" r="1.5"></circle>
+        </symbol>
+        <symbol id="icon-tools" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+        </symbol>
+        <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </symbol>
+    </svg>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-primary);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .android-emulator {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .ae-header {
+            height: 60px;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(76, 175, 80, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1000;
+        }
+
+        .ae-title {
+            font-size: var(--text-lg);
+            font-weight: 700;
+            color: var(--ai-secondary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .ae-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .ae-control-btn {
+            padding: var(--space-xs) var(--space-md);
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: var(--radius-md);
+            color: var(--ai-secondary);
+            cursor: pointer;
+            font-size: var(--text-xs);
+            transition: all var(--transition-fast);
+        }
+
+        .ae-control-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+        }
+
+        .ae-control-btn.primary {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: var(--ai-secondary);
+        }
+
+        .ae-control-btn.primary:hover {
+            background: rgba(0, 212, 255, 0.3);
+        }
+
+        .ae-sdk-status {
+            padding: var(--space-xs) var(--space-sm);
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            border-radius: var(--radius-md);
+            color: var(--error);
+            font-size: var(--text-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .ae-sdk-status.connected {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: rgba(0, 212, 255, 0.5);
+            color: var(--ai-secondary);
+        }
+
+        .ae-sdk-status.connecting {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: rgba(245, 158, 11, 0.5);
+            color: var(--warning);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .ae-sdk-panel {
+            position: fixed;
+            top: 80px;
+            right: var(--space-md);
+            width: 350px;
+            max-height: 500px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            backdrop-filter: blur(20px);
+            z-index: 1500;
+            display: none;
+        }
+
+        .ae-sdk-panel.visible {
+            display: block;
+        }
+
+        .ae-sdk-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-md);
+        }
+
+        .ae-sdk-panel-title {
+            font-size: var(--text-base);
+            font-weight: 600;
+            color: var(--ai-secondary);
+        }
+
+        .ae-sdk-panel-close {
+            background: none;
+            border: none;
+            color: var(--ai-secondary);
+            font-size: var(--text-lg);
+            cursor: pointer;
+            padding: var(--space-xs);
+        }
+
+        .ae-sdk-device-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: var(--space-md);
+        }
+
+        .ae-sdk-device {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm);
+            margin-bottom: var(--space-xs);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+
+        .ae-sdk-device:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(0, 212, 255, 0.6);
+        }
+
+        .ae-sdk-device.active {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: var(--ai-secondary);
+        }
+
+        .ae-sdk-device-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .ae-sdk-device-info {
+            font-size: var(--text-xs);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .ae-sdk-logs {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm);
+            height: 150px;
+            overflow-y: auto;
+            font-family: var(--font-mono);
+            font-size: var(--text-xs);
+            color: var(--ai-secondary);
+        }
+
+        .ae-sdk-log-entry {
+            margin-bottom: 2px;
+            padding: 2px 0;
+        }
+
+        .ae-sdk-log-entry.error {
+            color: var(--error);
+        }
+
+        .ae-sdk-log-entry.warning {
+            color: var(--warning);
+        }
+
+        .ae-search-bar {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            max-width: calc(100% - 40px);
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(0, 212, 255, 0.5);
+            border-radius: 25px;
+            padding: var(--space-sm) var(--space-md);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+        }
+
+        .ae-search-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: var(--text-sm);
+            outline: none;
+        }
+
+        .ae-search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .ae-app-launcher {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+        }
+
+        .ae-app-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: var(--space-lg);
+            padding: var(--space-lg);
+            align-content: start;
+            overflow-y: auto;
+        }
+
+        .ae-app-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ae-app-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(0, 212, 255, 0.6);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .ae-app-card.launching {
+            animation: appLaunch 0.6s ease-out;
+            background: rgba(0, 212, 255, 0.3);
+            border-color: var(--ai-secondary);
+        }
+
+        @keyframes appLaunch {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(2deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .ae-app-icon-large {
+            font-size: 48px;
+            margin-bottom: var(--space-md);
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .ae-app-name {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .ae-app-status {
+            font-size: var(--text-xs);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .ae-app-status.running {
+            color: var(--ai-secondary);
+            font-weight: bold;
+        }
+
+        .ae-app-actions {
+            position: absolute;
+            top: var(--space-sm);
+            right: var(--space-sm);
+            display: flex;
+            gap: var(--space-xs);
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+        }
+
+        .ae-app-card:hover .ae-app-actions {
+            opacity: 1;
+        }
+
+        .ae-action-btn {
+            width: 24px;
+            height: 24px;
+            background: rgba(0, 0, 0, 0.7);
+            border: none;
+            border-radius: 50%;
+            color: var(--text-primary);
+            font-size: var(--text-xs);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        .ae-action-btn:hover {
+            background: rgba(0, 212, 255, 0.8);
+            transform: scale(1.1);
+        }
+
+        .ae-quick-launch-bar {
+            position: fixed;
+            bottom: var(--space-md);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(0, 212, 255, 0.5);
+            border-radius: 25px;
+            padding: var(--space-sm) var(--space-md);
+            display: flex;
+            gap: var(--space-md);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+        }
+
+        .ae-quick-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            border-radius: 50%;
+            color: var(--ai-secondary);
+            font-size: var(--text-base);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-normal);
+        }
+
+        .ae-quick-btn:hover {
+            background: rgba(0, 212, 255, 0.4);
+            border-color: var(--ai-secondary);
+            transform: scale(1.1);
+        }
+
+        .ae-apk-manager {
+            position: fixed;
+            bottom: 80px;
+            right: var(--space-md);
+            width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+        }
+
+        .ae-manager-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-md);
+        }
+
+        .ae-manager-title {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--ai-secondary);
+        }
+
+        .ae-upload-zone {
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px dashed rgba(0, 212, 255, 0.5);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            margin-bottom: var(--space-md);
+        }
+
+        .ae-upload-zone:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: var(--ai-secondary);
+        }
+
+        .ae-app-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+        }
+
+        .ae-app-overlay.visible {
+            display: flex;
+        }
+
+        .ae-app-header {
+            height: 60px;
+            background: rgba(0, 0, 0, 0.9);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-md);
+        }
+
+        .ae-app-content {
+            flex: 1;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ae-app-window {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        .ae-back-btn {
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.5);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: var(--ai-secondary);
+            font-size: var(--text-lg);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-normal);
+        }
+
+        .ae-back-btn:hover {
+            background: rgba(0, 212, 255, 0.4);
+            transform: scale(1.1);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* AI-OS Icon Styles */
+        .ai-os-icon {
+            width: 1em;
+            height: 1em;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+        }
+        
+        .ai-os-icon-sm {
+            width: 0.875em;
+            height: 0.875em;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+        }
+        
+        .ai-os-icon-lg {
+            width: 1.25em;
+            height: 1.25em;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="android-emulator">
+        <!-- Header -->
+        <div class="ae-header">
+            <div class="ae-title">
+                <svg class="ai-os-icon"><use href="#icon-robot"></use></svg>
+                <span>Android App Launcher</span>
+            </div>
+            
+            <div class="ae-controls">
+                <div class="ae-control-btn" data-action="connectSDK" id="sdkConnectBtn">
+                    <svg class="ai-os-icon-sm"><use href="#icon-link"></use></svg>
+                    Connect SDK
+                </div>
+                <div class="ae-control-btn" data-action="installAPK">
+                    <svg class="ai-os-icon-sm"><use href="#icon-package"></use></svg>
+                    Install APK
+                </div>
+                <div class="ae-control-btn primary" data-action="refreshApps">
+                    <svg class="ai-os-icon-sm"><use href="#icon-refresh"></use></svg>
+                    Refresh
+                </div>
+                <div class="ae-sdk-status" id="sdkStatus">
+                    <svg class="ai-os-icon-sm"><use href="#icon-status-offline"></use></svg>
+                    SDK Disconnected
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="ae-search-bar">
+            <input type="text" class="ae-search-input" placeholder="Hľadať aplikácie..." data-action="searchApps">
+        </div>
+
+        <!-- App Launcher -->
+        <div class="ae-app-launcher">
+            <div class="ae-app-grid" id="appGrid">
+                <!-- Apps will be loaded here -->
+            </div>
+        </div>
+
+        <!-- App Running Overlay -->
+        <div class="ae-app-overlay" id="appOverlay">
+            <div class="ae-app-header">
+                <div class="ae-title">
+                    <svg class="ai-os-icon" id="runningAppIcon"><use href="#icon-smartphone"></use></svg>
+                    <span id="runningAppName">Aplikácia</span>
+                </div>
+                <button class="ae-back-btn" data-action="closeApp">
+                    <svg class="ai-os-icon"><use href="#icon-arrow-left"></use></svg>
+                </button>
+            </div>
+            <div class="ae-app-content">
+                <iframe class="ae-app-window" id="appWindow" src=""></iframe>
+            </div>
+        </div>
+
+        <!-- SDK Panel -->
+        <div class="ae-sdk-panel" id="sdkPanel">
+            <div class="ae-sdk-panel-header">
+                <div class="ae-sdk-panel-title">
+                    <svg class="ai-os-icon-sm"><use href="#icon-tools"></use></svg>
+                    Android SDK Integration
+                </div>
+                <button class="ae-sdk-panel-close" data-action="toggleSDKPanel">
+                    <svg class="ai-os-icon"><use href="#icon-close"></use></svg>
+                </button>
+            </div>
+            
+            <div class="ae-sdk-device-list" id="sdkDeviceList">
+                <!-- Virtual devices will be populated here -->
+            </div>
+            
+            <div class="ae-sdk-logs" id="sdkLogs">
+                <!-- SDK logs will appear here -->
+            </div>
+        </div>
+
+        <!-- APK Manager -->
+        <div class="ae-apk-manager">
+            <div class="ae-manager-header">
+                <div class="ae-manager-title">
+                    <svg class="ai-os-icon-sm"><use href="#icon-smartphone"></use></svg>
+                    Installed APKs
+                </div>
+                <div>
+                    <input type="file" id="apkFileInput" accept=".apk" style="display: none;" data-action="handleAPKUpload">
+                    <button class="ae-control-btn" data-action="uploadAPK">
+                        <svg class="ai-os-icon-sm"><use href="#icon-upload"></use></svg>
+                        Add
+                    </button>
+                </div>
+            </div>
+            
+            <div class="ae-upload-zone" data-action="triggerAPKUpload" ondrop="handleAPKDrop(event)" ondragover="handleDragOver(event)">
+                <svg class="ai-os-icon-lg" style="margin-bottom: var(--space-sm);"><use href="#icon-package"></use></svg>
+                <div>Drop APK files here</div>
+                <div style="font-size: var(--text-xs); opacity: 0.7; margin-top: var(--space-xs);">Supports .apk files</div>
+            </div>
+            
+            <div class="ae-apk-list" id="apkList">
+                <!-- APK items will be populated here -->
+            </div>
+        </div>
+
+        <!-- Enhanced Navigation Bar -->
+        <div class="ae-quick-launch-bar">
+            <button class="ae-quick-btn" data-action="navigateBack" title="Späť" style="background: rgba(255, 149, 0, 0.2); border-color: #FF9500; color: #FF9500;">
+                <svg class="ai-os-icon"><use href="#icon-arrow-left"></use></svg>
+                Späť
+            </button>
+            <div class="ae-quick-btn" data-action="showInstalledApps" title="Nainštalované aplikácie">
+                <svg class="ai-os-icon"><use href="#icon-smartphone"></use></svg>
+            </div>
+            <div class="ae-quick-btn" data-action="clearCache" title="Vyčistiť cache">
+                <svg class="ai-os-icon"><use href="#icon-clean"></use></svg>
+            </div>
+            <div class="ae-quick-btn" data-action="showSettings" title="Nastavenia">
+                <svg class="ai-os-icon"><use href="#icon-settings"></use></svg>
+            </div>
+            <button class="ae-quick-btn" data-action="goHome" title="Domov" style="background: rgba(52, 199, 89, 0.2); border-color: #34C759; color: #34C759;">
+                <svg class="ai-os-icon"><use href="#icon-home"></use></svg>
+                Domov
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        class AndroidAppLauncher {
+            constructor() {
+                this.apps = [];
+                this.runningApps = new Set();
+                this.searchQuery = '';
+                this.sdkConnected = false;
+                this.selectedDevice = null;
+                this.virtualDevices = [];
+                this.sdkLogs = [];
+                this.init();
+            }
+
+            init() {
+                this.loadDefaultApps();
+                this.loadVirtualDevices();
+                this.renderApps();
+                this.setupEventListeners();
+                this.updateSDKStatus();
+                this.showNotification('Android App Launcher', 'Pripravený na spustenie aplikácií');
+            }
+
+            loadVirtualDevices() {
+                this.virtualDevices = [
+                    {
+                        id: 'pixel_7_pro',
+                        name: 'Pixel 7 Pro',
+                        api: 'Android 13 (API 33)',
+                        status: 'offline',
+                        specs: '6.7" • 1440x3120 • 12GB RAM'
+                    },
+                    {
+                        id: 'galaxy_s23',
+                        name: 'Galaxy S23 Ultra',
+                        api: 'Android 13 (API 33)',
+                        status: 'offline',
+                        specs: '6.8" • 1440x3088 • 12GB RAM'
+                    },
+                    {
+                        id: 'pixel_6a',
+                        name: 'Pixel 6a',
+                        api: 'Android 13 (API 33)',
+                        status: 'offline',
+                        specs: '6.1" • 1080x2400 • 6GB RAM'
+                    },
+                    {
+                        id: 'nexus_5',
+                        name: 'Nexus 5',
+                        api: 'Android 6.0 (API 23)',
+                        status: 'offline',
+                        specs: '5.0" • 1080x1920 • 2GB RAM'
+                    }
+                ];
+            }
+
+            loadDefaultApps() {
+                this.apps = [
+                    {
+                        id: 'browser',
+                        name: 'Web Browser',
+                        icon: '🌐',
+                        url: 'https://google.com',
+                        description: 'Internetový prehliadač',
+                        category: 'Internet'
+                    },
+                    {
+                        id: 'calculator',
+                        name: 'Calculator',
+                        icon: '🧮',
+                        url: 'data:text/html,<html><body style="font-family:Arial;background:#f0f0f0;"><h1>Calculator</h1><input type="text" id="calc" style="font-size:20px;width:200px;"><br><br><button onclick="document.getElementById(\'calc\').value+=\'1\'">1</button><button onclick="document.getElementById(\'calc\').value+=\'2\'">2</button><button onclick="document.getElementById(\'calc\').value+=\'3\'">3</button><button onclick="document.getElementById(\'calc\').value+=\'+\'">+</button><br><button onclick="document.getElementById(\'calc\').value+=\'4\'">4</button><button onclick="document.getElementById(\'calc\').value+=\'5\'">5</button><button onclick="document.getElementById(\'calc\').value+=\'6\'">6</button><button onclick="document.getElementById(\'calc\').value+=\'-\'">-</button><br><button onclick="document.getElementById(\'calc\').value+=\'7\'">7</button><button onclick="document.getElementById(\'calc\').value+=\'8\'">8</button><button onclick="document.getElementById(\'calc\').value+=\'9\'">9</button><button onclick="document.getElementById(\'calc\').value+=\'*\'">*</button><br><button onclick="document.getElementById(\'calc\').value=\'\'">C</button><button onclick="document.getElementById(\'calc\').value+=\'0\'">0</button><button onclick="document.getElementById(\'calc\').value+=\'=\'">=</button><button onclick="document.getElementById(\'calc\').value+=\'/\'">/</button></body></html>',
+                        description: 'Jednoduchá kalkulačka',
+                        category: 'Utilities'
+                    },
+                    {
+                        id: 'notes',
+                        name: 'Notes',
+                        icon: '📝',
+                        url: 'data:text/html,<html><head><title>Notes</title><style>body{font-family:Arial;background:#f9f9f9;padding:20px;} textarea{width:100%;height:400px;font-size:16px;padding:10px;}</style></head><body><h1>📝 Notes</h1><textarea placeholder="Napíšte svoje poznámky..."></textarea></body></html>',
+                        description: 'Poznámky',
+                        category: 'Productivity'
+                    },
+                    {
+                        id: 'camera',
+                        name: 'Camera',
+                        icon: '📷',
+                        url: 'data:text/html,<html><body style="font-family:Arial;background:#000;color:white;display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;"><h1>📷 Camera</h1><p>Kamera simulátor</p><div style="width:300px;height:200px;background:#333;border:2px solid #666;border-radius:10px;display:flex;align-items:center;justify-content:center;">Camera View</div></body></html>',
+                        description: 'Kamera',
+                        category: 'Media'
+                    },
+                    {
+                        id: 'music',
+                        name: 'Music Player',
+                        icon: '🎵',
+                        url: 'data:text/html,<html><body style="font-family:Arial;background:linear-gradient(45deg,#667eea,#764ba2);color:white;padding:20px;"><h1>🎵 Music Player</h1><div style="background:rgba(255,255,255,0.1);padding:20px;border-radius:10px;"><p>♪ Playing: Sample Track</p><div style="background:#333;height:5px;border-radius:3px;margin:10px 0;"><div style="background:#4CAF50;height:100%;width:30%;border-radius:3px;"></div></div></div></body></html>',
+                        description: 'Prehrávač hudby',
+                        category: 'Media'
+                    },
+                    {
+                        id: 'settings',
+                        name: 'Settings',
+                        icon: '⚙️',
+                        url: 'data:text/html,<html><body style="font-family:Arial;background:#f5f5f5;padding:20px;"><h1>⚙️ Settings</h1><div style="background:white;padding:20px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);"><h3>Nastavenia zariadenia</h3><p>• Jazyk: Slovenčina</p><p>• Displej: Jas 80%</p><p>• Zvuk: Zapnutý</p><p>• WiFi: Pripojené</p></div></body></html>',
+                        description: 'Nastavenia',
+                        category: 'System'
+                    }
+                ];
+            }
+
+            renderApps() {
+                const appGrid = document.getElementById('appGrid');
+                if (!appGrid) return;
+
+                let filteredApps = this.apps;
+                if (this.searchQuery) {
+                    filteredApps = this.apps.filter(app => 
+                        app.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+                        app.description.toLowerCase().includes(this.searchQuery.toLowerCase())
+                    );
+                }
+
+                appGrid.innerHTML = filteredApps.map(app => `
+                    <div class="ae-app-card" onclick="androidLauncher.launchApp('${app.id}')">
+                        <div class="ae-app-icon-large">${app.icon}</div>
+                        <div class="ae-app-name">${app.name}</div>
+                        <div class="ae-app-status ${this.runningApps.has(app.id) ? 'running' : ''}">
+                            ${this.runningApps.has(app.id) ? '🟢 Beží' : '⚪ Dostupné'}
+                        </div>
+                        <div class="ae-app-actions">
+                            <button class="ae-action-btn" onclick="event.stopPropagation(); androidLauncher.uninstallApp('${app.id}')" title="Odinštalovať">🗑️</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            launchApp(appId) {
+                const app = this.apps.find(a => a.id === appId);
+                if (!app) return;
+
+                // Show launch animation
+                const card = event.currentTarget;
+                card.classList.add('launching');
+                
+                setTimeout(() => {
+                    card.classList.remove('launching');
+                }, 600);
+
+                this.runningApps.add(appId);
+                
+                // Open app in overlay
+                const overlay = document.getElementById('appOverlay');
+                const appWindow = document.getElementById('appWindow');
+                const appName = document.getElementById('runningAppName');
+                const appIcon = document.getElementById('runningAppIcon');
+
+                appName.textContent = app.name;
+                appIcon.textContent = app.icon;
+                appWindow.src = app.url;
+                
+                overlay.classList.add('visible');
+                
+                // Refresh app grid to show running status
+                this.renderApps();
+                
+                this.showNotification('App Launched', `Spúšťam ${app.name}...`);
+            }
+
+            closeApp() {
+                const overlay = document.getElementById('appOverlay');
+                overlay.classList.remove('visible');
+                
+                // Update running status
+                this.runningApps.clear();
+                this.renderApps();
+            }
+
+            uninstallApp(appId) {
+                const appIndex = this.apps.findIndex(a => a.id === appId);
+                if (appIndex === -1) return;
+
+                this.apps.splice(appIndex, 1);
+                this.runningApps.delete(appId);
+                this.renderApps();
+                
+                this.showNotification('App Uninstalled', 'Aplikácia bola odinštalovaná');
+            }
+
+            searchApps(query) {
+                this.searchQuery = query;
+                this.renderApps();
+            }
+
+            refreshApps() {
+                this.loadDefaultApps();
+                this.renderApps();
+                this.showNotification('Apps Refreshed', 'Aplikácie boli obnovené');
+            }
+
+            installAPK() {
+                const fileInput = document.getElementById('apkFileInput');
+                if (fileInput) {
+                    fileInput.click();
+                }
+            }
+
+            handleAPKUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                if (!file.name.endsWith('.apk')) {
+                    this.showNotification('Error', 'Podporované sú len APK súbory');
+                    return;
+                }
+
+                const newApp = {
+                    id: 'apk_' + Date.now(),
+                    name: file.name.replace('.apk', ''),
+                    icon: '📦',
+                    url: 'data:text/html,<html><body style="font-family:Arial;background:#f0f0f0;padding:20px;display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;"><h1>📦 ' + file.name.replace('.apk', '') + '</h1><p>Inštalujem APK súbor...</p><div style="background:#ddd;width:200px;height:10px;border-radius:5px;overflow:hidden;"><div style="background:#4CAF50;height:100%;width:0%;animation:loading 3s infinite;"></div></div></body></html>',
+                    description: 'Nainštalovaný APK súbor',
+                    category: 'Installed'
+                };
+
+                this.apps.unshift(newApp);
+                this.renderApps();
+                
+                this.showNotification('APK Installed', `${file.name} bol úspešne nainštalovaný`);
+            }
+
+            setupEventListeners() {
+                // File upload
+                const fileInput = document.getElementById('apkFileInput');
+                if (fileInput) {
+                    fileInput.addEventListener('change', (e) => this.handleAPKUpload(e));
+                }
+
+                // Drag and drop
+                const uploadZone = document.querySelector('.ae-upload-zone');
+                if (uploadZone) {
+                    uploadZone.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        const files = e.dataTransfer.files;
+                        if (files.length > 0) {
+                            const fakeEvent = { target: { files: files } };
+                            this.handleAPKUpload(fakeEvent);
+                        }
+                    });
+
+                    uploadZone.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                    });
+                }
+
+                // AI-OS Event Delegation for data-action attributes
+                document.addEventListener('click', (e) => {
+                    const actionElement = e.target.closest('[data-action]');
+                    if (!actionElement) return;
+
+                    const action = actionElement.dataset.action;
+                    const value = actionElement.dataset.value;
+
+                    switch (action) {
+                        case 'connectSDK':
+                            this.connectSDK();
+                            break;
+                        case 'installAPK':
+                            this.installAPK();
+                            break;
+                        case 'refreshApps':
+                            this.refreshApps();
+                            break;
+                        case 'closeApp':
+                            this.closeApp();
+                            break;
+                        case 'toggleSDKPanel':
+                            this.toggleSDKPanel();
+                            break;
+                        case 'uploadAPK':
+                            document.getElementById('apkFileInput')?.click();
+                            break;
+                        case 'triggerAPKUpload':
+                            document.getElementById('apkFileInput')?.click();
+                            break;
+                        case 'navigateBack':
+                            this.navigateBack();
+                            break;
+                        case 'showInstalledApps':
+                            this.showInstalledApps();
+                            break;
+                        case 'clearCache':
+                            this.clearCache();
+                            break;
+                        case 'showSettings':
+                            this.showSettings();
+                            break;
+                        case 'goHome':
+                            this.goHome();
+                            break;
+                    }
+                });
+
+                // Handle search input with data-action
+                const searchInput = document.querySelector('[data-action="searchApps"]');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        this.searchApps(e.target.value);
+                    });
+                }
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.closeApp();
+                    }
+                    if (e.ctrlKey && e.key === 'r') {
+                        e.preventDefault();
+                        this.refreshApps();
+                    }
+                });
+            }
+
+            // SDK Integration Methods
+            async connectSDK() {
+                const sdkBtn = document.getElementById('sdkConnectBtn');
+                const sdkStatus = document.getElementById('sdkStatus');
+                
+                if (this.sdkConnected) {
+                    this.disconnectSDK();
+                    return;
+                }
+
+                try {
+                    // Update button to loading state
+                    sdkBtn.innerHTML = '<svg class="ai-os-icon-sm"><use href="#icon-refresh"></use></svg> Connecting...';
+                    sdkBtn.disabled = true;
+                    sdkStatus.className = 'ae-sdk-status connecting';
+                    sdkStatus.innerHTML = '<svg class="ai-os-icon-sm"><use href="#icon-status-connecting"></use></svg> Connecting to SDK...';
+                    
+                    this.addSDKLog('Initializing Android SDK...', 'info');
+                    this.addSDKLog('Scanning for connected devices...', 'info');
+                    
+                    // Simulate SDK connection process
+                    await this.simulateSDKConnection();
+                    
+                    this.sdkConnected = true;
+                    this.updateSDKStatus();
+                    this.renderVirtualDevices();
+                    this.toggleSDKPanel();
+                    
+                    this.addSDKLog('SDK connection established successfully', 'info');
+                    this.showNotification('SDK Connected', 'Android SDK úspešne pripojený');
+                    
+                } catch (error) {
+                    console.error('SDK connection failed:', error);
+                    this.addSDKLog('SDK connection failed: ' + error.message, 'error');
+                    this.showNotification('SDK Error', 'Nepodarilo sa pripojiť Android SDK');
+                    
+                    sdkBtn.innerHTML = '<svg class="ai-os-icon-sm"><use href="#icon-link"></use></svg> Connect SDK';
+                    sdkBtn.disabled = false;
+                    sdkStatus.className = 'ae-sdk-status';
+                    sdkStatus.innerHTML = '<svg class="ai-os-icon-sm"><use href="#icon-status-offline"></use></svg> SDK Disconnected';
+                }
+            }
+
+            async simulateSDKConnection() {
+                const steps = [
+                    'Checking Android SDK installation...',
+                    'Verifying ADB connectivity...',
+                    'Loading device definitions...',
+                    'Initializing emulator drivers...',
+                    'Setting up debugging bridge...'
+                ];
+
+                for (let i = 0; i < steps.length; i++) {
+                    this.addSDKLog(steps[i], 'info');
+                    await new Promise(resolve => setTimeout(resolve, 800));
+                    
+                    // Simulate some failures occasionally
+                    if (i === 2 && Math.random() < 0.3) {
+                        throw new Error('ADB device not found');
+                    }
+                }
+            }
+
+            disconnectSDK() {
+                this.sdkConnected = false;
+                this.selectedDevice = null;
+                this.virtualDevices.forEach(device => {
+                    device.status = 'offline';
+                });
+                
+                this.updateSDKStatus();
+                this.renderVirtualDevices();
+                this.addSDKLog('SDK disconnected', 'warning');
+                this.showNotification('SDK Disconnected', 'Android SDK odpojený');
+            }
+
+            async selectDevice(deviceId) {
+                const device = this.virtualDevices.find(d => d.id === deviceId);
+                if (!device) return;
+
+                this.selectedDevice = device;
+                
+                if (!this.sdkConnected) {
+                    this.showNotification('Error', 'Najprv pripojte SDK');
+                    return;
+                }
+
+                try {
+                    this.addSDKLog(`Starting device: ${device.name}`, 'info');
+                    this.addSDKLog('Booting Android emulator...', 'info');
+                    
+                    // Simulate device boot
+                    device.status = 'starting';
+                    this.renderVirtualDevices();
+                    
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    device.status = 'online';
+                    this.renderVirtualDevices();
+                    
+                    this.addSDKLog(`Device ${device.name} is ready`, 'info');
+                    this.showNotification('Device Ready', `${device.name} je pripravený na používanie`);
+                    
+                } catch (error) {
+                    device.status = 'offline';
+                    this.addSDKLog(`Failed to start device: ${error.message}`, 'error');
+                    this.showNotification('Device Error', `Nepodarilo sa spustiť ${device.name}`);
+                }
+            }
+
+            updateSDKStatus() {
+                const sdkStatus = document.getElementById('sdkStatus');
+                const sdkBtn = document.getElementById('sdkConnectBtn');
+                
+                if (this.sdkConnected) {
+                    sdkStatus.className = 'ae-sdk-status connected';
+                    sdkStatus.innerHTML = '<svg class="ai-os-icon-sm"><use href="#icon-status-online"></use></svg> SDK Connected';
+                    sdkBtn.innerHTML = '<svg class="ai-os-icon-sm"><use href="#icon-plug"></use></svg> Disconnect SDK';
+                } else {
+                    sdkStatus.className = 'ae-sdk-status';
+                    sdkStatus.innerHTML = '<svg class="ai-os-icon-sm"><use href="#icon-status-offline"></use></svg> SDK Disconnected';
+                    sdkBtn.innerHTML = '<svg class="ai-os-icon-sm"><use href="#icon-link"></use></svg> Connect SDK';
+                }
+                
+                sdkBtn.disabled = false;
+            }
+
+            renderVirtualDevices() {
+                const deviceList = document.getElementById('sdkDeviceList');
+                if (!deviceList || !this.sdkConnected) return;
+
+                deviceList.innerHTML = this.virtualDevices.map(device => `
+                    <div class="ae-sdk-device ${this.selectedDevice?.id === device.id ? 'active' : ''}" 
+                         onclick="androidLauncher.selectDevice('${device.id}')">
+                        <div class="ae-sdk-device-name">${device.name}</div>
+                        <div class="ae-sdk-device-info">
+                            ${device.api} • ${device.specs} • 
+                            <span style="color: ${device.status === 'online' ? '#4CAF50' : device.status === 'starting' ? '#FFC107' : '#f44336'}">
+                                ${device.status.toUpperCase()}
+                            </span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            toggleSDKPanel() {
+                const panel = document.getElementById('sdkPanel');
+                panel.classList.toggle('visible');
+            }
+
+            addSDKLog(message, type = 'info') {
+                const timestamp = new Date().toLocaleTimeString();
+                const logEntry = {
+                    timestamp,
+                    message,
+                    type
+                };
+                
+                this.sdkLogs.unshift(logEntry);
+                
+                // Keep only last 50 logs
+                if (this.sdkLogs.length > 50) {
+                    this.sdkLogs = this.sdkLogs.slice(0, 50);
+                }
+                
+                this.renderSDKLogs();
+            }
+
+            renderSDKLogs() {
+                const logsContainer = document.getElementById('sdkLogs');
+                if (!logsContainer) return;
+
+                logsContainer.innerHTML = this.sdkLogs.slice(0, 20).map(log => `
+                    <div class="ae-sdk-log-entry ${log.type}">
+                        [${log.timestamp}] ${log.message}
+                    </div>
+                `).join('');
+                
+                // Auto scroll to top
+                logsContainer.scrollTop = 0;
+            }
+
+            showNotification(title, message) {
+                // Simple notification
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: rgba(0, 0, 0, 0.9);
+                    color: #4CAF50;
+                    padding: 15px 20px;
+                    border-radius: 10px;
+                    border: 1px solid rgba(76, 175, 80, 0.5);
+                    backdrop-filter: blur(20px);
+                    z-index: 10000;
+                    animation: slideIn 0.3s ease-out;
+                `;
+                notification.innerHTML = `<strong>${title}</strong><br>${message}`;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+        }
+
+        // Global functions for UI
+        let androidLauncher;
+
+        function launchApp(appId) {
+            if (androidLauncher) {
+                androidLauncher.launchApp(appId);
+            }
+        }
+
+        function closeApp() {
+            if (androidLauncher) {
+                androidLauncher.closeApp();
+            }
+        }
+
+        function searchApps(query) {
+            if (androidLauncher) {
+                androidLauncher.searchApps(query);
+            }
+        }
+
+        function refreshApps() {
+            if (androidLauncher) {
+                androidLauncher.refreshApps();
+            }
+        }
+
+        function installAPK() {
+            if (androidLauncher) {
+                androidLauncher.installAPK();
+            }
+        }
+
+        function showInstalledApps() {
+            // Scroll to APK manager
+            const apkManager = document.querySelector('.ae-apk-manager');
+            if (apkManager) {
+                apkManager.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function clearCache() {
+            if (androidLauncher) {
+                localStorage.removeItem('android_apps');
+                androidLauncher.refreshApps();
+                androidLauncher.showNotification('Cache Cleared', 'Cache bol vyčistený');
+            }
+        }
+
+        function showSettings() {
+            androidLauncher.launchApp('settings');
+        }
+
+        function navigateBack() {
+            console.log('⬅️ Navigate back in Android Emulator');
+            
+            // If we came from another page, go back in history
+            if (document.referrer && document.referrer !== window.location.href) {
+                window.history.back();
+            } else {
+                // Otherwise go to main AI-OS
+                goHome();
+            }
+        }
+
+        function goHome() {
+            console.log('🏠 Go home from Android Emulator');
+            
+            // Navigate back to main AI-OS
+            if (window.opener) {
+                window.close();
+            } else {
+                window.location.href = '../ADVANCED-AI-OS.html';
+            }
+        }
+
+        // SDK Integration Functions
+        function connectSDK() {
+            if (androidLauncher) {
+                androidLauncher.connectSDK();
+            }
+        }
+
+        function toggleSDKPanel() {
+            if (androidLauncher) {
+                androidLauncher.toggleSDKPanel();
+            }
+        }
+
+        function handleAPKDrop(event) {
+            event.preventDefault();
+            const files = event.dataTransfer.files;
+            if (files.length > 0) {
+                const fakeEvent = { target: { files: files } };
+                if (androidLauncher) {
+                    androidLauncher.handleAPKUpload(fakeEvent);
+                }
+            }
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+        }
+
+        // Initialize when page loads
+        // Initialize Android Emulator with AI-OS Core integration
+        let aiOSIntegration;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🤖 Initializing Android App Launcher...');
+            
+            // Wait for AI-OS Core to be available
+            const initAndroid = () => {
+                androidLauncher = new AndroidAppLauncher();
+                window.androidLauncher = androidLauncher;
+                
+                // Setup AI-OS Core integration
+                if (window.aiOSCore && window.AIOSAppIntegration) {
+                    aiOSIntegration = new AIOSAppIntegration('android-emulator', 'Android Emulator', [
+                        'app_launching', 'apk_management', 'device_simulation', 'sdk_integration'
+                    ]);
+                    
+                    // Listen for AI-OS events
+                    aiOSIntegration.on('appMessage', (data) => {
+                        if (data.from === 'aiOS-core') {
+                            handleAIOSCommand(data.data);
+                        }
+                    });
+                    
+                    aiOSIntegration.on('systemStateUpdate', (data) => {
+                        updateEmulatorStatus(data);
+                    });
+                    
+                    console.log('✅ Android Emulator integrated with AI-OS Core');
+                }
+            };
+            
+            if (window.aiOSCore) {
+                initAndroid();
+            } else {
+                setTimeout(initAndroid, 1000);
+            }
+        });
+        
+        function handleAIOSCommand(command) {
+            if (androidLauncher) {
+                switch (command.action) {
+                    case 'launch_app':
+                        androidLauncher.launchApp(command.appId);
+                        break;
+                    case 'install_apk':
+                        androidLauncher.installAPK(command.apkPath);
+                        break;
+                    case 'refresh_apps':
+                        androidLauncher.refreshApps();
+                        break;
+                }
+            }
+        }
+        
+        function updateEmulatorStatus(systemState) {
+            // Update emulator with system information
+            if (androidLauncher) {
+                androidLauncher.updateSystemInfo(systemState);
+            }
+        }
+    </script>
+</body>
+</html>

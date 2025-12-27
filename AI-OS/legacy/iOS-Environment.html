@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iOS-AI-OS - iPhone Experience</title>
+    
+    <!-- AI-OS Design System -->
+    <link rel="stylesheet" href="css/ai-os-design-system.css">
+    <script src="js/ai-os-utils.js"></script>
+    
+    <!-- SVG Icons - Heroicons -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="icon-terminal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="4 17 10 11 4 5"></polyline>
+            <line x1="12" y1="19" x2="20" y2="19"></line>
+        </symbol>
+        <symbol id="icon-chip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+            <path d="M9 9h6v6H9z"></path>
+            <path d="M9 1h6v2H9z"></path>
+            <path d="M9 21h6v2H9z"></path>
+            <path d="M1 9h2v6H1z"></path>
+            <path d="M21 9h2v6h-2z"></path>
+            <path d="M1 15h2v4H1z"></path>
+            <path d="M21 15h2v4h-2z"></path>
+        </symbol>
+        <symbol id="icon-plug" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v10"></path>
+            <path d="M18.4 6.6a9 9 0 1 1-12.77.04"></path>
+        </symbol>
+        <symbol id="icon-microphone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+            <line x1="12" y1="19" x2="12" y2="23"></line>
+            <line x1="8" y1="23" x2="16" y2="23"></line>
+        </symbol>
+        <symbol id="icon-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </symbol>
+        <symbol id="icon-lightning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </symbol>
+        <symbol id="icon-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </symbol>
+        <symbol id="icon-wifi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+            <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+            <line x1="12" y1="20" x2="12.01" y2="20"></line>
+        </symbol>
+        <symbol id="icon-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+        </symbol>
+        <symbol id="icon-shopping" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </symbol>
+        <symbol id="icon-device" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+            <line x1="12" y1="18" x2="12.01" y2="18"></line>
+        </symbol>
+        <symbol id="icon-cog" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </symbol>
+        <symbol id="icon-calculator" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+            <line x1="8" y1="6" x2="16" y2="6"></line>
+            <line x1="8" y1="10" x2="10" y2="10"></line>
+            <line x1="14" y1="10" x2="16" y2="10"></line>
+            <line x1="8" y1="14" x2="10" y2="14"></line>
+            <line x1="14" y1="14" x2="16" y2="14"></line>
+            <line x1="8" y1="18" x2="16" y2="18"></line>
+        </symbol>
+        <symbol id="icon-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+        </symbol>
+        <symbol id="icon-photos" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+        </symbol>
+        <symbol id="icon-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+        </symbol>
+        <symbol id="icon-bluetooth" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6.5 6.5l11 11-11 11"></path>
+            <path d="M17.5 6.5l-11 11 11 11"></path>
+        </symbol>
+        <symbol id="icon-airplane" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 2L11 13"></path>
+            <path d="M22 2L15 22 11 13 2 9l20-7z"></path>
+        </symbol>
+        <symbol id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </symbol>
+        <symbol id="icon-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </symbol>
+        <symbol id="icon-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </symbol>
+        <symbol id="icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </symbol>
+        <symbol id="icon-robot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+            <rect x="9" y="9" width="6" height="6"></rect>
+            <circle cx="9" cy="9" r="1"></circle>
+            <circle cx="15" cy="9" r="1"></circle>
+            <path d="M9 15h6"></path>
+        </symbol>
+        <symbol id="icon-dashboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="9"></rect>
+            <rect x="14" y="3" width="7" height="5"></rect>
+            <rect x="14" y="12" width="7" height="9"></rect>
+            <rect x="3" y="16" width="7" height="5"></rect>
+        </symbol>
+        <symbol id="icon-chart-bar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="20" x2="12" y2="10"></line>
+            <line x1="18" y1="20" x2="18" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="16"></line>
+        </symbol>
+        <symbol id="icon-analytics" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+            <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+        </symbol>
+    </svg>
+    
+    <style>
+        /* AI-OS Icon Styles */
+        .ai-os-icon {
+            width: 24px;
+            height: 24px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .ai-os-icon-sm {
+            width: 18px;
+            height: 18px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .ai-os-icon-lg {
+            width: 32px;
+            height: 32px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .app-icon-svg {
+            width: 28px;
+            height: 28px;
+            margin-bottom: 2px;
+        }
+        .control-icon-svg {
+            width: 22px;
+            height: 22px;
+            margin-bottom: 4px;
+        }
+
+        /* AI-OS CSS Variables */
+        :root {
+            --ios-primary: #007AFF;
+            --ios-secondary: #5856D6;
+            --ios-success: #34C759;
+            --ios-warning: #FF9500;
+            --ios-error: #FF3B30;
+            --ios-gray: #8E8E93;
+            --ios-light-gray: #F2F2F7;
+            --ios-dark: #1C1C1E;
+            --ios-white: #FFFFFF;
+            --ios-black: #000000;
+            --ios-blue: #007AFF;
+            --ios-purple: #5856D6;
+            --ios-teal: #30D158;
+            --ios-orange: #FF9500;
+            --ios-pink: #FF2D92;
+            --ios-yellow: #FFCC00;
+            
+            /* AI-OS Design System Variables */
+            --ai-primary: #00d4ff;
+            --ai-secondary: #00ff00;
+            --ai-accent: #ff44ff;
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --text-sm: 0.875rem;
+            --text-base: 1rem;
+            --text-lg: 1.125rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+            background: #000;
+            color: white;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .ios-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+        }
+
+        .ios-status-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 44px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 1000;
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .signal-bars {
+            display: flex;
+            gap: 2px;
+        }
+
+        .signal-bar {
+            width: 3px;
+            background: white;
+            border-radius: 1px;
+        }
+
+        .signal-bar:nth-child(1) { height: 4px; }
+        .signal-bar:nth-child(2) { height: 6px; }
+        .signal-bar:nth-child(3) { height: 8px; }
+        .signal-bar:nth-child(4) { height: 10px; }
+
+        .wifi-icon {
+            width: 15px;
+            height: 11px;
+            border: 2px solid white;
+            border-top: none;
+            border-radius: 0 0 15px 15px;
+            position: relative;
+        }
+
+        .wifi-icon::after {
+            content: '';
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .battery-icon {
+            width: 25px;
+            height: 12px;
+            border: 2px solid white;
+            border-radius: 3px;
+            position: relative;
+        }
+
+        .battery-icon::after {
+            content: '';
+            width: 3px;
+            height: 6px;
+            background: white;
+            border-radius: 1px;
+            position: absolute;
+            right: -4px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .battery-level {
+            width: 19px;
+            height: 8px;
+            background: white;
+            border-radius: 1px;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+        }
+
+        .ios-home-screen {
+            position: absolute;
+            top: 44px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 20px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px 15px;
+            padding: 20px 0;
+        }
+
+        .app-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .app-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .app-icon:active {
+            transform: scale(0.95);
+        }
+
+        .app-icon-emoji, .app-icon-svg-container {
+            font-size: 24px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .app-icon-label {
+            font-size: 10px;
+            text-align: center;
+            color: white;
+            font-weight: 500;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+            max-width: 65px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .ios-dock {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 320px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 10px 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .dock-app {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .dock-app:hover {
+            transform: scale(1.1);
+        }
+
+        .dock-app:active {
+            transform: scale(0.95);
+        }
+
+        .app-launcher {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .app-launcher.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .app-content {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 0;
+            position: relative;
+            transform: scale(0.8);
+            transition: all 0.5s ease;
+        }
+
+        .app-launcher.active .app-content {
+            transform: scale(1);
+        }
+
+        .app-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 0;
+        }
+
+        .ios-control-center {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .ios-control-center.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .control-panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 20px;
+            border-radius: 0 0 30px 30px;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .ios-control-center.active .control-panel {
+            transform: translateY(0);
+        }
+
+        .control-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .control-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .control-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .control-icon {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .control-label {
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .ios-notification {
+            position: fixed;
+            top: 60px;
+            left: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 1002;
+        }
+
+        .ios-notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-content {
+            color: #1C1C1E;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .notification-body {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .home-indicator {
+            position: fixed;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 134px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        .widget-container {
+            position: absolute;
+            top: 100px;
+            right: 20px;
+            width: 200px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 15px;
+            color: white;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+
+        .widget-container:hover {
+            opacity: 1;
+            transform: scale(1.02);
+        }
+
+        .widget-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .widget-content {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .widget-subtitle {
+            font-size: 10px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        /* App specific colors */
+        .icon-calculator { background: linear-gradient(135deg, #FF9500, #FF6B35); }
+        .icon-camera { background: linear-gradient(135deg, #000000, #434343); }
+        .icon-photos { background: linear-gradient(135deg, #FF6B6B, #FF8E53); }
+        .icon-mail { background: linear-gradient(135deg, #007AFF, #5AC8FA); }
+        .icon-messages { background: linear-gradient(135deg, #34C759, #30D158); }
+        .icon-maps { background: linear-gradient(135deg, #34C759, #30D158); }
+        .icon-weather { background: linear-gradient(135deg, #5AC8FA, #007AFF); }
+        .icon-clock { background: linear-gradient(135deg, #FF3B30, #FF6B6B); }
+        .icon-notes { background: linear-gradient(135deg, #FFCC00, #FF9500); }
+        .icon-reminders { background: linear-gradient(135deg, #5856D6, #AF52DE); }
+        .icon-health { background: linear-gradient(135deg, #FF3B30, #FF6B6B); }
+        .icon-settings { background: linear-gradient(135deg, #8E8E93, #AEAEB2); }
+        .icon-terminal { background: linear-gradient(135deg, #00FF00, #008000); }
+        .icon-android { background: linear-gradient(135deg, #3DDC84, #689F38); }
+        .icon-marketplace { background: linear-gradient(135deg, #FF2D92, #FF6B6B); }
+        .icon-learning { background: linear-gradient(135deg, #FF9500, #FFCC00); }
+        .icon-performance { background: linear-gradient(135deg, #FF3B30, #FF6B6B); }
+        .icon-voice { background: linear-gradient(135deg, #007AFF, #5856D6); }
+        .icon-universal { background: linear-gradient(135deg, #FF6B6B, #FF8E53); }
+        .icon-network { background: linear-gradient(135deg, #30D158, #34C759); }
+        .icon-monitor { background: linear-gradient(135deg, #007AFF, #5AC8FA); }
+
+        .app-page-indicator {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .page-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .page-dot.active {
+            background: white;
+            transform: scale(1.2);
+        }
+
+        @media (max-width: 390px) {
+            .app-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 15px 10px;
+            }
+            
+            .app-icon {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .app-icon-emoji {
+                font-size: 20px;
+            }
+            
+            .app-icon-label {
+                font-size: 9px;
+            }
+        }
+
+        .safe-area-inset {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+</head>
+<body>
+    <div class="ios-container">
+        <!-- Status Bar -->
+        <div class="ios-status-bar">
+            <div class="status-left">
+                <div class="time">9:41</div>
+            </div>
+            <div class="status-right">
+                <div class="signal-bars">
+                    <div class="signal-bar"></div>
+                    <div class="signal-bar"></div>
+                    <div class="signal-bar"></div>
+                    <div class="signal-bar"></div>
+                </div>
+                <div class="wifi-icon"></div>
+                <div class="battery-icon">
+                    <div class="battery-level"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Home Screen -->
+        <div class="ios-home-screen" id="homeScreen">
+            <!-- Widgets -->
+            <div class="widget-container">
+                <div class="widget-title">
+                    <svg class="ai-os-icon-sm" style="vertical-align: middle; margin-right: 4px;"><use href="#icon-robot"></use></svg>
+                    AI Status
+                </div>
+                <div class="widget-content">ONLINE</div>
+                <div class="widget-subtitle">All systems operational</div>
+            </div>
+
+            <!-- App Grid - Page 1 -->
+            <div class="app-grid" id="page1">
+                <div class="app-icon icon-terminal" data-action="launchApp" data-app="terminal">
+                    <div class="app-icon-svg-container">
+                        <svg class="app-icon-svg"><use href="#icon-terminal"></use></svg>
+                    </div>
+                    <div class="app-icon-label">Terminal</div>
+                </div>
+                <div class="app-icon icon-android" data-action="launchApp" data-app="android-emulator">
+                    <div class="app-icon-svg-container">
+                        <svg class="app-icon-svg"><use href="#icon-chip"></use></svg>
+                    </div>
+                    <div class="app-icon-label">Android</div>
+                </div>
+                <div class="app-icon icon-marketplace" data-action="launchApp" data-app="plugin-marketplace">
+                    <div class="app-icon-svg-container">
+                        <svg class="app-icon-svg"><use href="#icon-plug"></use></svg>
+                    </div>
+                    <div class="app-icon-label">Plugins</div>
+                </div>
+                <div class="app-icon icon-voice" data-action="launchApp" data-app="voice-interface">
+                    <div class="app-icon-svg-container">
+                        <svg class="app-icon-svg"><use href="#icon-microphone"></use></svg>
+                    </div>
+                    <div class="app-icon-label">Voice AI</div>
+                </div>
+                
+                <div class="app-icon icon-learning" data-action="launchApp" data-app="learning-center">
+                    <div class="app-icon-svg-container">
+                        <svg class="app-icon-svg"><use href="#icon-book"></use></svg>
+                    </div>
+                    <div class="app-icon-label">Learning</div>
+                </div>
+                <div class="app-icon icon-performance" data-action="launchApp" data-app="performance-optimizer">
+                    <div class="app-icon-svg-container">
+                        <svg class="app-icon-svg"><use href="#icon-lightning"></use></svg>
+                    </div>
+                    <div class="app-icon-label">Optimizer</div>
+                </div>
+                <div class="app-icon icon-universal" data-action="launchApp" data-app="universal-interface">
+                    <div class="app-icon-svg-container">
+                        <svg class="app-icon-svg"><use href="#icon-refresh"></use></svg>
+                    </div>
+                    <div class="app-icon-label">Universal</div>
+                </div>
+                <div class="app-icon icon-network" data-action="launchApp" data-app="network-monitor">
+                    <div class="app-icon-svg-container">
+                        <svg class="app-icon-svg"><use href="#icon-wifi"></use></svg>
+                    </div>
+                    <div class="app-icon-label">Network</div>
+                </div>
+                
+                <div class="app-icon icon-monitor" data-action="launchApp" data-app="system-monitor">
+                    <div class="app-icon-svg-container">
+                        <svg class="app-icon-svg"><use href="#icon-chart"></use></svg>
+                    </div>
+                    <div class="app-icon-label">Monitor</div>
+                </div>
+                <div class="app-icon icon-android" data-action="launchApp" data-app="app-store">
+                    <div class="app-icon-svg-container">
+                        <svg class="app-icon-svg"><use href="#icon-shopping"></use></svg>
+                    </div>
+                    <div class="app-icon-label">App Store</div>
+                </div>
+                <div class="app-icon icon-android" data-action="launchApp" data-app="android-store">
+                    <div class="app-icon-svg-container">
+                        <svg class="app-icon-svg"><use href="#icon-device"></use></svg>
+                    </div>
+                    <div class="app-icon-label">Android Store</div>
+                </div>
+                <div class="app-icon icon-settings" data-action="launchApp" data-app="system-settings">
+                    <div class="app-icon-svg-container">
+                        <svg class="app-icon-svg"><use href="#icon-cog"></use></svg>
+                    </div>
+                    <div class="app-icon-label">Settings</div>
+                </div>
+            </div>
+
+            <!-- Page Indicator -->
+            <div class="app-page-indicator">
+                <div class="page-dot active"></div>
+                <div class="page-dot"></div>
+                <div class="page-dot"></div>
+            </div>
+        </div>
+
+        <!-- Dock -->
+        <div class="ios-dock safe-area-inset">
+            <div class="dock-app icon-calculator" data-action="launchApp" data-app="calculator">
+                <div class="app-icon-svg-container">
+                    <svg class="app-icon-svg"><use href="#icon-calculator"></use></svg>
+                </div>
+            </div>
+            <div class="dock-app icon-camera" data-action="launchApp" data-app="camera">
+                <div class="app-icon-svg-container">
+                    <svg class="app-icon-svg"><use href="#icon-camera"></use></svg>
+                </div>
+            </div>
+            <div class="dock-app icon-photos" data-action="launchApp" data-app="photos">
+                <div class="app-icon-svg-container">
+                    <svg class="app-icon-svg"><use href="#icon-photos"></use></svg>
+                </div>
+            </div>
+            <div class="dock-app icon-mail" data-action="launchApp" data-app="mail">
+                <div class="app-icon-svg-container">
+                    <svg class="app-icon-svg"><use href="#icon-mail"></use></svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Home Indicator -->
+        <div class="home-indicator"></div>
+
+        <!-- App Launcher -->
+        <div class="app-launcher" id="appLauncher">
+            <div class="app-content">
+                <iframe class="app-frame" id="appFrame" src=""></iframe>
+            </div>
+        </div>
+
+        <!-- Control Center -->
+        <div class="ios-control-center" id="controlCenter">
+            <div class="control-panel">
+                <div class="control-title">Control Center</div>
+                <div class="control-grid">
+                    <div class="control-item" data-action="toggleWiFi">
+                        <div class="control-icon">
+                            <svg class="control-icon-svg"><use href="#icon-wifi"></use></svg>
+                        </div>
+                        <div class="control-label">WiFi</div>
+                    </div>
+                    <div class="control-item" data-action="toggleBluetooth">
+                        <div class="control-icon">
+                            <svg class="control-icon-svg"><use href="#icon-bluetooth"></use></svg>
+                        </div>
+                        <div class="control-label">Bluetooth</div>
+                    </div>
+                    <div class="control-item" data-action="toggleAirplaneMode">
+                        <div class="control-icon">
+                            <svg class="control-icon-svg"><use href="#icon-airplane"></use></svg>
+                        </div>
+                        <div class="control-label">Airplane</div>
+                    </div>
+                    <div class="control-item" data-action="toggleDarkMode">
+                        <div class="control-icon">
+                            <svg class="control-icon-svg"><use href="#icon-moon"></use></svg>
+                        </div>
+                        <div class="control-label">Dark Mode</div>
+                    </div>
+                    <div class="control-item" data-action="showNotification">
+                        <div class="control-icon">
+                            <svg class="control-icon-svg"><use href="#icon-bell"></use></svg>
+                        </div>
+                        <div class="control-label">Notify</div>
+                    </div>
+                    <div class="control-item" data-action="refreshScreen">
+                        <div class="control-icon">
+                            <svg class="control-icon-svg"><use href="#icon-refresh"></use></svg>
+                        </div>
+                        <div class="control-label">Refresh</div>
+                    </div>
+                    <div class="control-item" data-action="goHome">
+                        <div class="control-icon">
+                            <svg class="control-icon-svg"><use href="#icon-home"></use></svg>
+                        </div>
+                        <div class="control-label">Home</div>
+                    </div>
+                    <div class="control-item" data-action="closeControlCenter">
+                        <div class="control-icon">
+                            <svg class="control-icon-svg"><use href="#icon-x"></use></svg>
+                        </div>
+                        <div class="control-label">Close</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification -->
+        <div class="ios-notification" id="notification">
+            <div class="notification-content">
+                <div class="notification-title">
+                    <svg class="ai-os-icon-sm" style="vertical-align: middle; margin-right: 4px;"><use href="#icon-robot"></use></svg>
+                    AI-OS
+                </div>
+                <div class="notification-body">iOS Environment Active</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class IOSEnvironment {
+            constructor() {
+                this.currentTime = new Date();
+                this.isWiFiOn = true;
+                this.isBluetoothOn = true;
+                this.isAirplaneModeOn = false;
+                this.isDarkModeOn = true;
+                this.batteryLevel = 85;
+                this.currentPage = 1;
+                this.totalPages = 3;
+                this.appMapping = this.initializeAppMapping();
+                this.initializeEventListeners();
+                this.updateTime();
+                this.startTimeUpdater();
+                this.showWelcomeNotification();
+            }
+
+            initializeAppMapping() {
+                return {
+                    'terminal': 'Apps/ai-terminal-shell.html',
+                    'android-emulator': 'Apps/ai-android-emulator.html',
+                    'plugin-marketplace': 'MOBILE/ai-plugin-marketplace.html',
+                    'voice-interface': 'MOBILE/voice-interface.html',
+                    'learning-center': 'MOBILE/ai-learning-center.html',
+                    'performance-optimizer': 'MOBILE/ai-performance-optimizer.html',
+                    'universal-interface': 'Apps/ai-universal-interface.html',
+                    'network-monitor': 'Apps/ai-network-monitor.html',
+                    'system-monitor': 'Apps/ai-system-monitor.html',
+                    'app-store': 'Apps/ai-app-store.html',
+                    'android-store': 'Apps/ai-android-app-store.html',
+                    'system-settings': 'Apps/ai-system-settings.html',
+                    'file-manager': 'Apps/ai-file-manager.html',
+                    'task-manager': 'Apps/ai-task-manager.html',
+                    'desktop-manager': 'Apps/ai-desktop-manager.html',
+                    'terminal-shell': 'Apps/ai-terminal-shell.html',
+                    'nethunter': 'Apps/ai-terminal-shell.html',
+                    'calculator': 'data:text/html,<html><head><title>Calculator</title><style>body{font-family:Arial;background:#f0f0f0;margin:0;padding:20px;display:flex;justify-content:center;align-items:center;height:100vh;}</style></head><body><div style="background:white;border-radius:10px;padding:20px;box-shadow:0 4px 20px rgba(0,0,0,0.1);"><h2>Calculator</h2><input type="text" id="calc" style="font-size:20px;width:200px;margin-bottom:10px;"><br><button onclick="document.getElementById(\'calc\').value+=\'1\'">1</button><button onclick="document.getElementById(\'calc\').value+=\'2\'">2</button><button onclick="document.getElementById(\'calc\').value+=\'3\'">3</button><button onclick="document.getElementById(\'calc\').value+=\'+\'">+</button><br><button onclick="document.getElementById(\'calc\').value+=\'4\'">4</button><button onclick="document.getElementById(\'calc\').value+=\'5\'">5</button><button onclick="document.getElementById(\'calc\').value+=\'6\'">6</button><button onclick="document.getElementById(\'calc\').value+=\'-\'">-</button><br><button onclick="document.getElementById(\'calc\').value+=\'7\'">7</button><button onclick="document.getElementById(\'calc\').value+=\'8\'">8</button><button onclick="document.getElementById(\'calc\').value+=\'9\'">9</button><button onclick="document.getElementById(\'calc\').value+=\'*\'">*</button><br><button onclick="document.getElementById(\'calc\').value=\'\'">C</button><button onclick="document.getElementById(\'calc\').value+=\'0\'">0</button><button onclick="document.getElementById(\'calc\').value+=\'=\'">=</button><button onclick="document.getElementById(\'calc\').value+=\'/\'">/</button></div></body></html>',
+                    'camera': 'data:text/html,<html><head><title>Camera</title><style>body{font-family:Arial;background:#000;color:white;margin:0;padding:20px;display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;}</style></head><body><h2>📷 Camera</h2><div style="width:300px;height:200px;background:#333;border-radius:10px;display:flex;align-items:center;justify-content:center;margin:20px 0;">Camera View</div><button style="padding:15px 30px;border:none;border-radius:50%;background:#007AFF;color:white;font-size:16px;cursor:pointer;">Capture</button></body></html>',
+                    'photos': 'data:text/html,<html><head><title>Photos</title><style>body{font-family:Arial;background:#f0f0f0;margin:0;padding:20px;}</style></head><body><h2>📸 Photos</h2><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px;"><div style="width:80px;height:80px;background:#ddd;border-radius:5px;display:flex;align-items:center;justify-content:center;">📷</div><div style="width:80px;height:80px;background:#ddd;border-radius:5px;display:flex;align-items:center;justify-content:center;">🖼️</div><div style="width:80px;height:80px;background:#ddd;border-radius:5px;display:flex;align-items:center;justify-content:center;">📱</div></div></body></html>',
+                    'mail': 'data:text/html,<html><head><title>Mail</title><style>body{font-family:Arial;background:#f0f0f0;margin:0;padding:20px;}</style></head><body><h2>✉️ Mail</h2><div style="background:white;padding:20px;border-radius:10px;margin-top:20px;"><h3>Recent Emails</h3><p>📧 Welcome to AI-OS</p><p>📧 System Update Available</p><p>📧 New Features Released</p></div></body></html>'
+                };
+            }
+
+            initializeEventListeners() {
+                // AI-OS Event Delegation for data-action attributes
+                this.setupEventDelegation();
+                
+                // Swipe up to open Control Center
+                document.addEventListener('touchstart', (e) => {
+                    this.touchStartY = e.touches[0].clientY;
+                    this.touchStartX = e.touches[0].clientX;
+                });
+
+                document.addEventListener('touchend', (e) => {
+                    const touchEndY = e.changedTouches[0].clientY;
+                    const touchEndX = e.changedTouches[0].clientX;
+                    const deltaY = this.touchStartY - touchEndY;
+                    const deltaX = Math.abs(this.touchStartX - touchEndX);
+
+                    // Swipe up from bottom edge
+                    if (deltaY > 100 && this.touchStartY > window.innerHeight - 100 && deltaX < 50) {
+                        this.openControlCenter();
+                    }
+                    
+                    // Swipe down from top edge
+                    if (deltaY < -100 && this.touchStartY < 100 && deltaX < 50) {
+                        this.showNotification();
+                    }
+                });
+
+                // Home button (physical or gesture)
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' || e.key === 'Home') {
+                        this.goHome();
+                    }
+                });
+            }
+
+            setupEventDelegation() {
+                // AI-OS Event Delegation Pattern
+                document.addEventListener('click', (e) => {
+                    // Find the closest element with data-action attribute
+                    const actionElement = e.target.closest('[data-action]');
+                    
+                    if (!actionElement) return;
+                    
+                    const action = actionElement.getAttribute('data-action');
+                    const appId = actionElement.getAttribute('data-app');
+                    
+                    // Route to appropriate handler
+                    switch (action) {
+                        case 'launchApp':
+                            if (appId) {
+                                this.launchApp(appId);
+                            }
+                            break;
+                        case 'toggleWiFi':
+                            this.toggleWiFi();
+                            break;
+                        case 'toggleBluetooth':
+                            this.toggleBluetooth();
+                            break;
+                        case 'toggleAirplaneMode':
+                            this.toggleAirplaneMode();
+                            break;
+                        case 'toggleDarkMode':
+                            this.toggleDarkMode();
+                            break;
+                        case 'showNotification':
+                            this.showNotification();
+                            break;
+                        case 'refreshScreen':
+                            this.refreshScreen();
+                            break;
+                        case 'goHome':
+                            this.goHome();
+                            break;
+                        case 'closeControlCenter':
+                            this.closeControlCenter();
+                            break;
+                    }
+                });
+            }
+
+            updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: false
+                });
+                document.querySelector('.time').textContent = timeString;
+            }
+
+            startTimeUpdater() {
+                setInterval(() => {
+                    this.updateTime();
+                    this.updateBatteryLevel();
+                }, 60000); // Update every minute
+            }
+
+            updateBatteryLevel() {
+                // Simulate battery drain
+                if (this.batteryLevel > 0) {
+                    this.batteryLevel -= 0.1;
+                    document.querySelector('.battery-level').style.width = 
+                        `${Math.max(this.batteryLevel, 0)}%`;
+                }
+            }
+
+            showWelcomeNotification() {
+                setTimeout(() => {
+                    this.showNotification(
+                        '<svg class="ai-os-icon-sm" style="vertical-align: middle; margin-right: 4px;"><use href="#icon-robot"></use></svg> iOS-AI-OS', 
+                        'Welcome to iOS Environment! All AI-OS apps are available.'
+                    );
+                }, 1000);
+            }
+
+            showNotification(title = '<svg class="ai-os-icon-sm" style="vertical-align: middle; margin-right: 4px;"><use href="#icon-robot"></use></svg> AI-OS', message = 'iOS Environment Active') {
+                const notification = document.getElementById('notification');
+                notification.querySelector('.notification-title').innerHTML = title;
+                notification.querySelector('.notification-body').textContent = message;
+                notification.classList.add('show');
+
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+
+            openControlCenter() {
+                document.getElementById('controlCenter').classList.add('active');
+            }
+
+            closeControlCenter() {
+                document.getElementById('controlCenter').classList.remove('active');
+            }
+
+            toggleWiFi() {
+                this.isWiFiOn = !this.isWiFiOn;
+                this.showNotification('WiFi', this.isWiFiOn ? 'WiFi Connected' : 'WiFi Disconnected');
+                this.closeControlCenter();
+            }
+
+            toggleBluetooth() {
+                this.isBluetoothOn = !this.isBluetoothOn;
+                this.showNotification('Bluetooth', this.isBluetoothOn ? 'Bluetooth On' : 'Bluetooth Off');
+                this.closeControlCenter();
+            }
+
+            toggleAirplaneMode() {
+                this.isAirplaneModeOn = !this.isAirplaneModeOn;
+                this.showNotification('Airplane Mode', this.isAirplaneModeOn ? 'Enabled' : 'Disabled');
+                this.closeControlCenter();
+            }
+
+            toggleDarkMode() {
+                this.isDarkModeOn = !this.isDarkModeOn;
+                this.showNotification('Dark Mode', this.isDarkModeOn ? 'Dark Mode On' : 'Light Mode On');
+                this.closeControlCenter();
+            }
+
+            refreshScreen() {
+                location.reload();
+                this.closeControlCenter();
+            }
+
+            goHome() {
+                const appLauncher = document.getElementById('appLauncher');
+                if (appLauncher.classList.contains('active')) {
+                    appLauncher.classList.remove('active');
+                } else {
+                    // Navigate to main AI-OS
+                    if (window.opener) {
+                        window.close();
+                    } else {
+                        window.location.href = 'ADVANCED-AI-OS.html';
+                    }
+                }
+            }
+
+            launchApp(appId) {
+                const appLauncher = document.getElementById('appLauncher');
+                const appFrame = document.getElementById('appFrame');
+                
+                const appUrl = this.appMapping[appId];
+                if (appUrl) {
+                    appFrame.src = appUrl;
+                    appLauncher.classList.add('active');
+                    
+                    this.showNotification('Opening App', `Launching ${appId}...`);
+                } else {
+                    this.showNotification('Error', `App ${appId} not found`);
+                }
+            }
+        }
+
+        // Global functions for HTML onclick handlers
+        function launchApp(appId) {
+            if (window.iosEnvironment) {
+                window.iosEnvironment.launchApp(appId);
+            }
+        }
+
+        function toggleWiFi() {
+            if (window.iosEnvironment) {
+                window.iosEnvironment.toggleWiFi();
+            }
+        }
+
+        function toggleBluetooth() {
+            if (window.iosEnvironment) {
+                window.iosEnvironment.toggleBluetooth();
+            }
+        }
+
+        function toggleAirplaneMode() {
+            if (window.iosEnvironment) {
+                window.iosEnvironment.toggleAirplaneMode();
+            }
+        }
+
+        function toggleDarkMode() {
+            if (window.iosEnvironment) {
+                window.iosEnvironment.toggleDarkMode();
+            }
+        }
+
+        function showNotification() {
+            if (window.iosEnvironment) {
+                window.iosEnvironment.showNotification();
+            }
+        }
+
+        function refreshScreen() {
+            if (window.iosEnvironment) {
+                window.iosEnvironment.refreshScreen();
+            }
+        }
+
+        function goHome() {
+            if (window.iosEnvironment) {
+                window.iosEnvironment.goHome();
+            }
+        }
+
+        function closeControlCenter() {
+            if (window.iosEnvironment) {
+                window.iosEnvironment.closeControlCenter();
+            }
+        }
+
+        // Initialize iOS Environment when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Initializing iOS Environment with AI-OS standards...');
+            window.iosEnvironment = new IOSEnvironment();
+        });
+    </script>
+</body>
+</html>

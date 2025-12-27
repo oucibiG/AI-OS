@@ -1,0 +1,1982 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AI Plugin Marketplace">
+    <meta name="app-id" content="ai-plugin-marketplace">
+    <meta name="description" content="Trh s AI pluginmi a rozšíreniami pre AI-OS ekosystém">
+    <title>AI Plugin Marketplace | AI-OS</title>
+    
+    <!-- AI-OS Design System -->
+    <link rel="stylesheet" href="../css/ai-os-design-system.css">
+    
+    <!-- AI-OS Core Integration -->
+    <script src="../js/ai-os-core.js"></script>
+    <script src="../js/ai-os-app-integration.js"></script>
+    <script src="../js/ai-os-utils.js"></script>
+    
+    <!-- AI-OS SVG Icons -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="icon-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+        </symbol>
+        <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </symbol>
+        <symbol id="icon-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+        </symbol>
+        <symbol id="icon-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+        </symbol>
+        <symbol id="icon-filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+        </symbol>
+        <symbol id="icon-category" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="3" y1="9" x2="21" y2="9"></line>
+            <line x1="9" y1="21" x2="9" y2="9"></line>
+        </symbol>
+        <symbol id="icon-extension" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+        </symbol>
+        <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </symbol>
+        <symbol id="icon-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </symbol>
+        <symbol id="icon-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </symbol>
+        <symbol id="icon-crosshair" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="22" y1="12" x2="18" y2="12"></line>
+            <line x1="6" y1="12" x2="2" y2="12"></line>
+            <line x1="12" y1="6" x2="12" y2="2"></line>
+            <line x1="12" y1="22" x2="12" y2="18"></line>
+        </symbol>
+        <symbol id="icon-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+        </symbol>
+        <symbol id="icon-message" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </symbol>
+        <symbol id="icon-controller" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+            <line x1="6" y1="10" x2="6" y2="14"></line>
+            <line x1="10" y1="10" x2="10" y2="14"></line>
+            <circle cx="17" cy="10" r="1"></circle>
+            <circle cx="15" cy="12" r="1"></circle>
+        </symbol>
+        <symbol id="icon-wrench" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+        </symbol>
+    </svg>
+    
+    <style>
+        /* Plugin Marketplace Specific Styles */
+        .marketplace-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #000000 0%, #001122 30%, #000000 100%);
+            padding: var(--space-lg) var(--space-md);
+            position: relative;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .marketplace-header {
+            text-align: center;
+            margin-bottom: var(--space-xl);
+            position: relative;
+            z-index: 1;
+        }
+
+        .marketplace-icon {
+            font-size: 4rem;
+            margin-bottom: var(--space-md);
+            filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.8));
+            animation: marketplacePulse 3s ease-in-out infinite;
+        }
+
+        @keyframes marketplacePulse {
+            0%, 100% { 
+                transform: scale(1);
+                filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.8));
+            }
+            50% { 
+                transform: scale(1.05);
+                filter: drop-shadow(0 0 30px rgba(0, 212, 255, 1));
+            }
+        }
+
+        .search-section {
+            background: var(--surface);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: var(--radius-xl);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .search-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .search-form {
+            display: flex;
+            gap: var(--space-md);
+            position: relative;
+            z-index: 1;
+        }
+
+        .search-input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--space-sm) var(--space-md);
+            color: var(--text-primary);
+            font-size: var(--text-base);
+            transition: all var(--transition-fast);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--ai-primary);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .filters-section {
+            display: flex;
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .filter-btn {
+            padding: var(--space-xs) var(--space-sm);
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: var(--radius-lg);
+            color: var(--ai-primary);
+            font-size: var(--text-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: var(--ai-primary);
+        }
+
+        .filter-btn.active {
+            background: var(--ai-primary);
+            color: var(--background);
+            border-color: var(--ai-primary);
+        }
+
+        .categories-section {
+            margin-bottom: var(--space-xl);
+        }
+
+        .section-title {
+            font-size: var(--text-xl);
+            font-weight: 600;
+            color: var(--ai-primary);
+            margin-bottom: var(--space-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .category-card {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(0, 212, 255, 0.1) 0%, 
+                rgba(0, 212, 255, 0.05) 50%, 
+                transparent 100%);
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+            pointer-events: none;
+        }
+
+        .category-card:hover::before {
+            opacity: 1;
+        }
+
+        .category-card:hover {
+            border-color: var(--ai-primary);
+            background: rgba(0, 212, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .category-icon {
+            font-size: 2rem;
+            margin-bottom: var(--space-sm);
+            opacity: 0.8;
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-name {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-count {
+            font-size: var(--text-xs);
+            color: var(--text-secondary);
+            position: relative;
+            z-index: 1;
+        }
+
+        .plugins-section {
+            margin-bottom: var(--space-xl);
+        }
+
+        .plugins-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .plugin-card {
+            background: var(--surface);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: var(--radius-xl);
+            padding: var(--space-lg);
+            transition: all var(--transition-normal);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plugin-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--ai-primary), var(--ai-secondary));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform var(--transition-slow);
+        }
+
+        .plugin-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .plugin-card:hover {
+            border-color: var(--ai-primary);
+            background: rgba(0, 212, 255, 0.05);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .plugin-header {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .plugin-icon {
+            font-size: 2.5rem;
+            opacity: 0.9;
+            flex-shrink: 0;
+        }
+
+        .plugin-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .plugin-name {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+            line-height: 1.3;
+        }
+
+        .plugin-author {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .plugin-rating {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .stars {
+            color: var(--warning);
+            font-size: var(--text-sm);
+        }
+
+        .rating-text {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+        }
+
+        .plugin-description {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: var(--space-md);
+        }
+
+        .plugin-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+            margin-bottom: var(--space-md);
+        }
+
+        .plugin-tag {
+            padding: 2px var(--space-xs);
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: var(--radius-sm);
+            font-size: 10px;
+            color: var(--ai-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .plugin-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+            margin-bottom: var(--space-md);
+        }
+
+        .plugin-price {
+            font-size: var(--text-lg);
+            font-weight: 700;
+            color: var(--ai-primary);
+        }
+
+        .plugin-actions {
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .action-btn {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .featured-section {
+            margin-bottom: var(--space-xl);
+        }
+
+        .featured-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .featured-plugin {
+            background: linear-gradient(135deg, 
+                rgba(0, 212, 255, 0.1) 0%, 
+                rgba(0, 212, 255, 0.05) 100%);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .featured-plugin::after {
+            content: '⭐';
+            position: absolute;
+            top: var(--space-sm);
+            right: var(--space-sm);
+            font-size: var(--text-lg);
+            z-index: 2;
+        }
+
+        .load-more-section {
+            text-align: center;
+            margin-top: var(--space-xl);
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-xl);
+            margin-bottom: var(--space-xl);
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: var(--space-md);
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: var(--radius-lg);
+            min-width: 100px;
+        }
+
+        .stat-value {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--ai-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .stat-label {
+            font-size: var(--text-xs);
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* === KOMPLEXNÁ RESPONZIVITA === */
+        
+        /* Veľké tablety - 1024px */
+        @media (max-width: 1024px) {
+            .marketplace-container {
+                padding: var(--space-lg) var(--space-lg);
+            }
+            
+            .marketplace-header {
+                margin-bottom: var(--space-lg);
+            }
+            
+            .marketplace-icon {
+                font-size: 3.5rem;
+            }
+            
+            .search-section {
+                padding: var(--space-md);
+                margin-bottom: var(--space-lg);
+            }
+            
+            .stats-bar {
+                gap: var(--space-md);
+                margin-bottom: var(--space-lg);
+            }
+            
+            .stat-item {
+                min-width: 80px;
+                padding: var(--space-sm);
+            }
+            
+            .stat-value {
+                font-size: var(--text-lg);
+            }
+            
+            .categories-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: var(--space-sm);
+            }
+            
+            .category-card {
+                padding: var(--space-md);
+            }
+            
+            .category-icon {
+                font-size: 1.75rem;
+            }
+            
+            .category-name {
+                font-size: var(--text-sm);
+            }
+            
+            .plugins-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--space-md);
+            }
+            
+            .plugin-card {
+                padding: var(--space-md);
+            }
+            
+            .plugin-icon {
+                font-size: 2rem;
+            }
+            
+            .plugin-name {
+                font-size: var(--text-md);
+            }
+            
+            .plugin-author {
+                font-size: var(--text-sm);
+            }
+            
+            .plugin-description {
+                font-size: var(--text-sm);
+            }
+            
+            .featured-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--space-md);
+            }
+            
+            .section-title {
+                font-size: var(--text-lg);
+                margin-bottom: var(--space-md);
+            }
+        }
+        
+        /* Tablety - 768px */
+        @media (max-width: 768px) {
+            .marketplace-container {
+                padding: var(--space-md) var(--space-md);
+            }
+            
+            .marketplace-header {
+                margin-bottom: var(--space-lg);
+            }
+            
+            .marketplace-icon {
+                font-size: 3rem;
+            }
+            
+            h1.ai-heading-xl {
+                font-size: 1.75rem;
+            }
+            
+            .ai-text-body {
+                font-size: var(--text-sm);
+            }
+            
+            .search-section {
+                padding: var(--space-md);
+                margin-bottom: var(--space-lg);
+            }
+            
+            .search-form {
+                flex-direction: column;
+                gap: var(--space-sm);
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .filters-section {
+                justify-content: center;
+                gap: var(--space-xs);
+            }
+            
+            .filter-btn {
+                padding: var(--space-xs) var(--space-sm);
+                font-size: var(--text-xs);
+            }
+            
+            .stats-bar {
+                flex-wrap: wrap;
+                gap: var(--space-sm);
+                margin-bottom: var(--space-lg);
+            }
+            
+            .stat-item {
+                flex: 1;
+                min-width: 70px;
+                padding: var(--space-sm);
+            }
+            
+            .stat-value {
+                font-size: var(--text-md);
+            }
+            
+            .stat-label {
+                font-size: 10px;
+            }
+            
+            .categories-section {
+                margin-bottom: var(--space-lg);
+            }
+            
+            .categories-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: var(--space-sm);
+            }
+            
+            .category-card {
+                padding: var(--space-sm);
+            }
+            
+            .category-icon {
+                font-size: 1.5rem;
+                margin-bottom: var(--space-xs);
+            }
+            
+            .category-name {
+                font-size: var(--text-xs);
+            }
+            
+            .category-count {
+                font-size: 9px;
+            }
+            
+            .section-title {
+                font-size: var(--text-md);
+                margin-bottom: var(--space-md);
+            }
+            
+            .plugins-section {
+                margin-bottom: var(--space-lg);
+            }
+            
+            .plugins-grid {
+                grid-template-columns: 1fr;
+                gap: var(--space-md);
+            }
+            
+            .plugin-card {
+                padding: var(--space-md);
+            }
+            
+            .plugin-header {
+                flex-direction: row;
+                gap: var(--space-sm);
+                margin-bottom: var(--space-sm);
+            }
+            
+            .plugin-icon {
+                font-size: 2rem;
+            }
+            
+            .plugin-info {
+                text-align: left;
+            }
+            
+            .plugin-name {
+                font-size: var(--text-md);
+            }
+            
+            .plugin-author {
+                font-size: var(--text-xs);
+            }
+            
+            .plugin-description {
+                font-size: var(--text-sm);
+                margin-bottom: var(--space-sm);
+            }
+            
+            .plugin-tags {
+                margin-bottom: var(--space-sm);
+            }
+            
+            .plugin-stats {
+                font-size: 10px;
+                margin-bottom: var(--space-sm);
+            }
+            
+            .plugin-actions {
+                flex-direction: row;
+                align-items: center;
+                gap: var(--space-sm);
+            }
+            
+            .plugin-price {
+                font-size: var(--text-md);
+            }
+            
+            .action-btn {
+                flex: 1;
+            }
+            
+            .featured-section {
+                margin-bottom: var(--space-lg);
+            }
+            
+            .featured-grid {
+                grid-template-columns: 1fr;
+                gap: var(--space-md);
+            }
+            
+            .load-more-section {
+                margin-top: var(--space-lg);
+            }
+        }
+        
+        /* Veľké telefóny - 640px */
+        @media (max-width: 640px) {
+            .marketplace-container {
+                padding: var(--space-sm) var(--space-sm);
+            }
+            
+            .marketplace-header {
+                margin-bottom: var(--space-md);
+            }
+            
+            .marketplace-icon {
+                font-size: 2.75rem;
+            }
+            
+            h1.ai-heading-xl {
+                font-size: 1.5rem;
+            }
+            
+            .ai-text-body {
+                font-size: var(--text-xs);
+            }
+            
+            .search-section {
+                padding: var(--space-sm);
+                margin-bottom: var(--space-md);
+            }
+            
+            .search-form {
+                gap: var(--space-sm);
+            }
+            
+            .search-input {
+                padding: var(--space-sm) var(--space-sm);
+                font-size: var(--text-sm);
+            }
+            
+            .filters-section {
+                gap: var(--space-xs);
+            }
+            
+            .filter-btn {
+                padding: 2px var(--space-xs);
+                font-size: 10px;
+            }
+            
+            .stats-bar {
+                gap: var(--space-xs);
+                margin-bottom: var(--space-md);
+            }
+            
+            .stat-item {
+                padding: var(--space-xs);
+                min-width: 60px;
+            }
+            
+            .stat-value {
+                font-size: var(--text-sm);
+            }
+            
+            .stat-label {
+                font-size: 9px;
+            }
+            
+            .categories-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: var(--space-xs);
+            }
+            
+            .category-card {
+                padding: var(--space-xs);
+            }
+            
+            .category-icon {
+                font-size: 1.25rem;
+            }
+            
+            .category-name {
+                font-size: 10px;
+            }
+            
+            .category-count {
+                font-size: 8px;
+            }
+            
+            .section-title {
+                font-size: var(--text-sm);
+                margin-bottom: var(--space-sm);
+            }
+            
+            .plugins-grid {
+                gap: var(--space-sm);
+            }
+            
+            .plugin-card {
+                padding: var(--space-sm);
+            }
+            
+            .plugin-header {
+                margin-bottom: var(--space-sm);
+            }
+            
+            .plugin-icon {
+                font-size: 1.75rem;
+            }
+            
+            .plugin-name {
+                font-size: var(--text-sm);
+            }
+            
+            .plugin-description {
+                font-size: var(--text-xs);
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            
+            .plugin-tags {
+                gap: 2px;
+            }
+            
+            .plugin-tag {
+                padding: 1px 2px;
+                font-size: 8px;
+            }
+            
+            .plugin-stats {
+                font-size: 9px;
+            }
+            
+            .plugin-actions {
+                flex-wrap: wrap;
+            }
+            
+            .plugin-price {
+                font-size: var(--text-sm);
+            }
+            
+            .action-btn {
+                padding: var(--space-xs) var(--space-sm);
+                font-size: var(--text-xs);
+            }
+            
+            .featured-grid {
+                gap: var(--space-sm);
+            }
+            
+            .load-more-section {
+                margin-top: var(--space-md);
+            }
+        }
+        
+        /* Štandardné telefóny - 480px */
+        @media (max-width: 480px) {
+            .marketplace-container {
+                padding: var(--space-xs) var(--space-xs);
+            }
+            
+            .marketplace-header {
+                margin-bottom: var(--space-sm);
+            }
+            
+            .marketplace-icon {
+                font-size: 2.5rem;
+            }
+            
+            h1.ai-heading-xl {
+                font-size: 1.25rem;
+            }
+            
+            .ai-text-body {
+                display: none;
+            }
+            
+            .search-section {
+                padding: var(--space-xs);
+                margin-bottom: var(--space-sm);
+            }
+            
+            .stats-bar {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: var(--space-xs);
+                margin-bottom: var(--space-sm);
+            }
+            
+            .stat-item {
+                padding: var(--space-xs);
+                min-width: auto;
+            }
+            
+            .stat-value {
+                font-size: var(--text-sm);
+            }
+            
+            .stat-label {
+                font-size: 8px;
+            }
+            
+            .categories-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: var(--space-xs);
+            }
+            
+            .category-card {
+                padding: var(--space-xs);
+            }
+            
+            .category-icon {
+                font-size: 1rem;
+            }
+            
+            .category-name {
+                font-size: 9px;
+            }
+            
+            .category-count {
+                display: none;
+            }
+            
+            .section-title {
+                font-size: var(--text-xs);
+                margin-bottom: var(--space-sm);
+            }
+            
+            .plugins-grid {
+                gap: var(--space-xs);
+            }
+            
+            .plugin-card {
+                padding: var(--space-sm);
+            }
+            
+            .plugin-header {
+                flex-direction: column;
+                text-align: center;
+                gap: var(--space-xs);
+            }
+            
+            .plugin-icon {
+                font-size: 2rem;
+            }
+            
+            .plugin-info {
+                text-align: center;
+            }
+            
+            .plugin-rating {
+                justify-content: center;
+            }
+            
+            .plugin-tags {
+                display: none;
+            }
+            
+            .plugin-stats {
+                display: none;
+            }
+            
+            .plugin-actions {
+                flex-direction: column;
+                gap: var(--space-xs);
+            }
+            
+            .plugin-price {
+                text-align: center;
+            }
+            
+            .action-btn {
+                width: 100%;
+            }
+            
+            .featured-grid {
+                gap: var(--space-xs);
+            }
+            
+            .load-more-section {
+                margin-top: var(--space-sm);
+            }
+            
+            .load-more-btn {
+                padding: var(--space-sm) var(--space-md);
+                font-size: var(--text-sm);
+            }
+        }
+        
+        /* Malé telefóny - 360px */
+        @media (max-width: 360px) {
+            .marketplace-container {
+                padding: var(--space-xs);
+            }
+            
+            .marketplace-header {
+                margin-bottom: var(--space-xs);
+            }
+            
+            .marketplace-icon {
+                font-size: 2rem;
+            }
+            
+            h1.ai-heading-xl {
+                font-size: 1.125rem;
+            }
+            
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .categories-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .category-icon {
+                font-size: 1rem;
+            }
+            
+            .category-name {
+                font-size: 8px;
+            }
+            
+            .plugin-card {
+                padding: var(--space-xs);
+            }
+            
+            .plugin-icon {
+                font-size: 1.5rem;
+            }
+            
+            .plugin-name {
+                font-size: var(--text-xs);
+            }
+            
+            .action-btn {
+                padding: var(--space-xs);
+                font-size: 10px;
+            }
+        }
+        
+        /* Landscape orientácia pre mobilné zariadenia */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .marketplace-container {
+                padding: var(--space-sm) var(--space-md);
+            }
+            
+            .marketplace-header {
+                margin-bottom: var(--space-sm);
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                text-align: left;
+                gap: var(--space-md);
+            }
+            
+            .marketplace-icon {
+                font-size: 2rem;
+                margin-bottom: 0;
+            }
+            
+            h1.ai-heading-xl {
+                font-size: 1.25rem;
+            }
+            
+            .ai-text-body {
+                display: none;
+            }
+            
+            .stats-bar {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: var(--space-sm);
+                margin-bottom: var(--space-sm);
+            }
+            
+            .stat-item {
+                padding: var(--space-xs);
+            }
+            
+            .search-section {
+                padding: var(--space-sm);
+                margin-bottom: var(--space-sm);
+            }
+            
+            .filters-section {
+                margin-top: var(--space-xs);
+            }
+            
+            .categories-section {
+                margin-bottom: var(--space-sm);
+            }
+            
+            .categories-grid {
+                display: flex;
+                overflow-x: auto;
+                gap: var(--space-xs);
+                padding-bottom: var(--space-xs);
+            }
+            
+            .category-card {
+                flex-shrink: 0;
+                width: 80px;
+                padding: var(--space-xs);
+            }
+            
+            .category-icon {
+                font-size: 1.25rem;
+            }
+            
+            .category-name {
+                font-size: 9px;
+            }
+            
+            .category-count {
+                font-size: 8px;
+            }
+            
+            .plugins-section {
+                margin-bottom: var(--space-sm);
+            }
+            
+            .plugins-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: var(--space-sm);
+            }
+            
+            .plugin-card {
+                padding: var(--space-sm);
+            }
+            
+            .plugin-header {
+                flex-direction: column;
+                text-align: center;
+                gap: var(--space-xs);
+            }
+            
+            .plugin-icon {
+                font-size: 1.5rem;
+            }
+            
+            .plugin-name {
+                font-size: var(--text-xs);
+            }
+            
+            .plugin-description {
+                display: none;
+            }
+            
+            .plugin-tags {
+                display: none;
+            }
+            
+            .plugin-stats {
+                font-size: 9px;
+            }
+            
+            .plugin-actions {
+                flex-direction: row;
+                gap: var(--space-xs);
+            }
+            
+            .plugin-price {
+                font-size: var(--text-xs);
+            }
+            
+            .action-btn {
+                padding: var(--space-xs);
+                font-size: 10px;
+            }
+            
+            .featured-section {
+                display: none;
+            }
+            
+            .load-more-section {
+                margin-top: var(--space-sm);
+            }
+        }
+        
+        /* Vysoký kontrast pre lepšiu čitateľnosť */
+        @media (prefers-contrast: high) {
+            .search-section {
+                border-width: 2px;
+            }
+            
+            .category-card {
+                border-width: 2px;
+            }
+            
+            .plugin-card {
+                border-width: 2px;
+            }
+            
+            .stat-item {
+                border-width: 2px;
+            }
+            
+            .filter-btn {
+                border-width: 2px;
+            }
+            
+            .plugin-tag {
+                border-width: 2px;
+            }
+        }
+        
+        /* Znížený pohyb pre používateľov s vestibulárnymi poruchami */
+        @media (prefers-reduced-motion: reduce) {
+            .marketplace-icon {
+                animation: none;
+            }
+            
+            .category-card:hover {
+                transform: none;
+            }
+            
+            .category-card::before {
+                opacity: 0;
+            }
+            
+            .plugin-card:hover {
+                transform: none;
+            }
+            
+            .plugin-card::before {
+                transform: scaleX(0);
+            }
+            
+            .installing {
+                animation: none;
+            }
+        }
+
+        /* Animation States */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .installing {
+            animation: installing 1s ease-in-out infinite;
+        }
+
+        @keyframes installing {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .installed {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .installed::before {
+            background: linear-gradient(90deg, var(--success), #20c997);
+        }
+        
+        /* === AI-OS ICONS === */
+        .ai-os-icon {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            vertical-align: middle;
+        }
+        
+        .ai-os-icon-sm {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .ai-os-icon-lg {
+            width: 32px;
+            height: 32px;
+        }
+        
+        .ai-os-icon-xl {
+            width: 48px;
+            height: 48px;
+        }
+    </style>
+</head>
+<body>
+    <div class="marketplace-container">
+        <!-- Header -->
+        <header class="marketplace-header ai-animate-fade-in">
+            <div class="marketplace-icon" aria-hidden="true">
+                <svg class="ai-os-icon-lg"><use href="#icon-extension"></use></svg>
+            </div>
+            <h1 class="ai-heading-xl">AI Plugin Marketplace</h1>
+            <p class="ai-text-body">Rozšírte svoje AI-OS skúsenosti s pokročilými pluginmi</p>
+        </header>
+
+        <!-- Statistics Bar -->
+        <section class="stats-bar ai-animate-fade-in" style="animation-delay: 0.1s">
+            <div class="stat-item">
+                <div class="stat-value" id="totalPlugins">247</div>
+                <div class="stat-label">Pluginov</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalDownloads">1.2M</div>
+                <div class="stat-label">Stiahnutí</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="totalDevelopers">89</div>
+                <div class="stat-label">Vývojárov</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="userRating">4.8</div>
+                <div class="stat-label">Hodnotenie</div>
+            </div>
+        </section>
+
+        <!-- Search Section -->
+        <section class="search-section ai-animate-fade-in" style="animation-delay: 0.2s">
+            <form class="search-form" id="searchForm">
+                <input type="text" 
+                       class="search-input" 
+                       id="searchInput"
+                       placeholder="Hľadať pluginy, funkcie, kategórie..."
+                       aria-label="Hľadať pluginy">
+                <button type="submit" class="ai-btn ai-btn-primary">
+                    <svg class="ai-os-icon"><use href="#icon-search"></use></svg>
+                    Hľadať
+                </button>
+            </form>
+            
+            <div class="filters-section" id="filtersSection">
+                <button class="filter-btn active" data-filter="all">Všetky</button>
+                <button class="filter-btn" data-filter="free">Zadarmo</button>
+                <button class="filter-btn" data-filter="paid">Platené</button>
+                <button class="filter-btn" data-filter="featured">Odporúčané</button>
+                <button class="filter-btn" data-filter="new">Nové</button>
+                <button class="filter-btn" data-filter="popular">Populárne</button>
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section class="categories-section">
+            <h2 class="section-title">
+                <span aria-hidden="true">📂</span>
+                Kategórie
+            </h2>
+            <div class="categories-grid" id="categoriesGrid">
+                <!-- Categories will be dynamically generated -->
+            </div>
+        </section>
+
+        <!-- Featured Plugins Section -->
+        <section class="featured-section">
+            <h2 class="section-title">
+                <span aria-hidden="true">⭐</span>
+                Odporúčané pluginy
+            </h2>
+            <div class="featured-grid" id="featuredGrid">
+                <!-- Featured plugins will be dynamically generated -->
+            </div>
+        </section>
+
+        <!-- All Plugins Section -->
+        <section class="plugins-section">
+            <h2 class="section-title">
+                <span aria-hidden="true">🔌</span>
+                Všetky pluginy
+            </h2>
+            <div class="plugins-grid" id="pluginsGrid">
+                <!-- Plugins will be dynamically generated -->
+            </div>
+            
+            <div class="load-more-section">
+                <button class="ai-btn ai-btn-outline" id="loadMoreBtn">
+                    <span aria-hidden="true">📥</span> Načítať viac
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        /**
+         * AI Plugin Marketplace Application
+         * Standardized implementation using AI-OS Design System
+         */
+        class PluginMarketplaceApp {
+            constructor() {
+                this.plugins = [];
+                this.categories = [];
+                this.filteredPlugins = [];
+                this.currentFilter = 'all';
+                this.currentPage = 1;
+                this.pluginsPerPage = 12;
+                this.searchQuery = '';
+                
+                this.init();
+            }
+
+            init() {
+                this.loadPluginsData();
+                this.loadCategoriesData();
+                this.renderCategories();
+                this.renderFeaturedPlugins();
+                this.renderPlugins();
+                this.setupEventListeners();
+                this.registerWithAIOSCore();
+                
+                AIOS.utils.showNotification('Plugin Marketplace načítaný', 'success');
+            }
+
+            loadPluginsData() {
+                this.plugins = [
+                    {
+                        id: 'ai-voice-enhancer',
+                        name: 'AI Voice Enhancer',
+                        author: 'AI Studios',
+                        description: 'Pokročilé vylepšenie kvality hlasu pomocou AI s real-time processing',
+                        icon: '🎤',
+                        category: 'audio',
+                        rating: 4.9,
+                        downloads: 125000,
+                        price: 0,
+                        tags: ['hlas', 'AI', 'vylepšenie', 'real-time'],
+                        featured: true,
+                        installed: false,
+                        version: '2.1.0',
+                        size: '15.2 MB'
+                    },
+                    {
+                        id: 'smart-notifications',
+                        name: 'Smart Notifications',
+                        author: 'SmartTech',
+                        description: 'Inteligentné upozornenia s AI filtrami a personalizáciou',
+                        icon: '🔔',
+                        category: 'productivity',
+                        rating: 4.7,
+                        downloads: 89000,
+                        price: 4.99,
+                        tags: ['notifikácie', 'smart', 'AI', 'personalizácia'],
+                        featured: true,
+                        installed: true,
+                        version: '1.8.2',
+                        size: '8.7 MB'
+                    },
+                    {
+                        id: 'ai-code-assistant',
+                        name: 'AI Code Assistant',
+                        author: 'DevTools Inc',
+                        description: 'AI asistent pre programovanie s IntelliSense a code completion',
+                        icon: '💻',
+                        category: 'development',
+                        rating: 4.8,
+                        downloads: 67000,
+                        price: 0,
+                        tags: ['programovanie', 'AI', 'assistant', 'development'],
+                        featured: false,
+                        installed: false,
+                        version: '3.0.1',
+                        size: '23.1 MB'
+                    },
+                    {
+                        id: 'privacy-shield',
+                        name: 'Privacy Shield',
+                        author: 'SecureAI',
+                        description: 'Pokročilá ochrana súkromia s AI-powered threat detection',
+                        icon: '🛡️',
+                        category: 'security',
+                        rating: 4.6,
+                        downloads: 156000,
+                        price: 7.99,
+                        tags: ['súkromie', 'bezpečnosť', 'AI', 'shield'],
+                        featured: true,
+                        installed: false,
+                        version: '1.5.3',
+                        size: '12.4 MB'
+                    },
+                    {
+                        id: 'ai-translator',
+                        name: 'AI Universal Translator',
+                        author: 'LangTech',
+                        description: 'Prekladateľ s AI podporou pre 50+ jazykov v reálnom čase',
+                        icon: '🌐',
+                        category: 'communication',
+                        rating: 4.8,
+                        downloads: 234000,
+                        price: 0,
+                        tags: ['preklad', 'AI', 'jazyky', 'communication'],
+                        featured: false,
+                        installed: false,
+                        version: '2.3.0',
+                        size: '45.8 MB'
+                    },
+                    {
+                        id: 'focus-mode',
+                        name: 'AI Focus Mode',
+                        author: 'ProductivityLab',
+                        description: 'Inteligentný focus mode s AI distraction blocking',
+                        icon: '🎯',
+                        category: 'productivity',
+                        rating: 4.7,
+                        downloads: 98000,
+                        price: 2.99,
+                        tags: ['focus', 'productivity', 'AI', 'distraction'],
+                        featured: false,
+                        installed: true,
+                        version: '1.2.1',
+                        size: '6.3 MB'
+                    },
+                    {
+                        id: 'ai-image-enhancer',
+                        name: 'AI Image Enhancer',
+                        author: 'VisualAI',
+                        description: 'AI vylepšenie obrázkov s neural network processing',
+                        icon: '🖼️',
+                        category: 'graphics',
+                        rating: 4.8,
+                        downloads: 187000,
+                        price: 5.99,
+                        tags: ['obrázky', 'AI', 'enhancement', 'graphics'],
+                        featured: false,
+                        installed: false,
+                        version: '2.0.5',
+                        size: '89.2 MB'
+                    },
+                    {
+                        id: 'health-monitor',
+                        name: 'AI Health Monitor',
+                        author: 'HealthTech',
+                        description: 'AI monitorovanie zdravia s prediktívnou analýzou',
+                        icon: '❤️',
+                        category: 'health',
+                        rating: 4.4,
+                        downloads: 76000,
+                        price: 3.99,
+                        tags: ['zdravie', 'monitor', 'AI', 'analytics'],
+                        featured: false,
+                        installed: false,
+                        version: '1.7.0',
+                        size: '18.9 MB'
+                    }
+                ];
+                
+                this.filteredPlugins = [...this.plugins];
+            }
+
+            loadCategoriesData() {
+                this.categories = [
+                    { id: 'audio', name: 'Audio', icon: '🎵', count: 12 },
+                    { id: 'productivity', name: 'Produktivita', icon: '⚡', count: 18 },
+                    { id: 'development', name: 'Vývoj', icon: '💻', count: 25 },
+                    { id: 'security', name: 'Bezpečnosť', icon: '🛡️', count: 15 },
+                    { id: 'communication', name: 'Komunikácia', icon: '💬', count: 20 },
+                    { id: 'graphics', name: 'Grafika', icon: '🎨', count: 22 },
+                    { id: 'health', name: 'Zdravie', icon: '❤️', count: 14 },
+                    { id: 'education', name: 'Vzdelávanie', icon: '📚', count: 16 },
+                    { id: 'entertainment', name: 'Zábava', icon: '🎮', count: 19 },
+                    { id: 'utilities', name: 'Nástroje', icon: '🔧', count: 28 }
+                ];
+            }
+
+            renderCategories() {
+                const container = document.getElementById('categoriesGrid');
+                
+                container.innerHTML = this.categories.map((category, index) => `
+                    <div class="category-card ai-animate-fade-in" 
+                         data-category="${category.id}"
+                         style="animation-delay: ${index * 0.1}s"
+                         role="button"
+                         tabindex="0"
+                         aria-label="${category.name}: ${category.count} pluginov">
+                        <div class="category-icon" aria-hidden="true">${category.icon}</div>
+                        <div class="category-name">${category.name}</div>
+                        <div class="category-count">${category.count} pluginov</div>
+                    </div>
+                `).join('');
+            }
+
+            renderFeaturedPlugins() {
+                const container = document.getElementById('featuredGrid');
+                const featuredPlugins = this.plugins.filter(plugin => plugin.featured);
+                
+                container.innerHTML = featuredPlugins.map((plugin, index) => `
+                    <div class="plugin-card featured-plugin ai-animate-slide-in-up" 
+                         data-plugin-id="${plugin.id}"
+                         style="animation-delay: ${index * 0.2}s">
+                        ${this.createPluginContent(plugin)}
+                    </div>
+                `).join('');
+            }
+
+            renderPlugins() {
+                const container = document.getElementById('pluginsGrid');
+                const startIndex = (this.currentPage - 1) * this.pluginsPerPage;
+                const endIndex = startIndex + this.pluginsPerPage;
+                const pluginsToShow = this.filteredPlugins.slice(startIndex, endIndex);
+                
+                container.innerHTML = pluginsToShow.map((plugin, index) => `
+                    <div class="plugin-card ai-animate-fade-in" 
+                         data-plugin-id="${plugin.id}"
+                         style="animation-delay: ${index * 0.1}s">
+                        ${this.createPluginContent(plugin)}
+                    </div>
+                `).join('');
+                
+                // Update load more button visibility
+                const loadMoreBtn = document.getElementById('loadMoreBtn');
+                if (endIndex >= this.filteredPlugins.length) {
+                    loadMoreBtn.style.display = 'none';
+                } else {
+                    loadMoreBtn.style.display = 'inline-flex';
+                }
+            }
+
+            createPluginContent(plugin) {
+                const priceText = plugin.price === 0 ? 'Zadarmo' : `${plugin.price}€`;
+                const installButtonText = plugin.installed ? 'Nainštalované' : 'Inštalovať';
+                const installButtonClass = plugin.installed ? 'ai-btn ai-btn-success' : 'ai-btn ai-btn-primary';
+                
+                return `
+                    <div class="plugin-header">
+                        <div class="plugin-icon" aria-hidden="true">${plugin.icon}</div>
+                        <div class="plugin-info">
+                            <div class="plugin-name">${plugin.name}</div>
+                            <div class="plugin-author">od ${plugin.author}</div>
+                            <div class="plugin-rating">
+                                <div class="stars">${this.generateStars(plugin.rating)}</div>
+                                <span class="rating-text">${plugin.rating} (${plugin.downloads.toLocaleString()})</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="plugin-description">${plugin.description}</div>
+                    
+                    <div class="plugin-tags">
+                        ${plugin.tags.map(tag => `<span class="plugin-tag">${tag}</span>`).join('')}
+                    </div>
+                    
+                    <div class="plugin-stats">
+                        <span>v${plugin.version}</span>
+                        <span>${plugin.size}</span>
+                    </div>
+                    
+                    <div class="plugin-actions">
+                        <div class="plugin-price">${priceText}</div>
+                        <button class="${installButtonClass} action-btn" 
+                                onclick="marketplaceApp.toggleInstall('${plugin.id}')" 
+                                data-action="toggleInstall" 
+                                data-plugin-id="${plugin.id}"
+                                aria-label="${installButtonText} ${plugin.name}">
+                            <span aria-hidden="true">${plugin.installed ? 
+                                '<svg class="ai-os-icon"><use href="#icon-check"></use></svg>' : 
+                                '<svg class="ai-os-icon"><use href="#icon-download"></use></svg>'}</span>
+                            ${installButtonText}
+                        </button>
+                    </div>
+                `;
+            }
+
+            generateStars(rating) {
+                const fullStars = Math.floor(rating);
+                const hasHalfStar = rating % 1 >= 0.5;
+                const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+                
+                return '★'.repeat(fullStars) + 
+                       (hasHalfStar ? '☆' : '') + 
+                       '☆'.repeat(emptyStars);
+            }
+
+            setupEventListeners() {
+                // Search form
+                const searchForm = document.getElementById('searchForm');
+                searchForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleSearch();
+                });
+
+                // Search input
+                const searchInput = document.getElementById('searchInput');
+                searchInput.addEventListener('input', 
+                    AIOS.utils.debounce(() => this.handleSearch(), 300)
+                );
+
+                // Filter buttons
+                const filtersSection = document.getElementById('filtersSection');
+                filtersSection.addEventListener('click', (e) => {
+                    const filterBtn = e.target.closest('.filter-btn');
+                    if (filterBtn) {
+                        this.setFilter(filterBtn.dataset.filter);
+                    }
+                });
+
+                // Category cards
+                const categoriesGrid = document.getElementById('categoriesGrid');
+                categoriesGrid.addEventListener('click', (e) => {
+                    const categoryCard = e.target.closest('.category-card');
+                    if (categoryCard) {
+                        this.filterByCategory(categoryCard.dataset.category);
+                    }
+                });
+
+                // Category cards keyboard navigation
+                categoriesGrid.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        const categoryCard = e.target.closest('.category-card');
+                        if (categoryCard) {
+                            this.filterByCategory(categoryCard.dataset.category);
+                        }
+                    }
+                });
+
+                // Load more button
+                document.getElementById('loadMoreBtn').addEventListener('click', () => {
+                    this.loadMorePlugins();
+                });
+
+                // Plugin card interactions
+                document.addEventListener('click', (e) => {
+                    const pluginCard = e.target.closest('.plugin-card');
+                    if (pluginCard && !e.target.closest('.plugin-actions')) {
+                        this.openPluginDetails(pluginCard.dataset.pluginId);
+                    }
+                });
+            }
+
+            handleSearch() {
+                this.searchQuery = document.getElementById('searchInput').value.trim();
+                this.currentPage = 1;
+                this.applyFilters();
+            }
+
+            setFilter(filter) {
+                this.currentFilter = filter;
+                
+                // Update active filter button
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.filter === filter);
+                });
+                
+                this.currentPage = 1;
+                this.applyFilters();
+            }
+
+            filterByCategory(categoryId) {
+                this.currentFilter = `category:${categoryId}`;
+                this.currentPage = 1;
+                this.applyFilters();
+                
+                AIOS.utils.showNotification(`Filtrovanie podľa kategórie: ${categoryId}`, 'info');
+            }
+
+            applyFilters() {
+                let filtered = [...this.plugins];
+                
+                // Apply search filter
+                if (this.searchQuery) {
+                    const query = this.searchQuery.toLowerCase();
+                    filtered = filtered.filter(plugin => 
+                        plugin.name.toLowerCase().includes(query) ||
+                        plugin.description.toLowerCase().includes(query) ||
+                        plugin.author.toLowerCase().includes(query) ||
+                        plugin.tags.some(tag => tag.toLowerCase().includes(query))
+                    );
+                }
+                
+                // Apply category filter
+                if (this.currentFilter.startsWith('category:')) {
+                    const category = this.currentFilter.split(':')[1];
+                    filtered = filtered.filter(plugin => plugin.category === category);
+                } else {
+                    // Apply other filters
+                    switch (this.currentFilter) {
+                        case 'free':
+                            filtered = filtered.filter(plugin => plugin.price === 0);
+                            break;
+                        case 'paid':
+                            filtered = filtered.filter(plugin => plugin.price > 0);
+                            break;
+                        case 'featured':
+                            filtered = filtered.filter(plugin => plugin.featured);
+                            break;
+                        case 'new':
+                            // Simulate new plugins (would be based on release date in real app)
+                            filtered = filtered.filter(plugin => plugin.downloads < 50000);
+                            break;
+                        case 'popular':
+                            filtered = filtered.filter(plugin => plugin.downloads > 100000);
+                            break;
+                        case 'all':
+                        default:
+                            // No additional filtering
+                            break;
+                    }
+                }
+                
+                this.filteredPlugins = filtered;
+                this.renderPlugins();
+            }
+
+            loadMorePlugins() {
+                this.currentPage++;
+                this.renderPlugins();
+                AIOS.utils.showNotification('Načítané ďalšie pluginy', 'success');
+            }
+
+            toggleInstall(pluginId) {
+                const plugin = this.plugins.find(p => p.id === pluginId);
+                if (!plugin) return;
+                
+                plugin.installed = !plugin.installed;
+                
+                const button = document.querySelector(`[data-plugin-id="${pluginId}"] .action-btn`);
+                if (button) {
+                    if (plugin.installed) {
+                        button.className = 'ai-btn ai-btn-success action-btn';
+                        button.innerHTML = '<span aria-hidden="true">✅</span> Nainštalované';
+                        AIOS.utils.showNotification(`${plugin.name} nainštalovaný!`, 'success');
+                    } else {
+                        button.className = 'ai-btn ai-btn-primary action-btn';
+                        button.innerHTML = '<span aria-hidden="true">⬇️</span> Inštalovať';
+                        AIOS.utils.showNotification(`${plugin.name} odinštalovaný`, 'warning');
+                    }
+                    
+                    // Add animation
+                    const card = button.closest('.plugin-card');
+                    if (card) {
+                        card.classList.add(plugin.installed ? 'installed' : '');
+                        setTimeout(() => {
+                            card.classList.remove('installed');
+                        }, 1000);
+                    }
+                }
+            }
+
+            openPluginDetails(pluginId) {
+                const plugin = this.plugins.find(p => p.id === pluginId);
+                if (!plugin) return;
+                
+                const content = `
+                    <div class="ai-text-body ai-mb-lg">
+                        <strong>Autor:</strong> ${plugin.author}<br>
+                        <strong>Verzia:</strong> ${plugin.version}<br>
+                        <strong>Veľkosť:</strong> ${plugin.size}<br>
+                        <strong>Hodnotenie:</strong> ${plugin.rating}/5 (${plugin.downloads.toLocaleString()} stiahnutí)
+                    </div>
+                    
+                    <div class="ai-mb-lg">
+                        <strong>Popis:</strong><br>
+                        ${plugin.description}
+                    </div>
+                    
+                    <div class="ai-mb-lg">
+                        <strong>Špecifikácie:</strong>
+                        <ul style="padding-left: var(--space-md); line-height: 1.6;">
+                            <li>Podporované jazyky: SK, EN, DE, FR</li>
+                            <li>Minimálna verzia AI-OS: 2.0</li>
+                            <li>Požiadavky: 2GB RAM, 100MB disk</li>
+                            <li>Kompatibilita: iOS, Android, Desktop</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="ai-mb-lg">
+                        <strong>Recenzie používateľov:</strong>
+                        <div class="ai-text-small" style="margin-top: var(--space-sm);">
+                            <div style="margin-bottom: var(--space-sm);">
+                                <strong>⭐⭐⭐⭐⭐ Jan K.</strong><br>
+                                <em>"Skvelý plugin, veľmi užitočný!"</em>
+                            </div>
+                            <div>
+                                <strong>⭐⭐⭐⭐⭐ Mária S.</strong><br>
+                                <em>"Odporúčam každému, kto potrebuje túto funkcionalitu."</em>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                AIOS.utils.showModal(plugin.name, content, {
+                    size: 'lg',
+                    footerButtons: [
+                        {
+                            text: plugin.installed ? 'Odinštalovať' : 'Inštalovať',
+                            class: plugin.installed ? 'ai-btn-warning' : 'ai-btn-primary',
+                            onclick: `marketplaceApp.toggleInstall('${pluginId}')`
+                        },
+                        {
+                            text: 'Zavrieť',
+                            class: 'ai-btn-outline',
+                            onclick: null
+                        }
+                    ]
+                });
+            }
+
+            registerWithAIOSCore() {
+                if (window.aiOSCore) {
+                    window.aiOSCore.registerApplication('ai-plugin-marketplace', {
+                        name: 'AI Plugin Marketplace',
+                        description: 'Trh s AI pluginmi a rozšíreniami pre AI-OS ekosystém',
+                        version: '1.0.0',
+                        category: 'ecosystem',
+                        capabilities: ['plugin-management', 'search', 'installation', 'ratings'],
+                        url: window.location.href
+                    });
+                }
+            }
+
+            destroy() {
+                // Cleanup if needed
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            window.marketplaceApp = new PluginMarketplaceApp();
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (window.marketplaceApp) {
+                window.marketplaceApp.destroy();
+            }
+        });
+    </script>
+</body>
+</html>

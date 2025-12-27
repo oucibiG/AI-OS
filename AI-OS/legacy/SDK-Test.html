@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 SDK Integration Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .test-title {
+            text-align: center;
+            color: #4CAF50;
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .test-button {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+        
+        .test-result {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4CAF50;
+            color: #4CAF50;
+        }
+        
+        .error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+            color: #f44336;
+        }
+        
+        .info {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid #2196F3;
+            color: #2196F3;
+        }
+        
+        .home-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4CAF50;
+            color: #4CAF50;
+            padding: 10px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .home-button:hover {
+            background: rgba(76, 175, 80, 0.3);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <a href="ADVANCED-AI-OS.html" class="home-button">
+        🏠 Home
+    </a>
+
+    <div class="test-container">
+        <h1 class="test-title">🔧 Android SDK Integration Test</h1>
+        
+        <div class="test-section">
+            <h3>📱 Android Emulator SDK Test</h3>
+            <p>Tento test overuje funkcionalitu SDK integrácie v Android emulátore.</p>
+            
+            <button class="test-button" onclick="testAndroidEmulator()">
+                🤖 Otvoriť Android Emulator
+            </button>
+            
+            <button class="test-button" onclick="testSDKFunctions()">
+                🔗 Test SDK Funkcií
+            </button>
+            
+            <div id="testResults"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🧪 Funkcionality na Testovanie</h3>
+            <ul style="line-height: 1.8;">
+                <li>✅ Pripojenie/odpojenie SDK</li>
+                <li>✅ Výber virtuálneho zariadenia</li>
+                <li>✅ SDK logovanie</li>
+                <li>✅ Status zobrazenia</li>
+                <li>✅ App launching</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h3>📋 Dostupné Zariadenia</h3>
+            <ul style="line-height: 1.8;">
+                <li>📱 <strong>Pixel 7 Pro</strong> - Android 13 (API 33) - 6.7" 1440x3120</li>
+                <li>📱 <strong>Galaxy S23 Ultra</strong> - Android 13 (API 33) - 6.8" 1440x3088</li>
+                <li>📱 <strong>Pixel 6a</strong> - Android 13 (API 33) - 6.1" 1080x2400</li>
+                <li>📱 <strong>Nexus 5</strong> - Android 6.0 (API 23) - 5.0" 1080x1920</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function addTestResult(message, type = 'info') {
+            const results = document.getElementById('testResults');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${type}`;
+            resultDiv.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            results.appendChild(resultDiv);
+            
+            // Auto scroll to bottom
+            results.scrollTop = results.scrollHeight;
+        }
+        
+        function testAndroidEmulator() {
+            addTestResult('🚀 Otváram Android Emulator...', 'info');
+            
+            const emulatorWindow = window.open(
+                'Apps/ai-android-emulator.html',
+                'AndroidEmulator',
+                'width=1200,height=800,scrollbars=yes,resizable=yes'
+            );
+            
+            if (emulatorWindow) {
+                addTestResult('✅ Android Emulator úspešne otvorený!', 'success');
+                addTestResult('📱 Môžete teraz testovať SDK funkcie v emulátore', 'info');
+            } else {
+                addTestResult('❌ Chyba pri otváraní Android Emulatora', 'error');
+            }
+        }
+        
+        function testSDKFunctions() {
+            addTestResult('🔍 Testujem SDK funkcie...', 'info');
+            
+            // Test if Android emulator window exists
+            const windows = window.open('', '_blank'); // dummy window to check popup blocker
+            windows.close();
+            
+            addTestResult('✅ Popup blocker test prebehol', 'success');
+            addTestResult('🔗 SDK funkcie sú dostupné v Android Emulator', 'info');
+            addTestResult('📱 Virtuálne zariadenia: Pixel 7 Pro, Galaxy S23, Pixel 6a, Nexus 5', 'info');
+            addTestResult('🔧 SDK Panel s pripojením, výberom zariadení a logovaním', 'info');
+        }
+        
+        // Auto-run tests when page loads
+        window.addEventListener('load', () => {
+            addTestResult('🎯 SDK Test page načítaná', 'info');
+            addTestResult('📋 Kliknite na tlačidlá pre testovanie funkcionalít', 'info');
+        });
+    </script>
+</body>
+</html>

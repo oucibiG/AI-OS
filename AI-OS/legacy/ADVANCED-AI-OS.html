@@ -1,0 +1,1976 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AI-OS Pro">
+    <meta name="format-detection" content="telephone=no">
+    <title>🤖 AI-OS Pro - Pokročilý Autonómny Systém</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;AI-OS Pro&quot;,&quot;short_name&quot;:&quot;AI-OS&quot;,&quot;start_url&quot;:&quot;/&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;#000000&quot;,&quot;theme_color&quot;:&quot;#00d4ff&quot;,&quot;orientation&quot;:&quot;portrait-primary&quot;,&quot;icons&quot;:[{&quot;src&quot;:&quot;data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIyNCIgZmlsbD0iIzAwZDRmZiIvPjx0ZXh0IHg9Ijk2IiB5PSIxMDEiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI5NiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiMwMGZmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfkYI8L3RleHQ+PC9zdmc+&quot;,&quot;sizes&quot;:&quot;192x192&quot;,&quot;type&quot;:&quot;image/svg+xml&quot;}]}">
+    
+    <!-- Mobile Mod Loader - iPhone 11 Pro Optimized -->
+    <script src="mobile-mod-loader.js"></script>
+    
+    <!-- AI-OS Core Integration -->
+    <script src="js/ai-os-core.js"></script>
+    <script src="js/ai-os-app-integration.js"></script>
+    
+    <style>
+        /* AI-OS Design System - Standard Variables */
+        :root {
+            /* === AI-OS SPACING SYSTEM === */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --space-xxl: 48px;
+            
+            /* === AI-OS TYPOGRAPHY SCALE === */
+            --text-xs: 0.75rem;    /* 12px - Captions */
+            --text-sm: 0.875rem;   /* 14px - Body Small */
+            --text-base: 1rem;     /* 16px - Body */
+            --text-lg: 1.125rem;   /* 18px - Subtitle */
+            --text-xl: 1.25rem;    /* 20px - Title */
+            --text-2xl: 1.5rem;    /* 24px - Heading */
+            --text-3xl: 1.875rem;  /* 30px - Display */
+            
+            /* === AI-OS COLOR PALETTE === */
+            /* Primary Colors */
+            --primary-50: #f0f9ff;
+            --primary-100: #e0f2fe;
+            --primary-500: #00d4ff;  /* Primary */
+            --primary-600: #0099cc;
+            --primary-900: #003d5c;
+            
+            /* AI-OS Specific Colors */
+            --ai-primary: #00d4ff;   /* Primary AI Cyan */
+            --ai-secondary: #00ff00; /* Matrix Green */
+            --ai-accent: #ff44ff;    /* Magenta */
+            
+            /* Status Colors */
+            --success: #10b981;    /* Green */
+            --warning: #f59e0b;    /* Amber */
+            --error: #ef4444;      /* Red */
+            --info: #3b82f6;       /* Blue */
+            
+            /* Semantic Colors */
+            --text-primary: #ffffff;
+            --text-secondary: #e0e0e0;
+            --text-muted: #888888;
+            --background: #000000;
+            --surface: #0a0a0a;
+            --surface-light: #1a1a1a;
+            
+            /* === Z-INDEX HIERARCHY === */
+            --z-dropdown: 1000;
+            --z-sticky: 1020;
+            --z-fixed: 1030;
+            --z-modal-backdrop: 1040;
+            --z-modal: 1050;
+            --z-popover: 1060;
+            --z-tooltip: 1070;
+            --z-toast: 1080;
+            
+            /* === SAFE AREAS === */
+            --safe-area-top: 44px;
+            --safe-area-bottom: 34px;
+            --safe-area-left: 0px;
+            --safe-area-right: 0px;
+            
+            /* === FONT STACK === */
+            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+            --font-display: 'Inter Display', 'Inter', sans-serif;
+            
+            /* === BORDER RADIUS === */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 24px;
+            
+            /* === SHADOWS === */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 32px rgba(0, 212, 255, 0.15);
+            --shadow-xl: 0 16px 48px rgba(0, 212, 255, 0.25);
+            
+            /* === TRANSITIONS === */
+            --transition-fast: 0.15s cubic-bezier(0.4, 0.0, 0.2, 1);
+            --transition-normal: 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            --transition-slow: 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        /* === RESET & BASE STYLES === */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            font-size: var(--text-base);
+            line-height: 1.5;
+            color: var(--text-primary);
+            background: var(--background);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* === AI-OS CONTAINER === */
+        .ai-os-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: linear-gradient(135deg, #000000 0%, #001122 50%, #000000 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            min-height: 0;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* === HEADER COMPONENT === */
+        .ai-header {
+            position: relative;
+            padding: var(--space-lg) var(--space-md);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            margin-bottom: var(--space-md);
+        }
+
+        .ai-header h1 {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--ai-primary);
+            margin-bottom: var(--space-xs);
+            background: linear-gradient(45deg, var(--ai-primary), var(--ai-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .ai-subtitle {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        /* === STATUS BAR COMPONENT === */
+        .ai-status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: var(--radius-md);
+            margin: 0 var(--space-md) var(--space-md);
+            font-size: var(--text-xs);
+        }
+
+        .ai-status-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--ai-secondary);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        .status-dot.online { background: var(--success); }
+        .status-dot.processing { background: var(--warning); animation: processing 1s infinite; }
+        .status-dot.offline { background: var(--error); }
+
+        @keyframes processing {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* === APPS CONTAINER === */
+        .ai-apps-container {
+            flex: 1;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            padding: var(--space-md) 0 var(--space-xl);
+            min-height: 0;
+        }
+
+        /* === APPS GRID COMPONENT === */
+        .ai-apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: var(--space-md);
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+
+        /* Mobile Grid Optimization */
+        @media (max-width: 768px) {
+            .ai-apps-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: var(--space-sm);
+                padding: 0 var(--space-sm);
+            }
+        }
+
+        @media (max-width: 414px) {
+            .ai-apps-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--space-xs);
+            }
+        }
+
+        /* === APP CARD COMPONENT === */
+        .ai-app-card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            padding: var(--space-lg) var(--space-md);
+            background: rgba(0, 212, 255, 0.08);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: var(--radius-xl);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all var(--transition-normal);
+            cursor: pointer;
+            overflow: hidden;
+            min-height: 140px;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+        }
+
+        .ai-app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(0, 212, 255, 0.1) 0%, 
+                rgba(0, 212, 255, 0.05) 50%, 
+                rgba(0, 212, 255, 0.1) 100%);
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+            pointer-events: none;
+            border-radius: var(--radius-xl);
+        }
+
+        .ai-app-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.1), 
+                transparent);
+            transition: left 0.8s ease;
+            pointer-events: none;
+            border-radius: var(--radius-xl);
+        }
+
+        .ai-app-card:hover::before {
+            opacity: 1;
+        }
+
+        .ai-app-card:hover::after {
+            left: 100%;
+        }
+
+        .ai-app-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--ai-primary);
+            background: rgba(0, 212, 255, 0.15);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .ai-app-card:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+
+        /* === APP ICON === */
+        .ai-app-icon {
+            font-size: var(--text-3xl);
+            margin-bottom: var(--space-sm);
+            filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.5));
+            transition: all var(--transition-fast);
+            position: relative;
+            z-index: 1;
+        }
+
+        .ai-app-card:hover .ai-app-icon {
+            transform: scale(1.1) rotate(5deg);
+            filter: drop-shadow(0 0 16px rgba(0, 212, 255, 0.8));
+        }
+
+        /* === APP TITLE === */
+        .ai-app-title {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+            text-align: center;
+            text-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+            transition: all var(--transition-fast);
+            position: relative;
+            z-index: 1;
+        }
+
+        .ai-app-card:hover .ai-app-title {
+            color: var(--ai-primary);
+            text-shadow: 0 0 12px rgba(0, 212, 255, 0.6);
+        }
+
+        /* === APP DESCRIPTION === */
+        .ai-app-description {
+            font-size: var(--text-xs);
+            color: var(--text-secondary);
+            text-align: center;
+            line-height: 1.4;
+            opacity: 0.8;
+            transition: all var(--transition-fast);
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ai-app-card:hover .ai-app-description {
+            opacity: 1;
+            color: var(--text-primary);
+        }
+
+        /* === FEATURED APP ANIMATION === */
+        @keyframes appGlow {
+            0%, 100% { 
+                box-shadow: var(--shadow-md);
+            }
+            50% { 
+                box-shadow: var(--shadow-lg);
+            }
+        }
+
+        .ai-app-card.featured {
+            animation: appGlow 3s ease-in-out infinite;
+        }
+
+        /* === LAUNCH ANIMATION === */
+        @keyframes appLaunch {
+            0% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.05) rotate(2deg); }
+            50% { transform: scale(1.1) rotate(0deg); }
+            75% { transform: scale(1.05) rotate(-2deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .ai-app-card.launching {
+            animation: appLaunch 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        /* === VOICE INTERFACE COMPONENT === */
+        .voice-interface-btn {
+            position: fixed;
+            bottom: calc(var(--safe-area-bottom) + var(--space-md));
+            right: var(--space-md);
+            width: 56px;
+            height: 56px;
+            background: rgba(0, 212, 255, 0.2);
+            border: 2px solid var(--ai-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            backdrop-filter: blur(10px);
+            z-index: var(--z-fixed);
+            animation: voiceFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes voiceFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        .voice-interface-btn:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .voice-interface-btn.active {
+            background: var(--ai-primary);
+            animation: voiceActive 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes voiceActive {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        .voice-icon {
+            font-size: var(--text-xl);
+            color: var(--ai-primary);
+            transition: color var(--transition-fast);
+        }
+
+        .voice-interface-btn.active .voice-icon {
+            color: var(--background);
+        }
+
+        /* === AI LEARNING INDICATOR === */
+        .ai-learning-indicator {
+            position: fixed;
+            top: calc(var(--safe-area-top) + var(--space-sm));
+            left: var(--space-sm);
+            right: var(--space-sm);
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: var(--radius-md);
+            padding: var(--space-xs) var(--space-sm);
+            font-size: var(--text-xs);
+            color: var(--text-secondary);
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transform: translateY(-100px);
+            transition: transform var(--transition-slow);
+            z-index: var(--z-sticky);
+        }
+
+        .ai-learning-indicator.show {
+            transform: translateY(0);
+        }
+
+        /* === LOADING SCREEN === */
+        .ai-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--background);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: var(--z-modal);
+            transition: opacity var(--transition-normal);
+        }
+
+        .ai-loading.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .ai-loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(0, 212, 255, 0.3);
+            border-top: 3px solid var(--ai-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: var(--space-lg);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .ai-loading-text {
+            font-size: var(--text-lg);
+            color: var(--ai-primary);
+            font-weight: 500;
+        }
+
+        /* === NOTIFICATION SYSTEM === */
+        .ai-notification {
+            position: fixed;
+            bottom: calc(var(--safe-area-bottom) + 80px);
+            left: var(--space-md);
+            right: var(--space-md);
+            background: rgba(0, 212, 255, 0.9);
+            color: var(--background);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            z-index: var(--z-toast);
+            transform: translateY(100px);
+            transition: transform var(--transition-normal);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .ai-notification.show {
+            transform: translateY(0);
+        }
+
+        .ai-notification.success {
+            background: rgba(16, 185, 129, 0.9);
+        }
+
+        .ai-notification.error {
+            background: rgba(239, 68, 68, 0.9);
+        }
+
+        .ai-notification.warning {
+            background: rgba(245, 158, 11, 0.9);
+        }
+
+        /* === ACCESSIBILITY IMPROVEMENTS === */
+        /* Focus indicators */
+        .ai-app-card:focus-visible {
+            outline: 2px solid var(--ai-primary);
+            outline-offset: 2px;
+        }
+
+        .voice-interface-btn:focus-visible {
+            outline: 2px solid var(--ai-primary);
+            outline-offset: 2px;
+        }
+
+        /* High contrast mode */
+        @media (prefers-contrast: high) {
+            :root {
+                --border-color: rgba(0, 212, 255, 0.8);
+                --text-primary: #ffffff;
+                --text-secondary: #cccccc;
+            }
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* === COMPREHENSIVE RESPONSIVE DESIGN === */
+        /* AI-OS Responsive System - Mobile First */
+        
+        /* Large tablets and small laptops - 1024px */
+        @media (max-width: 1024px) {
+            .ai-os-container {
+                padding: var(--space-md);
+            }
+            
+            .ai-header {
+                padding: var(--space-lg);
+            }
+            
+            .ai-header h1 {
+                font-size: var(--text-2xl);
+            }
+            
+            .ai-apps-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: var(--space-md);
+            }
+        }
+        
+        /* Tablets - 768px */
+        @media (max-width: 768px) {
+            .ai-os-container {
+                padding: var(--space-sm);
+            }
+            
+            .ai-header {
+                padding: var(--space-md);
+                text-align: center;
+            }
+            
+            .ai-header h1 {
+                font-size: var(--text-xl);
+                margin-bottom: var(--space-xs);
+            }
+            
+            .ai-subtitle {
+                font-size: var(--text-sm);
+            }
+            
+            .ai-status-bar {
+                flex-wrap: wrap;
+                gap: var(--space-sm);
+                padding: var(--space-sm) var(--space-md);
+            }
+            
+            .ai-apps-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: var(--space-sm);
+                padding: 0 var(--space-sm);
+            }
+            
+            .ai-app-card {
+                padding: var(--space-md);
+                min-height: 130px;
+            }
+            
+            .ai-app-icon {
+                font-size: var(--text-2xl);
+                margin-bottom: var(--space-xs);
+            }
+            
+            .ai-app-title {
+                font-size: var(--text-sm);
+            }
+            
+            .ai-app-description {
+                font-size: var(--text-xs);
+            }
+        }
+        
+        /* Large phones and small tablets - 640px */
+        @media (max-width: 640px) {
+            .ai-header {
+                padding: var(--space-md) var(--space-sm);
+            }
+            
+            .ai-header h1 {
+                font-size: var(--text-lg);
+            }
+            
+            .ai-subtitle {
+                font-size: var(--text-xs);
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            
+            .ai-status-bar {
+                padding: var(--space-xs) var(--space-sm);
+            }
+            
+            .ai-status-indicator {
+                font-size: var(--text-xs);
+            }
+            
+            .ai-apps-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: var(--space-xs);
+            }
+            
+            .ai-app-card {
+                padding: var(--space-sm);
+                min-height: 110px;
+                border-radius: var(--radius-lg);
+            }
+            
+            .ai-app-icon {
+                font-size: var(--text-xl);
+                margin-bottom: 2px;
+            }
+            
+            .ai-app-title {
+                font-size: var(--text-xs);
+                margin-bottom: 2px;
+            }
+            
+            .ai-app-description {
+                display: none;
+            }
+            
+            .voice-interface-btn {
+                width: 48px;
+                height: 48px;
+                bottom: var(--space-md);
+                right: var(--space-md);
+            }
+        }
+        
+        /* Small phones - 480px */
+        @media (max-width: 480px) {
+            .ai-os-container {
+                padding: var(--space-xs);
+            }
+            
+            .ai-header {
+                padding: var(--space-sm);
+            }
+            
+            .ai-header h1 {
+                font-size: var(--text-lg);
+            }
+            
+            .ai-subtitle {
+                font-size: 11px;
+            }
+            
+            .ai-status-bar {
+                padding: var(--space-xs);
+                font-size: var(--text-xs);
+            }
+            
+            .ai-apps-container {
+                padding: var(--space-xs) 0;
+            }
+            
+            .ai-apps-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: var(--space-xs);
+            }
+            
+            .ai-app-card {
+                padding: var(--space-sm) var(--space-xs);
+                min-height: 100px;
+                border-radius: var(--radius-md);
+                background: rgba(0, 212, 255, 0.05);
+            }
+            
+            .ai-app-icon {
+                font-size: var(--text-lg);
+                margin-bottom: 2px;
+            }
+            
+            .ai-app-title {
+                font-size: 10px;
+                font-weight: var(--font-weight-medium);
+            }
+            
+            .ai-app-description {
+                display: none;
+            }
+            
+            .voice-interface-btn {
+                width: 44px;
+                height: 44px;
+                bottom: var(--space-sm);
+                right: var(--space-sm);
+            }
+            
+            .voice-icon {
+                font-size: 18px;
+            }
+        }
+        
+        /* Extra small phones - 360px */
+        @media (max-width: 360px) {
+            .ai-apps-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .ai-app-card {
+                min-height: 90px;
+                padding: var(--space-xs);
+            }
+            
+            .ai-app-icon {
+                font-size: var(--text-base);
+            }
+            
+            .ai-app-title {
+                font-size: 9px;
+            }
+        }
+        
+        /* Landscape orientation adjustments */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .ai-header {
+                padding: var(--space-xs) var(--space-md);
+            }
+            
+            .ai-header h1 {
+                font-size: var(--text-base);
+                margin-bottom: 0;
+            }
+            
+            .ai-subtitle {
+                display: none;
+            }
+            
+            .ai-status-bar {
+                padding: var(--space-xs);
+            }
+            
+            .ai-apps-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: var(--space-xs);
+            }
+            
+            .ai-app-card {
+                min-height: 80px;
+                padding: var(--space-xs);
+            }
+            
+            .ai-app-icon {
+                font-size: var(--text-base);
+            }
+            
+            .ai-app-title {
+                font-size: var(--text-xs);
+            }
+            
+            .ai-app-description {
+                display: none;
+            }
+        }
+
+        /* === TOUCH TARGET SIZES (44px minimum) === */
+        @media (pointer: coarse) {
+            .ai-app-card {
+                min-height: 48px;
+                padding: var(--space-md);
+            }
+            
+            .voice-interface-btn {
+                width: 48px;
+                height: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- AI Loading Screen -->
+    <div class="ai-loading" id="aiLoading" role="status" aria-label="Načítava sa AI-OS">
+        <div class="ai-loading-spinner" aria-hidden="true"></div>
+        <div class="ai-loading-text">Inicializujem AI-OS Pro...</div>
+    </div>
+
+    <!-- AI Learning Indicator -->
+    <div class="ai-learning-indicator" id="aiLearningIndicator" role="status" aria-live="polite">
+        🧠 AI sa učí z vašich interakcií...
+    </div>
+
+    <div class="ai-os-container">
+        <!-- AI Header -->
+        <header class="ai-header">
+            <h1>🤖 AI-OS Pro</h1>
+            <p class="ai-subtitle">Pokročilý autonómny operačný systém s AI agentmi</p>
+        </header>
+
+        <!-- AI Status Bar -->
+        <div class="ai-status-bar" role="status" aria-live="polite">
+            <div class="ai-status-indicator">
+                <div class="status-dot online" id="aiStatusDot" aria-hidden="true"></div>
+                <span id="aiStatusText">AI Agenti Online</span>
+            </div>
+            <div class="ai-status-indicator">
+                <span id="currentTime">--:--</span>
+                <span id="aiPerformance">100%</span>
+            </div>
+        </div>
+
+        <!-- AI Apps Container -->
+        <main class="ai-apps-container" role="main">
+            <div class="ai-apps-grid" id="aiAppsGrid" role="grid" aria-label="AI-OS Aplikácie">
+                <!-- AI Apps will be dynamically generated -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Voice Interface Button -->
+    <button class="voice-interface-btn" id="voiceInterfaceBtn" 
+            aria-label="Aktivovať hlasové ovládanie" 
+            aria-pressed="false">
+        <div class="voice-icon" aria-hidden="true">🎤</div>
+    </button>
+
+    <script>
+        /**
+         * AI-OS Pro System - Standardized Implementation
+         * Based on AI-OS-OS-STANDARDS.md
+         */
+        class AIOSPro {
+            constructor() {
+                this.aiAgents = new Map();
+                this.learningData = {
+                    interactions: [],
+                    preferences: {},
+                    usagePatterns: new Map()
+                };
+                this.isVoiceActive = false;
+                this.isProcessing = false;
+                this.aiOSCore = null;
+                
+                this.init();
+            }
+
+            async init() {
+                console.log('🚀 Inicializujem AI-OS Pro podľa štandardov...');
+                
+                // Initialize AI-OS Core first
+                await this.initializeAIOSCore();
+                
+                // Initialize AI agents
+                await this.initializeAIAgents();
+                
+                // Setup event listeners
+                this.setupEventListeners();
+                
+                // Start learning system
+                this.startLearningSystem();
+                
+                // Hide loading screen
+                setTimeout(() => {
+                    this.hideLoadingScreen();
+                }, 2000);
+                
+                console.log('✅ AI-OS Pro úspešne inicializovaný podľa štandardov');
+            }
+
+            async initializeAIAgents() {
+                // Core AI Agents based on standards hierarchy
+                const agents = [
+                    {
+                        id: 'autonomous-os',
+                        name: 'Autonómny OS',
+                        description: 'Pokročilý systém s AI agentmi',
+                        icon: '🖥️',
+                        category: 'core',
+                        capabilities: ['window-management', 'ai-dashboard', 'agent-orchestration'],
+                        priority: 'high'
+                    },
+                    {
+                        id: 'voice-interface',
+                        name: 'Hlasové Rozhranie',
+                        description: 'AI asistent s rozpoznávaním reči',
+                        icon: '🎤',
+                        category: 'interface',
+                        capabilities: ['speech-recognition', 'natural-language', 'slovak-support'],
+                        priority: 'high'
+                    },
+                    {
+                        id: 'ai-learning',
+                        name: 'AI Učenie',
+                        description: 'Adaptívne učenie a personalizácia',
+                        icon: '🧠',
+                        category: 'intelligence',
+                        capabilities: ['machine-learning', 'pattern-recognition', 'adaptation'],
+                        priority: 'high'
+                    },
+                    {
+                        id: 'performance-optimizer',
+                        name: 'Optimalizátor',
+                        description: 'Inteligentná optimalizácia systému',
+                        icon: '⚡',
+                        category: 'optimization',
+                        capabilities: ['resource-management', 'performance-tuning', 'battery-optimization'],
+                        priority: 'medium'
+                    },
+                    {
+                        id: 'plugin-marketplace',
+                        name: 'Plugin Trh',
+                        description: 'AI rozšírenia a funkcie',
+                        icon: '🔌',
+                        category: 'ecosystem',
+                        capabilities: ['plugin-management', 'ai-extensions', 'customization'],
+                        priority: 'medium'
+                    },
+                    {
+                        id: 'universal-interface',
+                        name: 'Univerzálne Rozhranie',
+                        description: 'Mobilné/desktop rozhranie',
+                        icon: '📱',
+                        category: 'interface',
+                        capabilities: ['responsive-design', 'touch-gestures', 'multi-platform'],
+                        priority: 'medium'
+                    },
+                    {
+                        id: 'terminal-shell',
+                        name: 'Terminál',
+                        description: 'AI shell s bezpečnostnými nástrojmi',
+                        icon: '💻',
+                        category: 'tools',
+                        capabilities: ['command-line', 'security-tools', 'ai-assistance'],
+                        priority: 'medium'
+                    },
+                    {
+                        id: 'android-emulator',
+                        name: 'Android Emulátor',
+                        description: 'Plná simulácia Android zariadenia',
+                        icon: '🤖',
+                        category: 'emulation',
+                        capabilities: ['android-simulation', 'apk-management', 'multi-instance'],
+                        priority: 'low'
+                    },
+                    {
+                        id: 'system-monitor',
+                        name: 'Monitor',
+                        description: 'Monitorovanie systému v reálnom čase',
+                        icon: '📊',
+                        category: 'monitoring',
+                        capabilities: ['real-time-monitoring', 'analytics', 'performance-metrics'],
+                        priority: 'low'
+                    },
+                    {
+                        id: 'network-scanner',
+                        name: 'Sieťový Skener',
+                        description: 'Bezpečnostná analýza siete',
+                        icon: '🌐',
+                        category: 'security',
+                        capabilities: ['network-analysis', 'port-scanning', 'security-audit'],
+                        priority: 'low'
+                    },
+                    {
+                        id: 'ios-environment',
+                        name: 'iOS Prostredie',
+                        description: 'Native iOS-style interface s AI-OS integráciou',
+                        icon: '🍎',
+                        category: 'interface',
+                        capabilities: ['ios-design', 'touch-gestures', 'native-experience'],
+                        priority: 'low'
+                    }
+                ];
+
+                // Initialize agents with standardized properties
+                agents.forEach(agent => {
+                    this.aiAgents.set(agent.id, {
+                        ...agent,
+                        status: 'active',
+                        lastUsed: Date.now(),
+                        performance: Math.random() * 20 + 80, // 80-100%
+                        position: this.getPriorityPosition(agent.priority)
+                    });
+                });
+            }
+
+            getPriorityPosition(priority) {
+                switch(priority) {
+                    case 'high': return 0;
+                    case 'medium': return 1;
+                    case 'low': return 2;
+                    default: return 3;
+                }
+            }
+
+            async initializeAIOSCore() {
+                console.log('🔗 Initializing AI-OS Core integration...');
+                
+                // Wait for AI-OS Core to be available
+                if (window.aiOSCore) {
+                    this.aiOSCore = window.aiOSCore;
+                    console.log('✅ AI-OS Core connected');
+                } else {
+                    console.warn('⚠️ AI-OS Core not found, running in standalone mode');
+                }
+                
+                // Register main AI-OS interface with core
+                if (this.aiOSCore && this.aiOSCore.registerApplication) {
+                    this.aiOSCore.registerApplication('ai-os-main', {
+                        name: 'AI-OS Main Interface',
+                        version: '2.0.0',
+                        capabilities: ['ui-management', 'app-launching', 'system-integration'],
+                        url: window.location.href,
+                        category: 'core',
+                        priority: 'high'
+                    });
+                }
+                
+                // Setup inter-app communication
+                this.setupInterAppCommunication();
+            }
+
+            setupInterAppCommunication() {
+                if (!this.aiOSCore) return;
+                
+                // Listen for app registration events
+                this.aiOSCore.on('appRegistered', (appInfo) => {
+                    console.log(`📱 App registered: ${appInfo.name}`);
+                    this.updateAppStatus(appInfo.appId, 'registered');
+                });
+                
+                // Listen for app state changes
+                this.aiOSCore.on('appStateChanged', (appInfo) => {
+                    console.log(`🔄 App state changed: ${appInfo.appId} -> ${appInfo.state}`);
+                    this.updateAppStatus(appInfo.appId, appInfo.state);
+                });
+                
+                // Listen for system state updates
+                this.aiOSCore.on('systemStateUpdate', (systemState) => {
+                    this.updateSystemMetrics(systemState);
+                });
+            }
+
+            updateAppStatus(appId, status) {
+                console.log(`📱 App ${appId} status: ${status}`);
+            }
+
+            updateSystemMetrics(systemState) {
+                console.log('📊 System metrics updated:', systemState);
+            }
+
+            setupEventListeners() {
+                // Voice interface button with accessibility
+                const voiceBtn = document.getElementById('voiceInterfaceBtn');
+                voiceBtn.addEventListener('click', () => {
+                    this.toggleVoiceInterface();
+                });
+
+                // Keyboard accessibility
+                voiceBtn.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.toggleVoiceInterface();
+                    }
+                });
+
+                // Touch gestures for mobile
+                this.setupTouchGestures();
+
+                // AI agent cards interaction with accessibility
+                this.setupAgentCardInteractions();
+
+                // Scroll detection
+                this.setupScrollDetection();
+
+                // Learning indicators
+                this.setupLearningIndicators();
+            }
+
+            setupTouchGestures() {
+                let startY = 0;
+                let startTime = 0;
+
+                document.addEventListener('touchstart', (e) => {
+                    startY = e.touches[0].clientY;
+                    startTime = Date.now();
+                }, { passive: true });
+
+                document.addEventListener('touchend', (e) => {
+                    const endY = e.changedTouches[0].clientY;
+                    const endTime = Date.now();
+                    const deltaY = startY - endY;
+                    const deltaTime = endTime - startTime;
+
+                    // Swipe up for AI insights
+                    if (deltaY > 50 && deltaTime < 300) {
+                        this.showAIInsights();
+                    }
+
+                    // Swipe down for quick actions
+                    if (deltaY < -50 && deltaTime < 300) {
+                        this.showQuickActions();
+                    }
+                }, { passive: true });
+            }
+
+            setupScrollDetection() {
+                const appsContainer = document.querySelector('.ai-apps-container');
+                if (appsContainer) {
+                    let scrollTimeout;
+                    
+                    appsContainer.addEventListener('scroll', () => {
+                        clearTimeout(scrollTimeout);
+                        scrollTimeout = setTimeout(() => {
+                            // Handle scroll end if needed
+                        }, 300);
+                    });
+                }
+            }
+
+            setupAgentCardInteractions() {
+                document.querySelectorAll('.ai-app-card').forEach(card => {
+                    // Click event
+                    card.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const agentId = card.dataset.agentId;
+                        this.launchAIAgent(agentId);
+                        
+                        // Learning: record interaction
+                        this.recordInteraction('agent-launch', agentId);
+                    });
+
+                    // Keyboard accessibility
+                    card.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            const agentId = card.dataset.agentId;
+                            this.launchAIAgent(agentId);
+                            this.recordInteraction('agent-launch', agentId);
+                        }
+                    });
+
+                    // Haptic feedback simulation
+                    card.addEventListener('touchstart', () => {
+                        if (navigator.vibrate) {
+                            navigator.vibrate(10);
+                        }
+                    });
+                });
+            }
+
+            setupLearningIndicators() {
+                // Show learning indicator periodically
+                setInterval(() => {
+                    this.showLearningIndicator();
+                }, 30000);
+            }
+
+            startLearningSystem() {
+                // AI Learning simulation
+                setInterval(() => {
+                    this.updateAILearning();
+                }, 5000);
+
+                // Pattern detection
+                setInterval(() => {
+                    this.detectPatterns();
+                }, 10000);
+
+                // Adaptive interface updates
+                setInterval(() => {
+                    this.adaptInterface();
+                }, 15000);
+            }
+
+            updateAILearning() {
+                this.isProcessing = true;
+                this.updateAIStatus('Spracovávam...', 'processing');
+                
+                // Simulate AI learning from user interactions
+                setTimeout(() => {
+                    this.isProcessing = false;
+                    this.updateAIStatus('AI Agenti Online', 'online');
+                }, 2000);
+            }
+
+            detectPatterns() {
+                // Analyze user interaction patterns
+                const recentInteractions = this.learningData.interactions
+                    .filter(i => i.timestamp > Date.now() - 300000)
+                    .slice(-10);
+
+                if (recentInteractions.length > 5) {
+                    this.showLearningInsight('Zistil som vzor vo vašom používaní!');
+                }
+            }
+
+            adaptInterface() {
+                // Adapt interface based on learning
+                const frequentlyUsed = this.getMostUsedAgents();
+                
+                // Animate frequently used agents
+                frequentlyUsed.forEach(agentId => {
+                    const card = document.querySelector(`[data-agent-id="${agentId}"]`);
+                    if (card) {
+                        card.style.transform = 'scale(1.02)';
+                        setTimeout(() => {
+                            card.style.transform = '';
+                        }, 1000);
+                    }
+                });
+            }
+
+            async launchAIAgent(agentId) {
+                const agent = this.aiAgents.get(agentId);
+                if (!agent) return;
+
+                // Update agent status
+                agent.lastUsed = Date.now();
+                agent.performance = Math.min(100, agent.performance + Math.random() * 2);
+
+                // Show launch animation
+                this.showAgentLaunchAnimation(agent);
+
+                // Get application URL
+                const appUrl = this.getAgentUrl(agentId);
+                
+                // Launch agent application with AI-OS integration
+                console.log(`🚀 Spúšťam AI agenta: ${agent.name}`);
+                console.log(`📱 Otváram aplikáciu: ${appUrl}`);
+                
+                // Open application with AI-OS integration
+                if (appUrl && appUrl !== '#') {
+                    const appWindow = window.open(appUrl, '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+                    
+                    // Wait for app to load and register with AI-OS Core
+                    setTimeout(() => {
+                        if (appWindow && !appWindow.closed) {
+                            appWindow.postMessage({
+                                type: 'aiOSRegistration',
+                                data: {
+                                    appId: agentId,
+                                    appName: agent.name,
+                                    capabilities: agent.capabilities
+                                }
+                            }, window.location.origin);
+                        }
+                    }, 2000);
+                    
+                    this.showNotification(`Spúšťam ${agent.name}...`, 'success');
+                    
+                    // Emit to AI-OS Core
+                    if (window.aiOSCore) {
+                        window.aiOSCore.emit('appLaunch', { appId: agentId, appName: agent.name });
+                    }
+                } else {
+                    this.showNotification(`${agent.name} nie je dostupný`, 'error');
+                }
+                
+                // Record learning data
+                this.recordInteraction('agent-launch', agentId);
+            }
+
+            showAgentLaunchAnimation(agent) {
+                // Create enhanced launch effect
+                const card = document.querySelector(`[data-agent-id="${agent.id}"]`);
+                if (card) {
+                    // Add launching class for CSS animation
+                    card.classList.add('launching');
+                    
+                    // Add haptic feedback if available
+                    if (navigator.vibrate) {
+                        navigator.vibrate([50, 30, 50]);
+                    }
+                    
+                    // Enhanced visual effects
+                    card.style.transform = 'scale(1.02)';
+                    card.style.boxShadow = '0 0 40px rgba(0, 212, 255, 0.8)';
+                    card.style.borderColor = '#00d4ff';
+                    
+                    setTimeout(() => {
+                        card.classList.remove('launching');
+                        card.style.transform = '';
+                        card.style.boxShadow = '';
+                        card.style.borderColor = '';
+                    }, 800);
+                }
+            }
+
+            toggleVoiceInterface() {
+                this.isVoiceActive = !this.isVoiceActive;
+                const btn = document.getElementById('voiceInterfaceBtn');
+                
+                if (this.isVoiceActive) {
+                    btn.classList.add('active');
+                    btn.setAttribute('aria-pressed', 'true');
+                    this.startVoiceListening();
+                    this.recordInteraction('voice-activate', 'voice-interface');
+                } else {
+                    btn.classList.remove('active');
+                    btn.setAttribute('aria-pressed', 'false');
+                    this.stopVoiceListening();
+                }
+            }
+
+            startVoiceListening() {
+                // Initialize speech recognition for Slovak
+                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    const recognition = new SpeechRecognition();
+                    
+                    recognition.lang = 'sk-SK';
+                    recognition.continuous = true;
+                    recognition.interimResults = true;
+                    
+                    recognition.onresult = (event) => {
+                        this.handleVoiceCommand(event);
+                    };
+                    
+                    recognition.onerror = (event) => {
+                        console.error('Chyba rozpoznávania hlasu:', event.error);
+                    };
+                    
+                    recognition.start();
+                    this.recognition = recognition;
+                }
+            }
+
+            stopVoiceListening() {
+                if (this.recognition) {
+                    this.recognition.stop();
+                    this.recognition = null;
+                }
+            }
+
+            handleVoiceCommand(event) {
+                const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase();
+                
+                // Slovak voice commands
+                const commands = {
+                    'otvor': (app) => this.launchAIAgent(app),
+                    'spusti': (app) => this.launchAIAgent(app),
+                    'zastav': () => this.stopVoiceListening(),
+                    'domov': () => this.goHome(),
+                    'nastavenia': () => this.openSettings(),
+                    'pomoc': () => this.showHelp()
+                };
+
+                // Process commands
+                Object.keys(commands).forEach(command => {
+                    if (transcript.includes(command)) {
+                        commands[command]();
+                    }
+                });
+            }
+
+            showAIInsights() {
+                // Show AI learning insights
+                const insights = [
+                    'Vaše najčastejšie používaná aplikácia je hlasové rozhranie',
+                    'Najaktívnejší ste medzi 14:00-16:00',
+                    'Používate predovšetkým bezpečnostné nástroje',
+                    'Vaše gestá naznačujú preferencie pre rýchle akcie'
+                ];
+
+                const randomInsight = insights[Math.floor(Math.random() * insights.length)];
+                this.showNotification(randomInsight, 'info');
+            }
+
+            showQuickActions() {
+                this.showNotification('Rýchle akcie: AI optimalizácia spustená', 'success');
+            }
+
+            showLearningIndicator() {
+                const indicator = document.getElementById('aiLearningIndicator');
+                indicator.classList.add('show');
+                
+                setTimeout(() => {
+                    indicator.classList.remove('show');
+                }, 3000);
+            }
+
+            showLearningInsight(message) {
+                this.showNotification(message, 'info');
+            }
+
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `ai-notification ${type}`;
+                notification.textContent = message;
+                notification.setAttribute('role', 'alert');
+                notification.setAttribute('aria-live', 'polite');
+                
+                document.body.appendChild(notification);
+                
+                // Show notification
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 100);
+                
+                // Hide notification
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        if (document.body.contains(notification)) {
+                            document.body.removeChild(notification);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+
+            updateAIStatus(text, status) {
+                document.getElementById('aiStatusText').textContent = text;
+                
+                const dot = document.getElementById('aiStatusDot');
+                dot.className = `status-dot ${status}`;
+            }
+
+            hideLoadingScreen() {
+                const loading = document.getElementById('aiLoading');
+                loading.classList.add('hidden');
+                
+                // Generate AI apps grid
+                this.generateAIAppsGrid();
+                
+                // Start time update
+                this.updateTime();
+                setInterval(() => this.updateTime(), 1000);
+            }
+
+            generateAIAppsGrid() {
+                const grid = document.getElementById('aiAppsGrid');
+                
+                // Sort agents by priority and position
+                const sortedAgents = Array.from(this.aiAgents.values())
+                    .sort((a, b) => {
+                        if (a.priority !== b.priority) {
+                            const priorityOrder = { 'high': 0, 'medium': 1, 'low': 2 };
+                            return priorityOrder[a.priority] - priorityOrder[b.priority];
+                        }
+                        return a.position - b.position;
+                    });
+                
+                sortedAgents.forEach(agent => {
+                    const card = document.createElement('a');
+                    card.href = this.getAgentUrl(agent.id);
+                    card.className = 'ai-app-card';
+                    card.dataset.agentId = agent.id;
+                    card.setAttribute('role', 'gridcell');
+                    card.setAttribute('tabindex', '0');
+                    card.setAttribute('aria-label', `${agent.name}: ${agent.description}`);
+                    
+                    if (agent.priority === 'high') {
+                        card.classList.add('featured');
+                    }
+                    
+                    card.innerHTML = `
+                        <div class="ai-app-icon" aria-hidden="true">${agent.icon}</div>
+                        <div class="ai-app-title">${agent.name}</div>
+                        <div class="ai-app-description">${agent.description}</div>
+                    `;
+                    
+                    grid.appendChild(card);
+                });
+            }
+
+            getAgentUrl(agentId) {
+                const urls = {
+                    'autonomous-os': 'Core/ai-autonomous-os.html',
+                    'voice-interface': 'MOBILE/voice-interface.html',
+                    'ai-learning': 'MOBILE/ai-learning-center.html',
+                    'performance-optimizer': 'MOBILE/ai-performance-optimizer.html',
+                    'plugin-marketplace': 'MOBILE/ai-plugin-marketplace.html',
+                    'universal-interface': 'Apps/ai-universal-interface.html',
+                    'terminal-shell': 'Apps/ai-terminal-shell.html',
+                    'android-emulator': 'Apps/ai-android-emulator.html',
+                    'system-monitor': 'Apps/ai-system-monitor.html',
+                    'network-scanner': 'Apps/ai-network-monitor.html',
+                    'ios-environment': 'iOS-Environment.html'
+                };
+                return urls[agentId] || '#';
+            }
+
+            recordInteraction(type, data) {
+                this.learningData.interactions.push({
+                    type,
+                    data,
+                    timestamp: Date.now(),
+                    context: this.getCurrentContext()
+                });
+                
+                // Keep only last 100 interactions for memory efficiency
+                if (this.learningData.interactions.length > 100) {
+                    this.learningData.interactions = this.learningData.interactions.slice(-100);
+                }
+            }
+
+            getCurrentContext() {
+                return {
+                    time: new Date().getHours(),
+                    day: new Date().getDay(),
+                    device: window.mobileLoader ? window.mobileLoader.getDeviceInfo() : {}
+                };
+            }
+
+            getMostUsedAgents() {
+                const agentUsage = {};
+                
+                this.learningData.interactions
+                    .filter(i => i.type === 'agent-launch')
+                    .forEach(i => {
+                        agentUsage[i.data] = (agentUsage[i.data] || 0) + 1;
+                    });
+                
+                return Object.entries(agentUsage)
+                    .sort(([,a], [,b]) => b - a)
+                    .slice(0, 3)
+                    .map(([agentId]) => agentId);
+            }
+
+            updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('sk-SK', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                document.getElementById('currentTime').textContent = timeString;
+            }
+
+            // Utility methods
+            goHome() {
+                window.location.reload();
+            }
+
+            openSettings() {
+                this.showSettingsPanel();
+            }
+
+            showSettingsPanel() {
+                // Create settings modal
+                const modal = document.createElement('div');
+                modal.id = 'aiOSSettingsModal';
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.95);
+                    z-index: ${parseInt(getComputedStyle(document.documentElement).getPropertyValue('--z-modal'))};
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: var(--space-md);
+                    backdrop-filter: blur(10px);
+                `;
+
+                // Get current settings
+                const currentTheme = localStorage.getItem('aios-theme') || 'dark';
+                const currentResolution = localStorage.getItem('aios-resolution') || 'auto';
+                const currentLanguage = localStorage.getItem('aios-language') || 'sk';
+                const animationsEnabled = localStorage.getItem('aios-animations') !== 'false';
+
+                modal.innerHTML = `
+                    <div style="
+                        background: var(--surface);
+                        border: 2px solid var(--ai-primary);
+                        border-radius: var(--radius-xl);
+                        padding: var(--space-xl);
+                        max-width: 450px;
+                        width: 100%;
+                        max-height: 85vh;
+                        overflow-y: auto;
+                        box-shadow: var(--shadow-xl);
+                    ">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg);">
+                            <h2 style="color: var(--ai-primary); margin: 0; font-size: var(--text-xl);">⚙️ AI-OS Nastavenia</h2>
+                            <button id="settingsCloseBtn" style="
+                                background: none;
+                                border: none;
+                                color: var(--ai-primary);
+                                font-size: 24px;
+                                cursor: pointer;
+                                padding: var(--space-xs);
+                                border-radius: var(--radius-md);
+                                transition: background var(--transition-fast);
+                            " aria-label="Zatvoriť nastavenia">✕</button>
+                        </div>
+
+                        <!-- Resolution Setting -->
+                        <div style="margin-bottom: var(--space-lg);">
+                            <label style="display: block; color: var(--text-primary); margin-bottom: var(--space-sm); font-weight: 500;">📺 Rozlíšenie</label>
+                            <select id="settingsResolution" style="
+                                width: 100%;
+                                padding: var(--space-md);
+                                background: rgba(0, 212, 255, 0.1);
+                                border: 1px solid rgba(0, 212, 255, 0.3);
+                                border-radius: var(--radius-md);
+                                color: var(--text-primary);
+                                font-size: var(--text-base);
+                                cursor: pointer;
+                            ">
+                                <option value="auto" ${currentResolution === 'auto' ? 'selected' : ''}>Automatické (predvolené)</option>
+                                <option value="1920x1080" ${currentResolution === '1920x1080' ? 'selected' : ''}>1920 × 1080 (Full HD)</option>
+                                <option value="1366x768" ${currentResolution === '1366x768' ? 'selected' : ''}>1366 × 768 (HD)</option>
+                                <option value="1280x720" ${currentResolution === '1280x720' ? 'selected' : ''}>1280 × 720</option>
+                                <option value="1024x768" ${currentResolution === '1024x768' ? 'selected' : ''}>1024 × 768 (XGA)</option>
+                                <option value="800x600" ${currentResolution === '800x600' ? 'selected' : ''}>800 × 600 (SVGA)</option>
+                                <option value="414x896" ${currentResolution === '414x896' ? 'selected' : ''}>414 × 896 (iPhone 11 Pro)</option>
+                                <option value="390x844" ${currentResolution === '390x844' ? 'selected' : ''}>390 × 844 (iPhone 13/14)</option>
+                                <option value="360x800" ${currentResolution === '360x800' ? 'selected' : ''}>360 × 800 (Android)</option>
+                            </select>
+                            <button id="applyResolutionBtn" style="
+                                width: 100%;
+                                margin-top: var(--space-sm);
+                                padding: var(--space-sm) var(--space-md);
+                                background: rgba(0, 212, 255, 0.2);
+                                border: 1px solid var(--ai-primary);
+                                border-radius: var(--radius-md);
+                                color: var(--ai-primary);
+                                font-size: var(--text-sm);
+                                cursor: pointer;
+                                transition: all var(--transition-fast);
+                            ">🚀 Použiť rozlíšenie</button>
+                            <button id="resetResolutionBtn" style="
+                                width: 100%;
+                                margin-top: var(--space-xs);
+                                padding: var(--space-xs) var(--space-md);
+                                background: transparent;
+                                border: 1px solid rgba(239, 68, 68, 0.5);
+                                border-radius: var(--radius-md);
+                                color: var(--error);
+                                font-size: var(--text-xs);
+                                cursor: pointer;
+                            ">↺ Obnoviť pôvodné rozlíšenie</button>
+                        </div>
+
+                        <!-- Theme Setting -->
+                        <div style="margin-bottom: var(--space-lg);">
+                            <label style="display: block; color: var(--text-primary); margin-bottom: var(--space-sm); font-weight: 500;">🎨 Téma</label>
+                            <select id="settingsTheme" style="
+                                width: 100%;
+                                padding: var(--space-md);
+                                background: rgba(0, 212, 255, 0.1);
+                                border: 1px solid rgba(0, 212, 255, 0.3);
+                                border-radius: var(--radius-md);
+                                color: var(--text-primary);
+                                font-size: var(--text-base);
+                                cursor: pointer;
+                            ">
+                                <option value="dark" ${currentTheme === 'dark' ? 'selected' : ''}>🌙 Tmavá</option>
+                                <option value="light" ${currentTheme === 'light' ? 'selected' : ''}>☀️ Svetlá</option>
+                                <option value="cyber" ${currentTheme === 'cyber' ? 'selected' : ''}>💜 Cyberpunk</option>
+                            </select>
+                        </div>
+
+                        <!-- Language Setting -->
+                        <div style="margin-bottom: var(--space-lg);">
+                            <label style="display: block; color: var(--text-primary); margin-bottom: var(--space-sm); font-weight: 500;">🌐 Jazyk</label>
+                            <select id="settingsLanguage" style="
+                                width: 100%;
+                                padding: var(--space-md);
+                                background: rgba(0, 212, 255, 0.1);
+                                border: 1px solid rgba(0, 212, 255, 0.3);
+                                border-radius: var(--radius-md);
+                                color: var(--text-primary);
+                                font-size: var(--text-base);
+                                cursor: pointer;
+                            ">
+                                <option value="sk" ${currentLanguage === 'sk' ? 'selected' : ''}>🇸🇰 Slovenčina</option>
+                                <option value="en" ${currentLanguage === 'en' ? 'selected' : ''}>🇺🇸 English</option>
+                                <option value="cs" ${currentLanguage === 'cs' ? 'selected' : ''}>🇨🇿 Čeština</option>
+                            </select>
+                        </div>
+
+                        <!-- Animations Toggle -->
+                        <div style="margin-bottom: var(--space-lg);">
+                            <label style="display: flex; align-items: center; justify-content: space-between; color: var(--text-primary); font-weight: 500; cursor: pointer;">
+                                <span>✨ Animácie</span>
+                                <input type="checkbox" id="settingsAnimations" ${animationsEnabled ? 'checked' : ''} style="
+                                    width: 20px;
+                                    height: 20px;
+                                    accent-color: var(--ai-primary);
+                                    cursor: pointer;
+                                ">
+                            </label>
+                        </div>
+
+                        <!-- Performance Info -->
+                        <div style="
+                            background: rgba(0, 212, 255, 0.05);
+                            border: 1px solid rgba(0, 212, 255, 0.2);
+                            border-radius: var(--radius-md);
+                            padding: var(--space-md);
+                            margin-bottom: var(--space-lg);
+                        ">
+                            <div style="color: var(--text-secondary); font-size: var(--text-sm); margin-bottom: var(--space-sm);">📊 Info o systéme:</div>
+                            <div idSystemInfo" style="color: var(--="settingstext-muted); font-size: var(--text-xs); font-family: var(--font-mono);">
+                                Načítavam...
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div style="display: flex; gap: var(--space-sm); justify-content: center;">
+                            <button id="saveSettingsBtn" style="
+                                flex: 1;
+                                padding: var(--space-md) var(--space-lg);
+                                background: rgba(0, 212, 255, 0.2);
+                                border: 1px solid var(--ai-primary);
+                                border-radius: var(--radius-md);
+                                color: var(--ai-primary);
+                                font-size: var(--text-base);
+                                font-weight: 500;
+                                cursor: pointer;
+                                transition: all var(--transition-fast);
+                            ">💾 Uložiť</button>
+                            <button id="cancelSettingsBtn" style="
+                                flex: 1;
+                                padding: var(--space-md) var(--space-lg);
+                                background: rgba(239, 68, 68, 0.2);
+                                border: 1px solid var(--error);
+                                border-radius: var(--radius-md);
+                                color: var(--error);
+                                font-size: var(--text-base);
+                                font-weight: 500;
+                                cursor: pointer;
+                                transition: all var(--transition-fast);
+                            ">❌ Zrušiť</button>
+                        </div>
+                    </div>
+                `;
+
+                document.body.appendChild(modal);
+
+                // Populate system info
+                const systemInfo = document.getElementById('settingsSystemInfo');
+                if (systemInfo) {
+                    systemInfo.innerHTML = `
+                        Rozlíšenie: ${window.innerWidth} × ${window.innerHeight}<br>
+                        User Agent: ${navigator.userAgent.substring(0, 50)}...
+                    `;
+                }
+
+                // Event Listeners
+                document.getElementById('settingsCloseBtn').addEventListener('click', () => modal.remove());
+                document.getElementById('cancelSettingsBtn').addEventListener('click', () => modal.remove());
+
+                // Resolution buttons
+                document.getElementById('applyResolutionBtn').addEventListener('click', () => {
+                    const resolution = document.getElementById('settingsResolution').value;
+                    this.applyResolution(resolution);
+                });
+
+                document.getElementById('resetResolutionBtn').addEventListener('click', () => {
+                    this.resetResolution();
+                });
+
+                // Save button
+                document.getElementById('saveSettingsBtn').addEventListener('click', () => {
+                    const resolution = document.getElementById('settingsResolution').value;
+                    const theme = document.getElementById('settingsTheme').value;
+                    const language = document.getElementById('settingsLanguage').value;
+                    const animations = document.getElementById('settingsAnimations').checked;
+
+                    // Save settings
+                    localStorage.setItem('aios-resolution', resolution);
+                    localStorage.setItem('aios-theme', theme);
+                    localStorage.setItem('aios-language', language);
+                    localStorage.setItem('aios-animations', animations.toString());
+
+                    // Apply theme
+                    this.applyTheme(theme);
+
+                    // Apply animations setting
+                    this.applyAnimationsSetting(animations);
+
+                    // Show notification
+                    this.showNotification('Nastavenia boli uložené! ✅', 'success');
+
+                    // Close modal
+                    modal.remove();
+
+                    // If resolution changed, apply it
+                    if (resolution !== 'auto' && resolution !== currentResolution) {
+                        this.applyResolution(resolution);
+                    } else if (resolution === 'auto') {
+                        this.resetResolution();
+                    }
+                });
+
+                // Close on backdrop click
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }
+
+            applyResolution(resolution) {
+                if (resolution === 'auto') {
+                    this.resetResolution();
+                    return;
+                }
+
+                const [width, height] = resolution.split('x').map(Number);
+                if (width && height) {
+                    // Calculate center position
+                    const left = Math.max(0, Math.floor((window.screen.width - width) / 2));
+                    const top = Math.max(0, Math.floor((window.screen.height - height) / 2));
+
+                    window.resizeTo(width, height);
+                    window.moveTo(left, top);
+
+                    this.showNotification(`Rozlíšenie zmenené na ${width} × ${height} ✅`, 'success');
+                    console.log(`📐 Resolution changed to ${width} × ${height}`);
+                }
+            }
+
+            resetResolution() {
+                // Maximize window
+                window.moveTo(0, 0);
+                window.resizeTo(window.screen.availWidth, window.screen.availHeight);
+                this.showNotification('Rozlíšenie obnovené na pôvodné ✅', 'success');
+                console.log('📐 Resolution reset to original');
+            }
+
+            applyTheme(theme) {
+                const root = document.documentElement;
+                switch (theme) {
+                    case 'light':
+                        root.style.setProperty('--background', '#ffffff');
+                        root.style.setProperty('--surface', '#f5f5f5');
+                        root.style.setProperty('--surface-light', '#e0e0e0');
+                        root.style.setProperty('--text-primary', '#1a1a1a');
+                        root.style.setProperty('--text-secondary', '#4a4a4a');
+                        break;
+                    case 'cyber':
+                        root.style.setProperty('--background', '#0a0015');
+                        root.style.setProperty('--surface', '#1a0a2e');
+                        root.style.setProperty('--surface-light', '#2a1a4e');
+                        root.style.setProperty('--ai-primary', '#ff44ff');
+                        root.style.setProperty('--text-primary', '#ffffff');
+                        root.style.setProperty('--text-secondary', '#ff88ff');
+                        break;
+                    default: // dark
+                        root.style.setProperty('--background', '#000000');
+                        root.style.setProperty('--surface', '#0a0a0a');
+                        root.style.setProperty('--surface-light', '#1a1a1a');
+                        root.style.setProperty('--ai-primary', '#00d4ff');
+                        root.style.setProperty('--text-primary', '#ffffff');
+                        root.style.setProperty('--text-secondary', '#e0e0e0');
+                }
+                localStorage.setItem('aios-theme', theme);
+            }
+
+            applyAnimationsSetting(enabled) {
+                if (enabled) {
+                    document.body.style.setProperty('--transition-fast', '0.15s cubic-bezier(0.4, 0.0, 0.2, 1)');
+                    document.body.style.setProperty('--transition-normal', '0.3s cubic-bezier(0.4, 0.0, 0.2, 1)');
+                    document.body.style.setProperty('--transition-slow', '0.5s cubic-bezier(0.4, 0.0, 0.2, 1)');
+                } else {
+                    document.body.style.setProperty('--transition-fast', '0.01ms');
+                    document.body.style.setProperty('--transition-normal', '0.01ms');
+                    document.body.style.setProperty('--transition-slow', '0.01ms');
+                }
+            }
+
+            showHelp() {
+                this.showNotification('Pomoc: Použite hlasové príkazy alebo klepnite na aplikácie', 'info');
+            }
+        }
+
+        // Initialize AI-OS Pro when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🤖 Loading AI-OS Pro with standardized design system...');
+            window.aiOS = new AIOSPro();
+            
+            // Wait for AI-OS Core to be ready
+            const waitForCore = setInterval(() => {
+                if (window.aiOSCore) {
+                    console.log('✅ AI-OS Core ready');
+                    clearInterval(waitForCore);
+                }
+            }, 100);
+        });
+
+        // Service Worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:application/javascript,/* Service Worker for AI-OS Pro */').catch(console.error);
+        }
+    </script>
+</body>
+</html>

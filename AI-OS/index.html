@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-OS Launcher</title>
+    <link rel="stylesheet" href="assets/css/ai-os-design-system.css">
+    <script src="assets/js/ai-os-utils.js"></script>
+    
+    <!-- SVG Icons -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="icon-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </symbol>
+        <symbol id="icon-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"></polyline>
+        </symbol>
+        <symbol id="icon-forward" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"></polyline>
+        </symbol>
+        <symbol id="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+        </symbol>
+        <symbol id="icon-system" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </symbol>
+        <symbol id="icon-development" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+        </symbol>
+        <symbol id="icon-terminal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="4 17 10 11 4 5"></polyline>
+            <line x1="12" y1="19" x2="20" y2="19"></line>
+        </symbol>
+        <symbol id="icon-mobile" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="5" y="2" width="14" height="20" rx="2"></rect>
+            <line x1="12" y1="18" x2="12.01" y2="18"></line>
+        </symbol>
+        <symbol id="icon-monitoring" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+        </symbol>
+        <symbol id="icon-dashboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="9"></rect>
+            <rect x="14" y="3" width="7" height="5"></rect>
+            <rect x="14" y="12" width="7" height="9"></rect>
+            <rect x="3" y="16" width="7" height="5"></rect>
+        </symbol>
+        <symbol id="icon-android" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+            <rect x="9" y="9" width="6" height="6"></rect>
+            <path d="M9 15h6"></path>
+        </symbol>
+        <symbol id="icon-ios" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+            <line x1="12" y1="18" x2="12.01" y2="18"></line>
+        </symbol>
+        <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </symbol>
+        <symbol id="icon-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </symbol>
+        <symbol id="icon-network" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </symbol>
+        <symbol id="icon-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+        </symbol>
+        <symbol id="icon-store" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </symbol>
+        <symbol id="icon-learning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </symbol>
+        <symbol id="icon-voice" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+            <line x1="12" y1="19" x2="12" y2="23"></line>
+            <line x1="8" y1="23" x2="16" y2="23"></line>
+        </symbol>
+        <symbol id="icon-performance" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </symbol>
+        <symbol id="icon-universal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <circle cx="12" cy="12" r="6"></circle>
+            <circle cx="12" cy="12" r="2"></circle>
+        </symbol>
+    </svg>
+    
+    <style>
+        :root {
+            --ai-primary: #00d4ff;
+            --ai-secondary: #00ff00;
+            --ai-accent: #ff44ff;
+            --bg-dark: #0a0a0f;
+            --bg-card: rgba(15, 15, 35, 0.9);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Navigation Bar */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+        
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .nav-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--ai-primary);
+        }
+        
+        .nav-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: var(--ai-primary);
+            transform: scale(1.05);
+        }
+        
+        .nav-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .nav-logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--ai-primary);
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+        
+        .nav-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .breadcrumb-item {
+            color: var(--ai-primary);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .breadcrumb-item:hover {
+            color: var(--text-primary);
+        }
+        
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            padding: 8px 12px;
+            gap: 8px;
+        }
+        
+        .search-box input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            width: 200px;
+            font-size: 14px;
+        }
+        
+        .search-box input::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-top: 60px;
+            padding: 30px;
+            min-height: calc(100vh - 60px);
+        }
+        
+        /* Category Sections */
+        .category-section {
+            margin-bottom: 40px;
+        }
+        
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+        
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        
+        .category-icon svg {
+            width: 24px;
+            height: 24px;
+            color: var(--ai-primary);
+        }
+        
+        .category-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .category-count {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-left: auto;
+        }
+        
+        /* App Grid */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 20px;
+        }
+        
+        .app-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+        
+        .app-card:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: var(--ai-primary);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+        }
+        
+        .app-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--ai-primary), var(--ai-accent));
+        }
+        
+        .app-icon svg {
+            width: 32px;
+            height: 32px;
+            color: white;
+        }
+        
+        .app-name {
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .app-category-tag {
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        
+        /* App Container */
+        .app-container {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-dark);
+            z-index: 100;
+        }
+        
+        .app-container.active {
+            display: block;
+        }
+        
+        .app-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        /* Category Colors */
+        .category-system .category-icon,
+        .category-system .app-icon {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+        }
+        
+        .category-development .category-icon,
+        .category-development .app-icon {
+            background: linear-gradient(135deg, #00ff00, #00cc00);
+        }
+        
+        .category-mobile .category-icon,
+        .category-mobile .app-icon {
+            background: linear-gradient(135deg, #ff44ff, #cc00cc);
+        }
+        
+        .category-monitoring .category-icon,
+        .category-monitoring .app-icon {
+            background: linear-gradient(135deg, #ffcc00, #cc9900);
+        }
+        
+        .category-core .category-icon,
+        .category-core .app-icon {
+            background: linear-gradient(135deg, #ff6b6b, #cc4444);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .search-box {
+                display: none;
+            }
+            
+            .app-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+            
+            .app-icon {
+                width: 48px;
+                height: 48px;
+            }
+            
+            .app-icon svg {
+                width: 24px;
+                height: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <div class="nav-left">
+            <button class="nav-btn" data-action="home" title="Home">
+                <svg><use href="#icon-home"></use></svg>
+            </button>
+            <button class="nav-btn" data-action="back" title="Back" id="backBtn" disabled>
+                <svg><use href="#icon-back"></use></svg>
+            </button>
+            <button class="nav-btn" data-action="forward" title="Forward" id="forwardBtn" disabled>
+                <svg><use href="#icon-forward"></use></svg>
+            </button>
+            <span class="nav-logo">AI-OS</span>
+        </div>
+        
+        <div class="nav-center">
+            <div class="breadcrumb" id="breadcrumb">
+                <span class="breadcrumb-item" data-action="home">Home</span>
+            </div>
+        </div>
+        
+        <div class="nav-right">
+            <div class="search-box">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="appSearch" placeholder="Search apps..." data-action="search">
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Categories will be populated here -->
+    </main>
+    
+    <!-- App Container -->
+    <div class="app-container" id="appContainer">
+        <iframe class="app-frame" id="appFrame"></iframe>
+    </div>
+    
+    <script>
+        // App Registry - Classification of all AI-OS applications
+        const appRegistry = {
+            system: {
+                name: 'System',
+                icon: 'icon-system',
+                apps: [
+                    { name: 'System Settings', file: 'apps/system/ai-system-settings.html', icon: 'icon-settings' },
+                    { name: 'Task Manager', file: 'apps/system/ai-task-manager.html', icon: 'icon-system' },
+                    { name: 'File Manager', file: 'apps/system/ai-file-manager.html', icon: 'icon-folder' },
+                    { name: 'System Monitor', file: 'apps/system/ai-system-monitor.html', icon: 'icon-monitoring' }
+                ]
+            },
+            development: {
+                name: 'Development',
+                icon: 'icon-development',
+                apps: [
+                    { name: 'Terminal', file: 'apps/development/ai-terminal-shell.html', icon: 'icon-terminal' },
+                    { name: 'Terminal Enhanced', file: 'apps/development/ai-terminal-shell-enhanced.html', icon: 'icon-terminal' },
+                    { name: 'Desktop Manager', file: 'apps/development/ai-desktop-manager.html', icon: 'icon-dashboard' }
+                ]
+            },
+            productivity: {
+                name: 'Productivity',
+                icon: 'icon-dashboard',
+                apps: [
+                    { name: 'Ecosystem Dashboard', file: 'apps/productivity/ai-ecosystem-dashboard.html', icon: 'icon-dashboard' },
+                    { name: 'Network Monitor', file: 'apps/productivity/ai-network-monitor.html', icon: 'icon-network' }
+                ]
+            },
+            mobile: {
+                name: 'Mobile',
+                icon: 'icon-mobile',
+                apps: [
+                    { name: 'Android Emulator', file: 'apps/mobile/ai-android-emulator.html', icon: 'icon-android' },
+                    { name: 'Android Emulator Universal', file: 'apps/mobile/ai-android-emulator-universal.html', icon: 'icon-android' },
+                    { name: 'Android SDK', file: 'apps/mobile/ai-android-sdk-integration.html', icon: 'icon-tool' },
+                    { name: 'Android Store', file: 'apps/mobile/ai-android-app-store.html', icon: 'icon-store' },
+                    { name: 'App Store', file: 'apps/mobile/ai-app-store.html', icon: 'icon-store' },
+                    { name: 'App Store Universal', file: 'apps/mobile/ai-app-store-universal.html', icon: 'icon-store' },
+                    { name: 'Universal Interface', file: 'apps/mobile/ai-universal-interface.html', icon: 'icon-universal' },
+                    { name: 'Voice Interface', file: 'apps/mobile/voice-interface.html', icon: 'icon-voice' },
+                    { name: 'Learning Center', file: 'apps/mobile/ai-learning-center.html', icon: 'icon-learning' },
+                    { name: 'Performance', file: 'apps/mobile/ai-performance-optimizer.html', icon: 'icon-performance' },
+                    { name: 'Plugin Market', file: 'apps/mobile/ai-plugin-marketplace.html', icon: 'icon-store' },
+                    { name: 'Mobile Shell', file: 'apps/mobile/mobile-shell.html', icon: 'icon-mobile' }
+                ]
+            },
+            core: {
+                name: 'Core Systems',
+                icon: 'icon-system',
+                apps: [
+                    { name: 'Autonomous OS', file: 'core/ai-autonomous-os.html', icon: 'icon-dashboard' }
+                ]
+            }
+        };
+        
+        // Navigation History
+        const navigationHistory = {
+            backStack: [],
+            forwardStack: [],
+            currentPath: []
+        };
+        
+        // AI-OS Launcher Class
+        class AIOSLauncher {
+            constructor() {
+                this.currentCategory = null;
+                this.currentApp = null;
+                this.init();
+            }
+            
+            init() {
+                this.renderCategories();
+                this.setupEventDelegation();
+                this.setupSearch();
+            }
+            
+            renderCategories() {
+                const container = document.getElementById('mainContent');
+                container.innerHTML = '';
+                
+                for (const [categoryId, category] of Object.entries(appRegistry)) {
+                    const section = document.createElement('section');
+                    section.className = `category-section category-${categoryId}`;
+                    section.id = `category-${categoryId}`;
+                    
+                    section.innerHTML = `
+                        <div class="category-header">
+                            <div class="category-icon">
+                                <svg><use href="#${category.icon}"></use></svg>
+                            </div>
+                            <h2 class="category-title">${category.name}</h2>
+                            <span class="category-count">${category.apps.length} apps</span>
+                        </div>
+                        <div class="app-grid">
+                            ${category.apps.map(app => this.renderAppCard(app, categoryId)).join('')}
+                        </div>
+                    `;
+                    
+                    container.appendChild(section);
+                }
+            }
+            
+            renderAppCard(app, categoryId) {
+                return `
+                    <a href="#" class="app-card" data-app="${app.file}" data-category="${categoryId}" data-name="${app.name}">
+                        <div class="app-icon">
+                            <svg><use href="#${app.icon}"></use></svg>
+                        </div>
+                        <span class="app-name">${app.name}</span>
+                        <span class="app-category-tag">${categoryId}</span>
+                    </a>
+                `;
+            }
+            
+            setupEventDelegation() {
+                document.addEventListener('click', (e) => {
+                    const actionElement = e.target.closest('[data-action]');
+                    const appElement = e.target.closest('[data-app]');
+                    
+                    if (actionElement) {
+                        const action = actionElement.getAttribute('data-action');
+                        this.handleNavigation(action);
+                    }
+                    
+                    if (appElement) {
+                        const appFile = appElement.getAttribute('data-app');
+                        const appName = appElement.getAttribute('data-name');
+                        const categoryId = appElement.getAttribute('data-category');
+                        this.openApp(appFile, appName, categoryId);
+                    }
+                });
+            }
+            
+            setupSearch() {
+                const searchInput = document.getElementById('appSearch');
+                searchInput.addEventListener('input', (e) => {
+                    this.filterApps(e.target.value);
+                });
+            }
+            
+            filterApps(searchTerm) {
+                const term = searchTerm.toLowerCase();
+                const sections = document.querySelectorAll('.category-section');
+                
+                sections.forEach(section => {
+                    const cards = section.querySelectorAll('.app-card');
+                    let visibleCount = 0;
+                    
+                    cards.forEach(card => {
+                        const name = card.getAttribute('data-name').toLowerCase();
+                        const category = card.getAttribute('data-category').toLowerCase();
+                        
+                        if (name.includes(term) || category.includes(term)) {
+                            card.style.display = 'flex';
+                            visibleCount++;
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                    
+                    section.style.display = visibleCount > 0 ? 'block' : 'none';
+                });
+            }
+            
+            handleNavigation(action) {
+                switch (action) {
+                    case 'home':
+                        this.goHome();
+                        break;
+                    case 'back':
+                        this.goBack();
+                        break;
+                    case 'forward':
+                        this.goForward();
+                        break;
+                }
+            }
+            
+            goHome() {
+                // Save current state
+                if (this.currentApp) {
+                    navigationHistory.backStack.push({
+                        app: this.currentApp,
+                        path: [...navigationHistory.currentPath]
+                    });
+                    navigationHistory.forwardStack = [];
+                }
+                
+                // Close current app
+                this.closeApp();
+                
+                // Show launcher
+                document.getElementById('mainContent').style.display = 'block';
+                this.updateBreadcrumb(['Home']);
+                this.updateNavButtons();
+            }
+            
+            goBack() {
+                if (navigationHistory.backStack.length === 0) return;
+                
+                // Save current state to forward stack
+                if (this.currentApp) {
+                    navigationHistory.forwardStack.push({
+                        app: this.currentApp,
+                        path: [...navigationHistory.currentPath]
+                    });
+                }
+                
+                // Get previous state
+                const previousState = navigationHistory.backStack.pop();
+                if (previousState) {
+                    this.currentApp = previousState.app;
+                    navigationHistory.currentPath = previousState.path;
+                    
+                    // Open previous app
+                    this.openAppDirect(this.currentApp.file, this.currentApp.name);
+                    this.updateBreadcrumb(this.currentApp.path);
+                }
+                
+                this.updateNavButtons();
+            }
+            
+            goForward() {
+                if (navigationHistory.forwardStack.length === 0) return;
+                
+                // Save current state to back stack
+                if (this.currentApp) {
+                    navigationHistory.backStack.push({
+                        app: this.currentApp,
+                        path: [...navigationHistory.currentPath]
+                    });
+                }
+                
+                // Get next state
+                const nextState = navigationHistory.forwardStack.pop();
+                if (nextState) {
+                    this.currentApp = nextState.app;
+                    navigationHistory.currentPath = nextState.path;
+                    
+                    // Open next app
+                    this.openAppDirect(this.currentApp.file, this.currentApp.name);
+                    this.updateBreadcrumb(this.currentApp.path);
+                }
+                
+                this.updateNavButtons();
+            }
+            
+            openApp(appFile, appName, categoryId) {
+                // Save current state
+                if (this.currentApp) {
+                    navigationHistory.backStack.push({
+                        app: this.currentApp,
+                        path: [...navigationHistory.currentPath]
+                    });
+                    navigationHistory.forwardStack = [];
+                }
+                
+                // Set new state
+                this.currentApp = {
+                    file: appFile,
+                    name: appName,
+                    category: categoryId
+                };
+                navigationHistory.currentPath = ['Home', appRegistry[categoryId].name, appName];
+                
+                // Open app
+                this.openAppDirect(appFile, appName);
+                this.updateBreadcrumb(navigationHistory.currentPath);
+                this.updateNavButtons();
+            }
+            
+            openAppDirect(appFile, appName) {
+                const appContainer = document.getElementById('appContainer');
+                const appFrame = document.getElementById('appFrame');
+                const mainContent = document.getElementById('mainContent');
+                
+                appFrame.src = appFile;
+                appContainer.classList.add('active');
+                mainContent.style.display = 'none';
+            }
+            
+            closeApp() {
+                const appContainer = document.getElementById('appContainer');
+                const appFrame = document.getElementById('appFrame');
+                
+                appContainer.classList.remove('active');
+                appFrame.src = '';
+                this.currentApp = null;
+                navigationHistory.currentPath = [];
+            }
+            
+            updateBreadcrumb(path) {
+                const breadcrumb = document.getElementById('breadcrumb');
+                breadcrumb.innerHTML = path.map((item, index) => {
+                    if (index === path.length - 1) {
+                        return `<span>${item}</span>`;
+                    }
+                    return `<span class="breadcrumb-item" data-action="home">${item}</span>`;
+                }).join(' <span style="color: var(--text-secondary);">/</span> ');
+            }
+            
+            updateNavButtons() {
+                const backBtn = document.getElementById('backBtn');
+                const forwardBtn = document.getElementById('forwardBtn');
+                
+                backBtn.disabled = navigationHistory.backStack.length === 0;
+                forwardBtn.disabled = navigationHistory.forwardStack.length === 0;
+                
+                backBtn.style.opacity = backBtn.disabled ? '0.5' : '1';
+                forwardBtn.style.opacity = forwardBtn.disabled ? '0.5' : '1';
+            }
+        }
+        
+        // Initialize Launcher
+        document.addEventListener('DOMContentLoaded', () => {
+            window.aiOSLauncher = new AIOSLauncher();
+        });
+    </script>
+</body>
+</html>

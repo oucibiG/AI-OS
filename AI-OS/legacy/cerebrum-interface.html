@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Cerebrum - AIOS Agent SDK Interface</title>
+    
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --primary-dark: #0099cc;
+            --secondary: #00ff00;
+            --accent: #ff44ff;
+            --background: #000000;
+            --surface: #0a0a0a;
+            --surface-light: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #e0e0e0;
+            --text-muted: #888888;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            
+            --transition-fast: 0.15s cubic-bezier(0.4, 0.0, 0.2, 1);
+            --transition-normal: 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            
+            --z-modal: 1050;
+            --z-toast: 1080;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .cerebrum-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .cerebrum-header {
+            padding: var(--space-md) var(--space-lg);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .cerebrum-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .cerebrum-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .cerebrum-logo-text {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .cerebrum-status {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-xs) var(--space-sm);
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: var(--radius-md);
+            font-size: var(--text-xs);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Main Content */
+        .cerebrum-main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        /* Sidebar */
+        .cerebrum-sidebar {
+            width: 280px;
+            background: var(--surface);
+            border-right: 1px solid rgba(0, 212, 255, 0.1);
+            padding: var(--space-md);
+            overflow-y: auto;
+        }
+        
+        .sidebar-section {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .sidebar-title {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .nav-item:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+        
+        .nav-item.active {
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        
+        .nav-icon {
+            font-size: 18px;
+        }
+        
+        .nav-label {
+            font-size: var(--text-sm);
+        }
+        
+        /* Content Area */
+        .cerebrum-content {
+            flex: 1;
+            padding: var(--space-lg);
+            overflow-y: auto;
+        }
+        
+        .content-header {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .content-title {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .content-subtitle {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+        }
+        
+        /* Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-md);
+        }
+        
+        .card {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: var(--radius-xl);
+            padding: var(--space-lg);
+            backdrop-filter: blur(20px);
+            transition: all var(--transition-normal);
+        }
+        
+        .card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+        
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .card-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+        }
+        
+        .card-description {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-md);
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+            padding: var(--space-sm) var(--space-md);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .btn-primary {
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .btn-success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+        
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+        
+        /* Agent Chat */
+        .agent-chat-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 200px);
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            padding: var(--space-md);
+            background: rgba(0, 212, 255, 0.05);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-md);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: var(--space-md);
+            border-radius: var(--radius-lg);
+            animation: messageSlide 0.3s ease;
+        }
+        
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message-user {
+            align-self: flex-end;
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        
+        .message-assistant {
+            align-self: flex-start;
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+        
+        .message-tool {
+            align-self: flex-start;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .message-content {
+            font-size: var(--text-sm);
+            line-height: 1.6;
+        }
+        
+        .message-meta {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+            margin-top: var(--space-xs);
+        }
+        
+        .chat-input-container {
+            padding: var(--space-md);
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            display: flex;
+            gap: var(--space-sm);
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: var(--space-md);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-lg);
+            color: var(--text-primary);
+            font-size: var(--text-sm);
+            resize: none;
+            min-height: 50px;
+            max-height: 150px;
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+        }
+        
+        .chat-send-btn {
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid var(--primary);
+            border-radius: var(--radius-lg);
+            color: var(--primary);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .chat-send-btn:hover {
+            background: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        /* Tool Calls */
+        .tool-calls-panel {
+            padding: var(--space-md);
+            background: rgba(0, 0, 0, 0.5);
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .tool-call-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(0, 212, 255, 0.05);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .tool-call-icon {
+            font-size: 16px;
+        }
+        
+        .tool-call-name {
+            font-size: var(--text-sm);
+            font-weight: 500;
+        }
+        
+        .tool-call-status {
+            margin-left: auto;
+            font-size: var(--text-xs);
+            padding: 2px 8px;
+            border-radius: var(--radius-sm);
+        }
+        
+        .status-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+        
+        .status-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+        
+        .status-error {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+        }
+        
+        /* Settings Panel */
+        .settings-panel {
+            max-width: 600px;
+        }
+        
+        .setting-group {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .setting-label {
+            display: block;
+            font-size: var(--text-sm);
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .setting-select {
+            width: 100%;
+            padding: var(--space-md);
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: var(--text-base);
+            cursor: pointer;
+        }
+        
+        .setting-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .setting-input {
+            width: 100%;
+            padding: var(--space-md);
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: var(--text-base);
+        }
+        
+        .setting-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .stat-card {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+            margin-top: var(--space-xs);
+        }
+        
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--background);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: var(--z-modal);
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(0, 212, 255, 0.3);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: var(--space-lg);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: var(--text-lg);
+            color: var(--primary);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: var(--space-xl);
+            right: var(--space-xl);
+            z-index: var(--z-toast);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+        
+        .toast {
+            padding: var(--space-md) var(--space-lg);
+            background: rgba(0, 212, 255, 0.9);
+            color: var(--background);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            font-weight: 500;
+            animation: toastSlide 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        @keyframes toastSlide {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .toast.success {
+            background: rgba(16, 185, 129, 0.9);
+        }
+        
+        .toast.error {
+            background: rgba(239, 68, 68, 0.9);
+        }
+        
+        .toast.warning {
+            background: rgba(245, 158, 11, 0.9);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .cerebrum-sidebar {
+                width: 60px;
+                padding: var(--space-sm);
+            }
+            
+            .sidebar-title,
+            .nav-label {
+                display: none;
+            }
+            
+            .nav-item {
+                justify-content: center;
+                padding: var(--space-sm);
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Memory Visualization */
+        .memory-visualization {
+            background: var(--surface-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            margin-top: var(--space-md);
+        }
+        
+        .memory-title {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .memory-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+        
+        .memory-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: var(--radius-sm);
+            transition: width 0.3s ease;
+        }
+        
+        .memory-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: var(--space-xs);
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+        }
+        
+        /* Terminal */
+        .terminal-container {
+            background: #0a0a0a;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(0, 212, 255, 0.1);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+        
+        .terminal-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .terminal-btn.close { background: #ef4444; }
+        .terminal-btn.minimize { background: #f59e0b; }
+        .terminal-btn.maximize { background: #10b981; }
+        
+        .terminal-body {
+            padding: var(--space-md);
+            height: 300px;
+            overflow-y: auto;
+            font-size: var(--text-sm);
+            color: var(--secondary);
+        }
+        
+        .terminal-line {
+            margin-bottom: var(--space-xs);
+        }
+        
+        .terminal-line.system { color: var(--primary); }
+        .terminal-line.command { color: var(--text-secondary); }
+        .terminal-line.output { color: var(--secondary); }
+        .terminal-line.error { color: var(--error); }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Inicializujem Cerebrum Agent SDK...</div>
+    </div>
+    
+    <div class="cerebrum-container">
+        <!-- Header -->
+        <header class="cerebrum-header">
+            <div class="cerebrum-logo">
+                <div class="cerebrum-logo-icon">🧠</div>
+                <span class="cerebrum-logo-text">Cerebrum</span>
+            </div>
+            <div class="cerebrum-status">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>SDK Active</span>
+                </div>
+                <div class="status-indicator">
+                    <span id="currentTime">--:--</span>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <div class="cerebrum-main">
+            <!-- Sidebar -->
+            <aside class="cerebrum-sidebar">
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Hlavné</div>
+                    <div class="nav-item active" data-view="dashboard">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-label">Dashboard</span>
+                    </div>
+                    <div class="nav-item" data-view="chat">
+                        <span class="nav-icon">💬</span>
+                        <span class="nav-label">Agent Chat</span>
+                    </div>
+                    <div class="nav-item" data-view="tools">
+                        <span class="nav-icon">🔧</span>
+                        <span class="nav-label">Nástroje</span>
+                    </div>
+                    <div class="nav-item" data-view="memory">
+                        <span class="nav-icon">🧠</span>
+                        <span class="nav-label">Pamäť</span>
+                    </div>
+                    <div class="nav-item" data-view="llm">
+                        <span class="nav-icon">🤖</span>
+                        <span class="nav-label">LLM Modely</span>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Systém</div>
+                    <div class="nav-item" data-view="terminal">
+                        <span class="nav-icon">💻</span>
+                        <span class="nav-label">Terminál</span>
+                    </div>
+                    <div class="nav-item" data-view="settings">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-label">Nastavenia</span>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <div class="sidebar-title">Príklady</div>
+                    <div class="nav-item" onclick="loadExampleAgent('demo')">
+                        <span class="nav-icon">📝</span>
+                        <span class="nav-label">Demo Agent</span>
+                    </div>
+                    <div class="nav-item" onclick="loadExampleAgent('search')">
+                        <span class="nav-icon">🔍</span>
+                        <span class="nav-label">Vyhľadávanie</span>
+                    </div>
+                    <div class="nav-item" onclick="loadExampleAgent('writer')">
+                        <span class="nav-icon">✍️</span>
+                        <span class="nav-label">Písanie</span>
+                    </div>
+                </div>
+            </aside>
+            
+            <!-- Content Area -->
+            <main class="cerebrum-content" id="contentArea">
+                <!-- Dashboard View -->
+                <div id="dashboardView" class="view active">
+                    <div class="content-header">
+                        <h1 class="content-title">Cerebrum Dashboard</h1>
+                        <p class="content-subtitle">Prehľad AI Agent SDK a jeho komponentov</p>
+                    </div>
+                    
+                    <!-- Stats -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="statAgents">0</div>
+                            <div class="stat-label">Aktívni Agenti</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="statTools">0</div>
+                            <div class="stat-label">Registrované Nástroje</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="statMessages">0</div>
+                            <div class="stat-label">Správy</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="statTokens">0</div>
+                            <div class="stat-label">Tokeny</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="card-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">🤖</div>
+                                <div>
+                                    <div class="card-title">Nový Agent</div>
+                                    <div class="card-description">Vytvorte nového AI agenta</div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="createNewAgent()">Vytvoriť Agenta</button>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">🔧</div>
+                                <div>
+                                    <div class="card-title">Pridať Nástroj</div>
+                                    <div class="card-description">Zaregistrujte nový nástroj</div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="showView('tools')">Pridať Nástroj</button>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">🧠</div>
+                                <div>
+                                    <div class="card-title">Spravovať Pamäť</div>
+                                    <div class="card-description">Prehliadať a exportovať pamäť</div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="showView('memory')">Otvoriť Pamäť</button>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">💻</div>
+                                <div>
+                                    <div class="card-title">Terminál</div>
+                                    <div class="card-description">Príkazový riadok agenta</div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" onclick="showView('terminal')">Otvoriť Terminál</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Architecture Info -->
+                    <div class="card" style="margin-top: var(--space-lg);">
+                        <div class="card-header">
+                            <div class="card-icon">🏗️</div>
+                            <div>
+                                <div class="card-title">Architektúra SDK</div>
+                                <div class="card-description">Komponenty Cerebrum Agent SDK</div>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-md);">
+                            <div style="padding: var(--space-md); background: rgba(0, 212, 255, 0.05); border-radius: var(--radius-md);">
+                                <div style="font-weight: 600; margin-bottom: var(--space-xs);">🧠 Agent Core</div>
+                                <div style="font-size: var(--text-xs); color: var(--text-secondary);">Jadro agenta s podporou pre LLM, nástroje a pamäť</div>
+                            </div>
+                            <div style="padding: var(--space-md); background: rgba(0, 212, 255, 0.05); border-radius: var(--radius-md);">
+                                <div style="font-weight: 600; margin-bottom: var(--space-xs);">🔧 Tool Registry</div>
+                                <div style="font-size: var(--text-xs); color: var(--text-secondary);">Správa a registrácia nástrojov pre agentov</div>
+                            </div>
+                            <div style="padding: var(--space-md); background: rgba(0, 212, 255, 0.05); border-radius: var(--radius-md);">
+                                <div style="font-weight: 600; margin-bottom: var(--space-xs);">💾 Memory Manager</div>
+                                <div style="font-size: var(--text-xs); color: var(--text-secondary);">Krátkodobá a dlhodobá pamäť agenta</div>
+                            </div>
+                            <div style="padding: var(--space-md); background: rgba(0, 212, 255, 0.05); border-radius: var(--radius-md);">
+                                <div style="font-weight: 600; margin-bottom: var(--space-xs);">🤖 LLM Integration</div>
+                                <div style="font-size: var(--text-xs); color: var(--text-secondary);">Podpora pre OpenAI, Anthropic, Groq a ďalšie</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Chat View -->
+                <div id="chatView" class="view" style="display: none;">
+                    <div class="content-header">
+                        <h1 class="content-title">Agent Chat</h1>
+                        <p class="content-subtitle">Komunikácia s AI agentom</p>
+                    </div>
+                    
+                    <div class="agent-chat-container">
+                        <div class="chat-header">
+                            <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                                <span style="font-size: 24px;">🤖</span>
+                                <div>
+                                    <div style="font-weight: 600;" id="currentAgentName">Demo Agent</div>
+                                    <div style="font-size: var(--text-xs); color: var(--text-muted);" id="currentAgentStatus">Pripravený</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: var(--space-sm);">
+                                <button class="btn btn-secondary" onclick="clearChat()">🗑️ Vymazať</button>
+                                <button class="btn btn-primary" onclick="loadExampleAgent('demo')">📝 Nový Príklad</button>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="message message-assistant">
+                                <div class="message-content">
+                                    👋 Ahoj! Som Demo Agent postavený na Cerebrum SDK. 
+                                    Môžem vám pomôcť s rôznymi úlohami ako vyhľadávanie informácií, 
+                                    analýza dát alebo všeobecné otázky.
+                                    <br><br>
+                                    Ako vám môžem pomôcť today?
+                                </div>
+                                <div class="message-meta">Cerebrum Agent • Práve teraz</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tool Calls Panel -->
+                        <div class="tool-calls-panel" id="toolCallsPanel">
+                            <div style="font-size: var(--text-xs); color: var(--text-muted); margin-bottom: var(--space-sm);">
+                                📦 Aktivované nástroje:
+                            </div>
+                            <div id="toolCallsList"></div>
+                        </div>
+                        
+                        <!-- Chat Input -->
+                        <div class="chat-input-container">
+                            <textarea class="chat-input" id="chatInput" placeholder="Zadajte správu pre agenta..." rows="1"></textarea>
+                            <button class="chat-send-btn" onclick="sendMessage()">➤</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tools View -->
+                <div id="toolsView" class="view" style="display: none;">
+                    <div class="content-header">
+                        <h1 class="content-title">Správa Nástrojov</h1>
+                        <p class="content-subtitle">Prehľad dostupných nástrojov pre agentov</p>
+                    </div>
+                    
+                    <div class="card-grid" id="toolsGrid">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">🔍</div>
+                                <div>
+                                    <div class="card-title">Vyhľadávanie</div>
+                                    <div class="card-description">Vyhľadávanie na internete</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: var(--space-sm);">
+                                <span class="status-indicator" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3);">
+                                    <span style="width: 6px; height: 6px; background: var(--success); border-radius: 50%;"></span>
+                                    Aktivovaný
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">📚</div>
+                                <div>
+                                    <div class="card-title">Wikipedia</div>
+                                    <div class="card-description">Vyhľadávanie na Wikipedii</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: var(--space-sm);">
+                                <span class="status-indicator" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3);">
+                                    <span style="width: 6px; height: 6px; background: var(--success); border-radius: 50%;"></span>
+                                    Aktivovaný
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">💻</div>
+                                <div>
+                                    <div class="card-title">Terminál</div>
+                                    <div class="card-description">Spúšťanie príkazov</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: var(--space-sm);">
+                                <span class="status-indicator" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3);">
+                                    <span style="width: 6px; height: 6px; background: var(--success); border-radius: 50%;"></span>
+                                    Aktivovaný
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">📊</div>
+                                <div>
+                                    <div class="card-title">Analýza Dát</div>
+                                    <div class="card-description">Spracovanie a analýza dát</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: var(--space-sm);">
+                                <span class="status-indicator" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3);">
+                                    <span style="width: 6px; height: 6px; background: var(--success); border-radius: 50%;"></span>
+                                    Aktivovaný
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" style="margin-top: var(--space-lg);" onclick="showToast('Pridávanie nástrojov bude čoskoro dostupné!', 'info')">
+                        + Pridať Vlastný Nástroj
+                    </button>
+                </div>
+                
+                <!-- Memory View -->
+                <div id="memoryView" class="view" style="display: none;">
+                    <div class="content-header">
+                        <h1 class="content-title">Pamäť Agenta</h1>
+                        <p class="content-subtitle">Správa pamäte a kontextu konverzácie</p>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="shortTermCount">0</div>
+                            <div class="stat-label">Krátkodobé</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="longTermCount">0</div>
+                            <div class="stat-label">Dlhodobé</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalCount">0</div>
+                            <div class="stat-label">Celkom</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="memoryUsage">0%</div>
+                            <div class="stat-label">Využitie</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">🧠</div>
+                            <div>
+                                <div class="card-title">Využitie Pamäte</div>
+                                <div class="card-description">Aktuálny stav pamäťového systému</div>
+                            </div>
+                        </div>
+                        
+                        <div class="memory-visualization">
+                            <div class="memory-bar">
+                                <div class="memory-fill" id="memoryFill" style="width: 0%;"></div>
+                            </div>
+                            <div class="memory-stats">
+                                <span id="memoryUsed">0 položiek</span>
+                                <span>Max: 1000</span>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: var(--space-sm); margin-top: var(--space-md);">
+                            <button class="btn btn-primary" onclick="clearMemory('short')">🗑️ Vymazať Krátkodobú</button>
+                            <button class="btn btn-secondary" onclick="clearMemory('long')">🗑️ Vymazať Dlhodobú</button>
+                            <button class="btn btn-success" onclick="saveMemory()">💾 Uložiť</button>
+                            <button class="btn btn-secondary" onclick="loadMemory()">📂 Načítať</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card" style="margin-top: var(--space-md);">
+                        <div class="card-header">
+                            <div class="card-icon">📋</div>
+                            <div>
+                                <div class="card-title">História Konverzácie</div>
+                                <div class="card-description">Posledné interakcie</div>
+                            </div>
+                        </div>
+                        <div id="memoryHistory" style="max-height: 300px; overflow-y: auto;">
+                            <div style="padding: var(--space-md); color: var(--text-muted); text-align: center;">
+                                Žiadne správy zatiaľ
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- LLM View -->
+                <div id="llmView" class="view" style="display: none;">
+                    <div class="content-header">
+                        <h1 class="content-title">LLM Modely</h1>
+                        <p class="content-subtitle">Konfigurácia a správa jazykových modelov</p>
+                    </div>
+                    
+                    <div class="card-grid" id="llmProviders">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">🔑</div>
+                                <div>
+                                    <div class="card-title">OpenAI</div>
+                                    <div class="card-description">GPT-4, GPT-3.5 Turbo</div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: var(--space-md);">
+                                <label class="setting-label">API Key</label>
+                                <input type="password" class="setting-input" id="openaiKey" placeholder="sk-...">
+                            </div>
+                            <select class="setting-select" id="openaiModel">
+                                <option value="gpt-4">GPT-4</option>
+                                <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                                <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                            </select>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">🧠</div>
+                                <div>
+                                    <div class="card-title">Anthropic</div>
+                                    <div class="card-description">Claude 3 Opus, Sonnet, Haiku</div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: var(--space-md);">
+                                <label class="setting-label">API Key</label>
+                                <input type="password" class="setting-input" id="anthropicKey" placeholder="sk-ant-...">
+                            </div>
+                            <select class="setting-select" id="anthropicModel">
+                                <option value="claude-3-opus-20240229">Claude 3 Opus</option>
+                                <option value="claude-3-sonnet-20240229">Claude 3 Sonnet</option>
+                                <option value="claude-3-haiku-20240307">Claude 3 Haiku</option>
+                            </select>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon">⚡</div>
+                                <div>
+                                    <div class="card-title">Groq</div>
+                                    <div class="card-description">Llama 2, Mixtral</div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: var(--space-md);">
+                                <label class="setting-label">API Key</label>
+                                <input type="password" class="setting-input" id="groqKey" placeholder="gsk-...">
+                            </div>
+                            <select class="setting-select" id="groqModel">
+                                <option value="mixtral-8x7b-32768">Mixtral 8x7b</option>
+                                <option value="llama2-70b-4096">Llama 2 70b</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary" style="margin-top: var(--space-lg);" onclick="saveLLMSettings()">
+                        💾 Uložiť Nastavenia LLM
+                    </button>
+                </div>
+                
+                <!-- Terminal View -->
+                <div id="terminalView" class="view" style="display: none;">
+                    <div class="content-header">
+                        <h1 class="content-title">Terminál</h1>
+                        <p class="content-subtitle">Príkazový riadok pre Cerebrum SDK</p>
+                    </div>
+                    
+                    <div class="terminal-container">
+                        <div class="terminal-header">
+                            <div class="terminal-btn close"></div>
+                            <div class="terminal-btn minimize"></div>
+                            <div class="terminal-btn maximize"></div>
+                            <span style="margin-left: var(--space-sm); font-size: var(--text-xs); color: var(--text-muted);">
+                                cerebrum-terminal
+                            </span>
+                        </div>
+                        <div class="terminal-body" id="terminalBody">
+                            <div class="terminal-line system">🤖 Cerebrum Agent SDK v1.0.0</div>
+                            <div class="terminal-line system">📦 Type 'help' for available commands</div>
+                            <div class="terminal-line system">------------------------------------------</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: var(--space-sm); margin-top: var(--space-md);">
+                        <input type="text" class="setting-input" id="terminalInput" placeholder="Zadajte príkaz..." style="flex: 1;">
+                        <button class="btn btn-primary" onclick="executeTerminalCommand()">Spustiť</button>
+                        <button class="btn btn-secondary" onclick="clearTerminal()">🗑️</button>
+                    </div>
+                    
+                    <div style="margin-top: var(--space-md);">
+                        <div style="font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-sm);">
+                            💡 Rýchle príkazy:
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs);">
+                            <button class="btn btn-secondary" style="font-size: var(--text-xs);" onclick="insertCommand('list-agents')">list-agents</button>
+                            <button class="btn btn-secondary" style="font-size: var(--text-xs);" onclick="insertCommand('list-tools')">list-tools</button>
+                            <button class="btn btn-secondary" style="font-size: var(--text-xs);" onclick="insertCommand('status')">status</button>
+                            <button class="btn btn-secondary" style="font-size: var(--text-xs);" onclick="insertCommand('help')">help</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings View -->
+                <div id="settingsView" class="view" style="display: none;">
+                    <div class="content-header">
+                        <h1 class="content-title">Nastavenia</h1>
+                        <p class="content-subtitle">Konfigurácia Cerebrum SDK</p>
+                    </div>
+                    
+                    <div class="card settings-panel">
+                        <div class="setting-group">
+                            <label class="setting-label">🌍 Jazyk Rozhrania</label>
+                            <select class="setting-select" id="settingLanguage">
+                                <option value="sk">🇸🇰 Slovenčina</option>
+                                <option value="en">🇺🇸 English</option>
+                                <option value="cs">🇨🇿 Čeština</option>
+                            </select>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label class="setting-label">🎨 Téma</label>
+                            <select class="setting-select" id="settingTheme">
+                                <option value="dark">🌙 Tmavá</option>
+                                <option value="light">☀️ Svetlá</option>
+                                <option value="cyber">💜 Cyberpunk</option>
+                            </select>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label class="setting-label">📊 Maximálny Počet Správ v Pamäti</label>
+                            <input type="number" class="setting-input" id="settingMaxMessages" value="100" min="10" max="1000">
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label class="setting-label">⏱️ Timeout (sekundy)</label>
+                            <input type="number" class="setting-input" id="settingTimeout" value="300" min="30" max="3600">
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label class="setting-label">🔄 Automatické Uloženie Pamäte</label>
+                            <select class="setting-select" id="settingAutoSave">
+                                <option value="true">Zapnuté</option>
+                                <option value="false">Vypnuté</option>
+                            </select>
+                        </div>
+                        
+                        <div style="display: flex; gap: var(--space-sm); margin-top: var(--space-lg);">
+                            <button class="btn btn-primary" onclick="saveSettings()">💾 Uložiť Nastavenia</button>
+                            <button class="btn btn-secondary" onclick="resetSettings()">↺ Obnoviť Predvolené</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <script>
+        // Cerebrum SDK Web Interface
+        class CerebrumInterface {
+            constructor() {
+                this.currentView = 'dashboard';
+                this.messages = [];
+                this.toolCalls = [];
+                this.agentState = 'idle';
+                this.stats = {
+                    agents: 0,
+                    tools: 4,
+                    messages: 0,
+                    tokens: 0
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                // Setup navigation
+                document.querySelectorAll('.nav-item[data-view]').forEach(item => {
+                    item.addEventListener('click', () => {
+                        this.showView(item.dataset.view);
+                    });
+                });
+                
+                // Setup chat input
+                const chatInput = document.getElementById('chatInput');
+                chatInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+                
+                // Setup terminal input
+                const terminalInput = document.getElementById('terminalInput');
+                terminalInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        this.executeTerminalCommand();
+                    }
+                });
+                
+                // Update time
+                this.updateTime();
+                setInterval(() => this.updateTime(), 1000);
+                
+                // Hide loading screen
+                setTimeout(() => {
+                    document.getElementById('loadingScreen').classList.add('hidden');
+                }, 1500);
+                
+                // Update stats
+                this.updateStats();
+                
+                // Load settings
+                this.loadSettings();
+            }
+            
+            showView(viewName) {
+                // Update nav
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.view === viewName) {
+                        item.classList.add('active');
+                    }
+                });
+                
+                // Update views
+                document.querySelectorAll('.view').forEach(view => {
+                    view.style.display = 'none';
+                });
+                document.getElementById(`${viewName}View`).style.display = 'block';
+                
+                this.currentView = viewName;
+                
+                // View-specific initialization
+                if (viewName === 'memory') {
+                    this.updateMemoryDisplay();
+                }
+            }
+            
+            updateTime() {
+                const now = new Date();
+                document.getElementById('currentTime').textContent = 
+                    now.toLocaleTimeString('sk-SK', { hour: '2-digit', minute: '2-digit' });
+            }
+            
+            updateStats() {
+                document.getElementById('statAgents').textContent = this.stats.agents;
+                document.getElementById('statTools').textContent = this.stats.tools;
+                document.getElementById('statMessages').textContent = this.stats.messages;
+                document.getElementById('statTokens').textContent = this.stats.tokens.toLocaleString();
+            }
+            
+            sendMessage() {
+                const input = document.getElementById('chatInput');
+                const message = input.value.trim();
+                
+                if (!message) return;
+                
+                // Add user message
+                this.addMessage('user', message);
+                input.value = '';
+                
+                // Simulate agent response
+                this.simulateAgentResponse(message);
+            }
+            
+            addMessage(role, content, meta = '') {
+                const messagesContainer = document.getElementById('chatMessages');
+                
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message message-${role}`;
+                
+                let icon = '🤖';
+                if (role === 'user') icon = '👤';
+                if (role === 'tool') icon = '🔧';
+                
+                messageDiv.innerHTML = `
+                    <div class="message-content">${content}</div>
+                    <div class="message-meta">${icon} ${meta || this.getRoleLabel(role)} • Práve teraz</div>
+                `;
+                
+                messagesContainer.appendChild(messageDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                
+                this.stats.messages++;
+                this.updateStats();
+                
+                this.messages.push({ role, content, timestamp: Date.now() });
+            }
+            
+            getRoleLabel(role) {
+                const labels = {
+                    'user': 'Používateľ',
+                    'assistant': 'Agent',
+                    'tool': 'Nástroj'
+                };
+                return labels[role] || role;
+            }
+            
+            simulateAgentResponse(userMessage) {
+                const agentName = document.getElementById('currentAgentName').textContent;
+                document.getElementById('currentAgentStatus').textContent = 'Premýšľam...';
+                
+                // Simulate thinking delay
+                setTimeout(() => {
+                    // Check if we should use a tool
+                    const shouldUseTool = Math.random() > 0.7;
+                    
+                    if (shouldUseTool) {
+                        this.simulateToolCall(userMessage);
+                    } else {
+                        this.generateResponse(userMessage);
+                    }
+                }, 1500);
+            }
+            
+            simulateToolCall(userMessage) {
+                const tools = [
+                    { name: 'Vyhľadávanie', icon: '🔍', result: 'Výsledky vyhľadávania pre: ' + userMessage },
+                    { name: 'Wikipedia', icon: '📚', result: 'Nájdené informácie na Wikipedii' },
+                    { name: 'Analýza Dát', icon: '📊', result: 'Analýza dokončená úspešne' },
+                    { name: 'Terminál', icon: '💻', result: 'Príkaz bol úspešne vykonaný' }
+                ];
+                
+                const tool = tools[Math.floor(Math.random() * tools.length)];
+                
+                // Add tool call indicator
+                const toolCallDiv = document.createElement('div');
+                toolCallDiv.className = 'tool-call-item';
+                toolCallDiv.innerHTML = `
+                    <span class="tool-call-icon">${tool.icon}</span>
+                    <span class="tool-call-name">${tool.name}</span>
+                    <span class="tool-call-status status-pending">Vykonávanie...</span>
+                `;
+                document.getElementById('toolCallsList').appendChild(toolCallDiv);
+                
+                setTimeout(() => {
+                    toolCallDiv.querySelector('.tool-call-status').textContent = 'Úspech';
+                    toolCallDiv.querySelector('.tool-call-status').className = 'tool-call-status status-success';
+                    
+                    this.addMessage('tool', `${tool.result}`, tool.name);
+                    this.generateResponse(userMessage);
+                }, 1000);
+            }
+            
+            generateResponse(userMessage) {
+                const responses = [
+                    `Rozumiem! "${userMessage}" je zaujímavá téma. Môžem vám s tým pomôcť.`,
+                    `Dobrá otázka! Poďme sa pozrieť na "${userMessage}" podrobnejšie.`,
+                    `Áno, môžem vám s tým pomôcť. "${userMessage}" je niečo, čo sa dá efektívne spracovať.`,
+                    `Zaujímavé! "${userMessage}" ma motivuje k analýze dostupných možností.`
+                ];
+                
+                const response = responses[Math.floor(Math.random() * responses.length)];
+                this.addMessage('assistant', response);
+                document.getElementById('currentAgentStatus').textContent = 'Pripravený';
+            }
+            
+            clearChat() {
+                document.getElementById('chatMessages').innerHTML = `
+                    <div class="message message-assistant">
+                        <div class="message-content">
+                            👋 Ahoj! Som Demo Agent postavený na Cerebrum SDK. 
+                            Môžete začať novú konverzáciu.
+                        </div>
+                        <div class="message-meta">Cerebrum Agent • Práve teraz</div>
+                    </div>
+                `;
+                document.getElementById('toolCallsList').innerHTML = '';
+                this.messages = [];
+            }
+            
+            loadExampleAgent(type) {
+                const agents = {
+                    'demo': { name: 'Demo Agent', icon: '📝' },
+                    'search': { name: 'Vyhľadávací Agent', icon: '🔍' },
+                    'writer': { name: 'Autorský Agent', icon: '✍️' }
+                };
+                
+                const agent = agents[type];
+                document.getElementById('currentAgentName').textContent = agent.name;
+                this.showToast(`Načítaný agent: ${agent.name}`, 'success');
+                this.clearChat();
+            }
+            
+            updateMemoryDisplay() {
+                const shortTerm = this.messages.filter(m => 
+                    m.timestamp > Date.now() - 300000
+                ).length;
+                
+                const longTerm = this.messages.filter(m => 
+                    m.timestamp <= Date.now() - 300000
+                ).length;
+                
+                document.getElementById('shortTermCount').textContent = shortTerm;
+                document.getElementById('longTermCount').textContent = longTerm;
+                document.getElementById('totalCount').textContent = this.messages.length;
+                
+                const usage = Math.min(100, (this.messages.length / 100) * 100);
+                document.getElementById('memoryUsage').textContent = Math.round(usage) + '%';
+                document.getElementById('memoryFill').style.width = usage + '%';
+                document.getElementById('memoryUsed').textContent = this.messages.length + ' položiek';
+            }
+            
+            clearMemory(type) {
+                if (type === 'short') {
+                    this.messages = this.messages.filter(m => 
+                        m.timestamp <= Date.now() - 300000
+                    );
+                    this.showToast('Krátkodobá pamäť vymazaná', 'success');
+                } else {
+                    this.messages = [];
+                    this.showToast('Dlhodobá pamäť vymazaná', 'success');
+                }
+                this.updateMemoryDisplay();
+            }
+            
+            saveMemory() {
+                localStorage.setItem('cerebrum_memory', JSON.stringify(this.messages));
+                this.showToast('Pamäť uložená', 'success');
+            }
+            
+            loadMemory() {
+                const saved = localStorage.getItem('cerebrum_memory');
+                if (saved) {
+                    this.messages = JSON.parse(saved);
+                    this.showToast('Pamäť načítaná', 'success');
+                    this.updateMemoryDisplay();
+                } else {
+                    this.showToast('Žiadna uložená pamäť', 'warning');
+                }
+            }
+            
+            executeTerminalCommand() {
+                const input = document.getElementById('terminalInput');
+                const command = input.value.trim();
+                
+                if (!command) return;
+                
+                const terminal = document.getElementById('terminalBody');
+                
+                // Add command to terminal
+                const commandDiv = document.createElement('div');
+                commandDiv.className = 'terminal-line command';
+                commandDiv.textContent = `> ${command}`;
+                terminal.appendChild(commandDiv);
+                
+                // Process command
+                this.processTerminalCommand(command);
+                
+                input.value = '';
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+            
+            processTerminalCommand(command) {
+                const terminal = document.getElementById('terminalBody');
+                const parts = command.split(' ');
+                const cmd = parts[0].toLowerCase();
+                const args = parts.slice(1);
+                
+                const responses = {
+                    'help': [
+                        '📋 Dostupné príkazy:',
+                        '  list-agents   - Zoznam agentov',
+                        '  list-tools    - Zoznam nástrojov',
+                        '  status        - Stav systému',
+                        '  clear         - Vymazať terminál',
+                        '  help          - Zobraziť pomoc'
+                    ],
+                    'list-agents': [
+                        '📝 Dostupní agenti:',
+                        '  demo_author/demo_agent v0.0.3',
+                        '  search_author/web_search v1.0.0',
+                        '  writer_author/content_gen v2.0.1'
+                    ],
+                    'list-tools': [
+                        '🔧 Dostupné nástroje:',
+                        '  google/google_search',
+                        '  wikipedia/wiki_search',
+                        '  terminal/execute',
+                        '  data_analysis/analyze'
+                    ],
+                    'status': [
+                        '📊 Stav systému:',
+                        `  Agenti: ${this.stats.agents}`,
+                        `  Nástroje: ${this.stats.tools}`,
+                        `  Správy: ${this.stats.messages}`,
+                        `  Tokeny: ${this.stats.tokens}`,
+                        '  LLM: Pripravený'
+                    ],
+                    'clear': 'clear'
+                };
+                
+                if (cmd === 'clear') {
+                    terminal.innerHTML = '';
+                    return;
+                }
+                
+                if (responses[cmd]) {
+                    if (Array.isArray(responses[cmd])) {
+                        responses[cmd].forEach(line => {
+                            const lineDiv = document.createElement('div');
+                            lineDiv.className = 'terminal-line output';
+                            lineDiv.textContent = line;
+                            terminal.appendChild(lineDiv);
+                        });
+                    } else {
+                        const lineDiv = document.createElement('div');
+                        lineDiv.className = 'terminal-line output';
+                        lineDiv.textContent = responses[cmd];
+                        terminal.appendChild(lineDiv);
+                    }
+                } else {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'terminal-line error';
+                    errorDiv.textContent = `Neznámy príkaz: ${cmd}`;
+                    terminal.appendChild(errorDiv);
+                }
+                
+                // Add system prompt
+                const promptDiv = document.createElement('div');
+                promptDiv.className = 'terminal-line';
+                promptDiv.innerHTML = '<span style="color: var(--text-muted);">$</span>';
+                terminal.appendChild(promptDiv);
+            }
+            
+            insertCommand(cmd) {
+                document.getElementById('terminalInput').value = cmd;
+            }
+            
+            clearTerminal() {
+                document.getElementById('terminalBody').innerHTML = `
+                    <div class="terminal-line system">🤖 Cerebrum Agent SDK v1.0.0</div>
+                    <div class="terminal-line system">📦 Type 'help' for available commands</div>
+                    <div class="terminal-line system">------------------------------------------</div>
+                `;
+            }
+            
+            saveLLMSettings() {
+                const settings = {
+                    openai: {
+                        key: document.getElementById('openaiKey').value,
+                        model: document.getElementById('openaiModel').value
+                    },
+                    anthropic: {
+                        key: document.getElementById('anthropicKey').value,
+                        model: document.getElementById('anthropicModel').value
+                    },
+                    groq: {
+                        key: document.getElementById('groqKey').value,
+                        model: document.getElementById('groqModel').value
+                    }
+                };
+                
+                localStorage.setItem('cerebrum_llm_settings', JSON.stringify(settings));
+                this.showToast('Nastavenia LLM uložené', 'success');
+            }
+            
+            saveSettings() {
+                const settings = {
+                    language: document.getElementById('settingLanguage').value,
+                    theme: document.getElementById('settingTheme').value,
+                    maxMessages: document.getElementById('settingMaxMessages').value,
+                    timeout: document.getElementById('settingTimeout').value,
+                    autoSave: document.getElementById('settingAutoSave').value
+                };
+                
+                localStorage.setItem('cerebrum_settings', JSON.stringify(settings));
+                this.showToast('Nastavenia uložené', 'success');
+            }
+            
+            loadSettings() {
+                const saved = localStorage.getItem('cerebrum_settings');
+                if (saved) {
+                    const settings = JSON.parse(saved);
+                    document.getElementById('settingLanguage').value = settings.language || 'sk';
+                    document.getElementById('settingTheme').value = settings.theme || 'dark';
+                    document.getElementById('settingMaxMessages').value = settings.maxMessages || 100;
+                    document.getElementById('settingTimeout').value = settings.timeout || 300;
+                    document.getElementById('settingAutoSave').value = settings.autoSave || 'true';
+                }
+                
+                // Load LLM settings
+                const llmSettings = localStorage.getItem('cerebrum_llm_settings');
+                if (llmSettings) {
+                    const settings = JSON.parse(llmSettings);
+                    if (settings.openai?.key) document.getElementById('openaiKey').value = settings.openai.key;
+                    if (settings.anthropic?.key) document.getElementById('anthropicKey').value = settings.anthropic.key;
+                    if (settings.groq?.key) document.getElementById('groqKey').value = settings.groq.key;
+                }
+            }
+            
+            resetSettings() {
+                document.getElementById('settingLanguage').value = 'sk';
+                document.getElementById('settingTheme').value = 'dark';
+                document.getElementById('settingMaxMessages').value = 100;
+                document.getElementById('settingTimeout').value = 300;
+                document.getElementById('settingAutoSave').value = 'true';
+                this.showToast('Nastavenia obnovené', 'success');
+            }
+            
+            showToast(message, type = 'info') {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                container.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
+            }
+        }
+        
+        // Initialize interface
+        document.addEventListener('DOMContentLoaded', () => {
+            window.cerebrum = new CerebrumInterface();
+        });
+    </script>
+</body>
+</html>

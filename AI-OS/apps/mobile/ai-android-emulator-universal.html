@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🤖 Android Emulator - Universal SDK</title>
+    
+    <!-- AI-OS Core Integration -->
+    <script src="../js/ai-os-core.js"></script>
+    <script src="../js/ai-os-app-integration.js"></script>
+    
+    <!-- Universal AI-OS Styles -->
+    <link rel="stylesheet" href="../universal-app-styles.css">
+    
+    <!-- Android-specific styles -->
+    <style>
+        /* Android App Theme */
+        .android-app {
+            --primary: #4CAF50;
+            --primary-dark: #388E3C;
+            --secondary: #2196F3;
+            --accent: #FF9800;
+            --bg-primary: #121212;
+            --bg-secondary: #1E1E1E;
+            --bg-tertiary: #2C2C2C;
+            --text-primary: #FFFFFF;
+            --text-secondary: #B0B0B0;
+            --border-primary: rgba(76, 175, 80, 0.3);
+        }
+        
+        .android-app .ai-app-header {
+            background: linear-gradient(90deg, #121212, #1E1E1E, #121212);
+            border-bottom: 1px solid var(--primary);
+        }
+        
+        .android-app .ai-app-icon {
+            background: rgba(76, 175, 80, 0.2);
+            border-color: rgba(76, 175, 80, 0.5);
+        }
+        
+        .android-app .ai-btn:hover {
+            background: rgba(76, 175, 80, 0.1);
+            border-color: var(--primary);
+        }
+        
+        .android-app .ai-btn-primary {
+            background: var(--primary);
+            color: #000;
+        }
+        
+        .android-app .ai-card {
+            background: rgba(30, 30, 30, 0.9);
+            border-color: var(--border-primary);
+        }
+        
+        /* Android-specific components */
+        .android-device {
+            background: #000;
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            padding: 20px;
+            margin: var(--space-lg);
+            max-width: 400px;
+            aspect-ratio: 9/16;
+            position: relative;
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.3);
+        }
+        
+        .android-screen {
+            background: linear-gradient(135deg, #000, #1a1a1a);
+            border-radius: 15px;
+            height: 100%;
+            padding: var(--space-md);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            text-align: center;
+            position: relative;
+        }
+        
+        .android-status-bar {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .android-home-indicator {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+        
+        .device-controls {
+            position: absolute;
+            right: -60px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+        
+        .device-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-primary);
+            border-radius: 50%;
+            color: var(--primary);
+            font-size: 16px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .device-btn:hover {
+            background: var(--primary);
+            color: #000;
+            transform: scale(1.1);
+        }
+        
+        .sdk-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-top: var(--space-lg);
+        }
+        
+        .device-list {
+            display: grid;
+            gap: var(--space-md);
+            margin-top: var(--space-md);
+        }
+        
+        .device-item {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+        
+        .device-item:hover {
+            border-color: var(--primary);
+            background: rgba(76, 175, 80, 0.1);
+        }
+        
+        .device-item.active {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: #000;
+        }
+        
+        .device-icon {
+            font-size: 24px;
+            width: 40px;
+            text-align: center;
+        }
+        
+        .device-info {
+            flex: 1;
+        }
+        
+        .device-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .device-status {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .device-actions {
+            display: flex;
+            gap: var(--space-xs);
+        }
+        
+        .status-indicator {
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .status-offline {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.5);
+            color: #f44336;
+        }
+        
+        .status-connecting {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid rgba(255, 193, 7, 0.5);
+            color: #FFC107;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-online {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            color: #4CAF50;
+        }
+        
+        .emulator-apps {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+        
+        .app-icon {
+            aspect-ratio: 1;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            padding: var(--space-md);
+        }
+        
+        .app-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .app-icon:active {
+            transform: scale(0.95);
+        }
+        
+        .app-icon-emoji {
+            font-size: 24px;
+        }
+        
+        .app-icon-name {
+            font-size: 10px;
+            font-weight: 500;
+            text-align: center;
+            line-height: 1.2;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .android-device {
+                margin: var(--space-md);
+                max-width: 300px;
+            }
+            
+            .device-controls {
+                position: static;
+                flex-direction: row;
+                justify-content: center;
+                margin-top: var(--space-md);
+            }
+            
+            .emulator-apps {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    </style>
+</head>
+<body class="safe-area android-app">
+    <!-- Universal App Container -->
+    <div class="ai-app-container">
+        <!-- Universal App Header -->
+        <header class="ai-app-header">
+            <div class="ai-app-title">
+                <div class="ai-app-icon">🤖</div>
+                <span>Android Emulator - Universal SDK</span>
+            </div>
+            <div class="ai-app-controls">
+                <!-- Universal controls will be added automatically -->
+            </div>
+        </header>
+
+        <!-- Universal App Layout -->
+        <div class="ai-app-layout">
+            <!-- Universal Sidebar -->
+            <aside class="ai-sidebar">
+                <button class="ai-btn ai-btn-icon ai-sidebar-toggle" onclick="aiApp.toggleSidebar()">
+                    ☰
+                </button>
+                <div class="ai-sidebar-content">
+                    <nav class="ai-sidebar-nav">
+                        <div class="ai-sidebar-item active" data-section="emulator">
+                            <div class="ai-sidebar-icon">🤖</div>
+                            <span class="sidebar-item-text">Emulator</span>
+                        </div>
+                        <div class="ai-sidebar-item" data-section="devices">
+                            <div class="ai-sidebar-icon">📱</div>
+                            <span class="sidebar-item-text">Devices</span>
+                        </div>
+                        <div class="ai-sidebar-item" data-section="sdk">
+                            <div class="ai-sidebar-icon">🔧</div>
+                            <span class="sidebar-item-text">SDK Tools</span>
+                        </div>
+                        <div class="ai-sidebar-item" data-section="apps">
+                            <div class="ai-sidebar-icon">📦</div>
+                            <span class="sidebar-item-text">Apps</span>
+                        </div>
+                        <div class="ai-sidebar-item" data-section="settings">
+                            <div class="ai-sidebar-icon">⚙️</div>
+                            <span class="sidebar-item-text">Settings</span>
+                        </div>
+                    </nav>
+                </div>
+            </aside>
+
+            <!-- Universal Main Content -->
+            <main class="ai-main-content">
+                <div class="ai-content-area">
+                    <!-- Emulator Section -->
+                    <div id="emulator-section" class="section-content">
+                        <div class="ai-card ai-fade-in">
+                            <div class="ai-card-header">
+                                <div class="ai-app-icon">🤖</div>
+                                <div>
+                                    <h3 class="ai-card-title">Android Emulator</h3>
+                                    <p class="ai-card-subtitle">Universal Android SDK Integration</p>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: center; position: relative;">
+                                <!-- Android Device -->
+                                <div class="android-device">
+                                    <div class="android-screen" id="emulatorScreen">
+                                        <div class="android-status-bar">
+                                            <span>9:41</span>
+                                            <span>📶🔋100%</span>
+                                        </div>
+                                        
+                                        <div id="homeScreen" style="text-align: center;">
+                                            <h2 style="margin-bottom: var(--space-lg);">Android Emulator</h2>
+                                            <div class="status-indicator status-online">
+                                                <span style="width: 8px; height: 8px; background: currentColor; border-radius: 50%;"></span>
+                                                Device Online
+                                            </div>
+                                            <p style="margin-top: var(--space-md); opacity: 0.8;">Tap apps to launch</p>
+                                        </div>
+                                        
+                                        <div class="android-home-indicator"></div>
+                                    </div>
+                                    
+                                    <div class="device-controls">
+                                        <button class="device-btn" onclick="powerDevice()" title="Power">⚡</button>
+                                        <button class="device-btn" onclick="volumeUp()" title="Volume Up">🔊</button>
+                                        <button class="device-btn" onclick="volumeDown()" title="Volume Down">🔉</button>
+                                        <button class="device-btn" onclick="rotateDevice()" title="Rotate">📱</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Devices Section -->
+                    <div id="devices-section" class="section-content" style="display: none;">
+                        <div class="ai-card ai-fade-in">
+                            <div class="ai-card-header">
+                                <div class="ai-app-icon">📱</div>
+                                <div>
+                                    <h3 class="ai-card-title">Virtual Devices</h3>
+                                    <p class="ai-card-subtitle">Manage Android virtual devices</p>
+                                </div>
+                            </div>
+                            
+                            <div class="device-list">
+                                <div class="device-item active" onclick="selectDevice('pixel7')">
+                                    <div class="device-icon">📱</div>
+                                    <div class="device-info">
+                                        <div class="device-name">Pixel 7 Pro</div>
+                                        <div class="device-status">Android 13 • API Level 33 • Running</div>
+                                    </div>
+                                    <div class="device-actions">
+                                        <button class="ai-btn ai-btn-icon" onclick="startDevice('pixel7')">▶️</button>
+                                        <button class="ai-btn ai-btn-icon" onclick="stopDevice('pixel7')">⏹️</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="device-item" onclick="selectDevice('nexus5')">
+                                    <div class="device-icon">📱</div>
+                                    <div class="device-info">
+                                        <div class="device-name">Nexus 5</div>
+                                        <div class="device-status">Android 11 • API Level 30 • Stopped</div>
+                                    </div>
+                                    <div class="device-actions">
+                                        <button class="ai-btn ai-btn-icon" onclick="startDevice('nexus5')">▶️</button>
+                                        <button class="ai-btn ai-btn-icon" onclick="stopDevice('nexus5')">⏹️</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="device-item" onclick="selectDevice('tablet')">
+                                    <div class="device-icon">📱</div>
+                                    <div class="device-info">
+                                        <div class="device-name">Tablet 10"</div>
+                                        <div class="device-status">Android 12 • API Level 31 • Running</div>
+                                    </div>
+                                    <div class="device-actions">
+                                        <button class="ai-btn ai-btn-icon" onclick="startDevice('tablet')">▶️</button>
+                                        <button class="ai-btn ai-btn-icon" onclick="stopDevice('tablet')">⏹️</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: var(--space-lg); display: flex; gap: var(--space-md);">
+                                <button class="ai-btn ai-btn-primary" onclick="createDevice()">Create New Device</button>
+                                <button class="ai-btn" onclick="importDevice()">Import Device</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SDK Tools Section -->
+                    <div id="sdk-section" class="section-content" style="display: none;">
+                        <div class="ai-card ai-fade-in">
+                            <div class="ai-card-header">
+                                <div class="ai-app-icon">🔧</div>
+                                <div>
+                                    <h3 class="ai-card-title">SDK Tools</h3>
+                                    <p class="ai-card-subtitle">Android SDK integration and tools</p>
+                                </div>
+                            </div>
+                            
+                            <div class="sdk-panel">
+                                <h4 style="margin-bottom: var(--space-md);">SDK Status</h4>
+                                <div class="status-indicator status-online" id="sdkStatus">
+                                    <span style="width: 8px; height: 8px; background: currentColor; border-radius: 50%;"></span>
+                                    SDK Connected - API Level 33
+                                </div>
+                                
+                                <div style="margin-top: var(--space-lg); display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-md);">
+                                    <div class="ai-card">
+                                        <h4>📱 ADB</h4>
+                                        <p style="margin-top: var(--space-sm); font-size: 14px;">Android Debug Bridge</p>
+                                        <button class="ai-btn ai-btn-secondary ai-mt-md" onclick="runADBCommand()">Run ADB</button>
+                                    </div>
+                                    
+                                    <div class="ai-card">
+                                        <h4>🔍 Logcat</h4>
+                                        <p style="margin-top: var(--space-sm); font-size: 14px;">System logs viewer</p>
+                                        <button class="ai-btn ai-btn-secondary ai-mt-md" onclick="openLogcat()">Open Logcat</button>
+                                    </div>
+                                    
+                                    <div class="ai-card">
+                                        <h4>📦 APK Install</h4>
+                                        <p style="margin-top: var(--space-sm); font-size: 14px;">Install APK files</p>
+                                        <button class="ai-btn ai-btn-secondary ai-mt-md" onclick="installAPK()">Install APK</button>
+                                    </div>
+                                    
+                                    <div class="ai-card">
+                                        <h4>🔐 Root Access</h4>
+                                        <p style="margin-top: var(--space-sm); font-size: 14px;">Enable root shell</p>
+                                        <button class="ai-btn ai-btn-secondary ai-mt-md" onclick="enableRoot()">Enable Root</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Apps Section -->
+                    <div id="apps-section" class="section-content" style="display: none;">
+                        <div class="ai-card ai-fade-in">
+                            <div class="ai-card-header">
+                                <div class="ai-app-icon">📦</div>
+                                <div>
+                                    <h3 class="ai-card-title">Emulator Apps</h3>
+                                    <p class="ai-card-subtitle">Pre-installed and user apps</p>
+                                </div>
+                            </div>
+                            
+                            <div class="emulator-apps">
+                                <div class="app-icon" onclick="launchApp('browser')">
+                                    <div class="app-icon-emoji">🌐</div>
+                                    <div class="app-icon-name">Browser</div>
+                                </div>
+                                <div class="app-icon" onclick="launchApp('calculator')">
+                                    <div class="app-icon-emoji">🧮</div>
+                                    <div class="app-icon-name">Calculator</div>
+                                </div>
+                                <div class="app-icon" onclick="launchApp('camera')">
+                                    <div class="app-icon-emoji">📷</div>
+                                    <div class="app-icon-name">Camera</div>
+                                </div>
+                                <div class="app-icon" onclick="launchApp('contacts')">
+                                    <div class="app-icon-emoji">📞</div>
+                                    <div class="app-icon-name">Contacts</div>
+                                </div>
+                                <div class="app-icon" onclick="launchApp('gallery')">
+                                    <div class="app-icon-emoji">🖼️</div>
+                                    <div class="app-icon-name">Gallery</div>
+                                </div>
+                                <div class="app-icon" onclick="launchApp('maps')">
+                                    <div class="app-icon-emoji">🗺️</div>
+                                    <div class="app-icon-name">Maps</div>
+                                </div>
+                                <div class="app-icon" onclick="launchApp('messages')">
+                                    <div class="app-icon-emoji">💬</div>
+                                    <div class="app-icon-name">Messages</div>
+                                </div>
+                                <div class="app-icon" onclick="launchApp('music')">
+                                    <div class="app-icon-emoji">🎵</div>
+                                    <div class="app-icon-name">Music</div>
+                                </div>
+                                <div class="app-icon" onclick="launchApp('phone')">
+                                    <div class="app-icon-emoji">📱</div>
+                                    <div class="app-icon-name">Phone</div>
+                                </div>
+                                <div class="app-icon" onclick="launchApp('settings')">
+                                    <div class="app-icon-emoji">⚙️</div>
+                                    <div class="app-icon-name">Settings</div>
+                                </div>
+                                <div class="app-icon" onclick="launchApp('clock')">
+                                    <div class="app-icon-emoji">⏰</div>
+                                    <div class="app-icon-name">Clock</div>
+                                </div>
+                                <div class="app-icon" onclick="launchApp('weather')">
+                                    <div class="app-icon-emoji">🌤️</div>
+                                    <div class="app-icon-name">Weather</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Section -->
+                    <div id="settings-section" class="section-content" style="display: none;">
+                        <div class="ai-card ai-fade-in">
+                            <div class="ai-card-header">
+                                <div class="ai-app-icon">⚙️</div>
+                                <div>
+                                    <h3 class="ai-card-title">Emulator Settings</h3>
+                                    <p class="ai-card-subtitle">Configure emulator preferences</p>
+                                </div>
+                            </div>
+                            
+                            <div class="ai-grid ai-grid-cols-2 ai-mt-lg">
+                                <div class="ai-card">
+                                    <h4>🎨 Display</h4>
+                                    <div style="margin-top: var(--space-md);">
+                                        <label style="display: block; margin-bottom: var(--space-sm);">
+                                            <input type="checkbox" checked> Hardware acceleration
+                                        </label>
+                                        <label style="display: block; margin-bottom: var(--space-sm);">
+                                            <input type="checkbox" checked> Multitouch support
+                                        </label>
+                                        <label style="display: block; margin-bottom: var(--space-sm);">
+                                            <input type="checkbox"> Show device frame
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="ai-card">
+                                    <h4>🔋 Performance</h4>
+                                    <div style="margin-top: var(--space-md);">
+                                        <label style="display: block; margin-bottom: var(--space-sm);">
+                                            RAM: 4GB
+                                        </label>
+                                        <label style="display: block; margin-bottom: var(--space-sm);">
+                                            CPU: 4 cores
+                                        </label>
+                                        <label style="display: block; margin-bottom: var(--space-sm);">
+                                            Storage: 8GB
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Universal Navigation Bar -->
+                <nav class="ai-nav-bar">
+                    <div class="ai-nav-left">
+                        <button class="ai-nav-back" onclick="aiApp.navigateBack()">
+                            ← Späť
+                        </button>
+                    </div>
+                    <div class="ai-nav-right">
+                        <button class="ai-nav-home" onclick="aiApp.goHome()">
+                            🏠 Hlavná
+                        </button>
+                    </div>
+                </nav>
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div class="ai-sidebar-overlay" onclick="aiApp.closeSidebar()"></div>
+
+    <!-- Universal AI-OS JavaScript -->
+    <script src="../universal-app.js"></script>
+    
+    <!-- Android-specific JavaScript -->
+    <script>
+        let selectedDevice = 'pixel7';
+        let devicePower = true;
+        let isRotated = false;
+        
+        // Device control functions
+        function powerDevice() {
+            devicePower = !devicePower;
+            const screen = document.getElementById('emulatorScreen');
+            const homeScreen = document.getElementById('homeScreen');
+            
+            if (devicePower) {
+                screen.style.background = 'linear-gradient(135deg, #000, #1a1a1a)';
+                homeScreen.style.display = 'block';
+                showNotification('Device powered on');
+            } else {
+                screen.style.background = '#000';
+                homeScreen.style.display = 'none';
+                showNotification('Device powered off');
+            }
+        }
+        
+        function volumeUp() {
+            showNotification('Volume up');
+        }
+        
+        function volumeDown() {
+            showNotification('Volume down');
+        }
+        
+        function rotateDevice() {
+            isRotated = !isRotated;
+            const device = document.querySelector('.android-device');
+            if (isRotated) {
+                device.style.transform = 'rotate(90deg)';
+                showNotification('Device rotated to landscape');
+            } else {
+                device.style.transform = 'rotate(0deg)';
+                showNotification('Device rotated to portrait');
+            }
+        }
+        
+        // Device management
+        function selectDevice(deviceId) {
+            // Remove active class from all devices
+            document.querySelectorAll('.device-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to selected device
+            event.target.closest('.device-item').classList.add('active');
+            selectedDevice = deviceId;
+            
+            showNotification(`Selected ${deviceId}`);
+        }
+        
+        function startDevice(deviceId) {
+            showNotification(`Starting ${deviceId}...`);
+            
+            setTimeout(() => {
+                const statusIndicator = event.target.closest('.device-item').querySelector('.device-status');
+                statusIndicator.textContent = 'Android 13 • API Level 33 • Running';
+                
+                const statusEl = event.target.closest('.device-item').querySelector('.device-actions');
+                statusEl.innerHTML = `
+                    <button class="ai-btn ai-btn-icon" onclick="stopDevice('${deviceId}')">⏹️</button>
+                `;
+                
+                showNotification(`${deviceId} started successfully`);
+            }, 2000);
+        }
+        
+        function stopDevice(deviceId) {
+            showNotification(`Stopping ${deviceId}...`);
+            
+            setTimeout(() => {
+                const statusIndicator = event.target.closest('.device-item').querySelector('.device-status');
+                statusIndicator.textContent = 'Android 13 • API Level 33 • Stopped';
+                
+                const statusEl = event.target.closest('.device-item').querySelector('.device-actions');
+                statusEl.innerHTML = `
+                    <button class="ai-btn ai-btn-icon" onclick="startDevice('${deviceId}')">▶️</button>
+                `;
+                
+                showNotification(`${deviceId} stopped`);
+            }, 1500);
+        }
+        
+        function createDevice() {
+            aiApp.showModal(`
+                <h4>Create New Virtual Device</h4>
+                <div style="margin-top: var(--space-md);">
+                    <label>Device Name:</label>
+                    <input type="text" class="ai-input" placeholder="My Device" style="margin-top: var(--space-xs);">
+                </div>
+                <div style="margin-top: var(--space-md);">
+                    <label>Android Version:</label>
+                    <select class="ai-input" style="margin-top: var(--space-xs);">
+                        <option>Android 13 (API 33)</option>
+                        <option>Android 12 (API 31)</option>
+                        <option>Android 11 (API 30)</option>
+                    </select>
+                </div>
+                <div style="margin-top: var(--space-md);">
+                    <label>Device Type:</label>
+                    <select class="ai-input" style="margin-top: var(--space-xs);">
+                        <option>Phone</option>
+                        <option>Tablet</option>
+                        <option>TV</option>
+                        <option>Wear OS</option>
+                    </select>
+                </div>
+                <div style="margin-top: var(--space-lg); display: flex; gap: var(--space-md);">
+                    <button class="ai-btn ai-btn-primary" onclick="confirmCreateDevice()">Create</button>
+                    <button class="ai-btn" onclick="aiApp.hideModal()">Cancel</button>
+                </div>
+            `, { title: 'New Virtual Device' });
+        }
+        
+        function confirmCreateDevice() {
+            aiApp.hideModal();
+            showNotification('Virtual device created successfully');
+        }
+        
+        function importDevice() {
+            aiApp.showModal(`
+                <h4>Import Virtual Device</h4>
+                <p style="margin: var(--space-md) 0;">Select an AVD (Android Virtual Device) file to import:</p>
+                <input type="file" accept=".avd" style="margin: var(--space-md) 0;">
+                <div style="margin-top: var(--space-lg); display: flex; gap: var(--space-md);">
+                    <button class="ai-btn ai-btn-primary" onclick="confirmImportDevice()">Import</button>
+                    <button class="ai-btn" onclick="aiApp.hideModal()">Cancel</button>
+                </div>
+            `, { title: 'Import Device' });
+        }
+        
+        function confirmImportDevice() {
+            aiApp.hideModal();
+            showNotification('Device imported successfully');
+        }
+        
+        // SDK Tools functions
+        function runADBCommand() {
+            aiApp.showModal(`
+                <h4>ADB Command Runner</h4>
+                <input type="text" class="ai-input" placeholder="Enter ADB command..." style="margin: var(--space-md) 0;">
+                <div style="background: #000; border: 1px solid var(--border-primary); border-radius: var(--radius-md); padding: var(--space-md); font-family: var(--font-mono); font-size: 12px; margin-top: var(--space-md); max-height: 200px; overflow-y: auto;">
+                    $ adb devices<br>
+                    List of devices attached<br>
+                    emulator-5554   device<br>
+                    <br>
+                    $ adb shell getprop ro.build.version.release<br>
+                    13
+                </div>
+            `, { title: 'ADB Command Runner' });
+        }
+        
+        function openLogcat() {
+            aiApp.showModal(`
+                <h4>Logcat Viewer</h4>
+                <div style="background: #000; border: 1px solid var(--border-primary); border-radius: var(--radius-md); padding: var(--space-md); font-family: var(--font-mono); font-size: 11px; margin-top: var(--space-md); max-height: 300px; overflow-y: auto;">
+                    12-19 09:04:36.123  1234  1245 I ActivityManager: Starting service Intent<br>
+                    12-19 09:04:36.456  1234  1245 D dalvikvm: GC_FOR_MALLOC freed 1234 objects<br>
+                    12-19 09:04:36.789  1234  1245 W System.out: Debug message<br>
+                    12-19 09:04:37.012  1234  1245 E AndroidRuntime: FATAL EXCEPTION<br>
+                </div>
+                <div style="margin-top: var(--space-md);">
+                    <button class="ai-btn ai-btn-secondary" onclick="clearLogcat()">Clear</button>
+                    <button class="ai-btn ai-btn-secondary" onclick="pauseLogcat()">Pause</button>
+                </div>
+            `, { title: 'Logcat Viewer' });
+        }
+        
+        function installAPK() {
+            aiApp.showModal(`
+                <h4>Install APK</h4>
+                <input type="file" accept=".apk" style="margin: var(--space-md) 0;">
+                <p style="margin: var(--space-md) 0; font-size: 14px;">Select an APK file to install on the emulator.</p>
+                <div style="margin-top: var(--space-lg); display: flex; gap: var(--space-md);">
+                    <button class="ai-btn ai-btn-primary" onclick="confirmInstallAPK()">Install</button>
+                    <button class="ai-btn" onclick="aiApp.hideModal()">Cancel</button>
+                </div>
+            `, { title: 'Install APK' });
+        }
+        
+        function confirmInstallAPK() {
+            aiApp.hideModal();
+            showNotification('APK installed successfully');
+        }
+        
+        function enableRoot() {
+            showNotification('Root access enabled');
+        }
+        
+        function clearLogcat() {
+            console.log('Logcat cleared');
+        }
+        
+        function pauseLogcat() {
+            console.log('Logcat paused');
+        }
+        
+        // App launcher
+        function launchApp(appName) {
+            const appNames = {
+                'browser': '🌐 Browser',
+                'calculator': '🧮 Calculator',
+                'camera': '📷 Camera',
+                'contacts': '📞 Contacts',
+                'gallery': '🖼️ Gallery',
+                'maps': '🗺️ Maps',
+                'messages': '💬 Messages',
+                'music': '🎵 Music',
+                'phone': '📱 Phone',
+                'settings': '⚙️ Settings',
+                'clock': '⏰ Clock',
+                'weather': '🌤️ Weather'
+            };
+            
+            showNotification(`Launching ${appNames[appName] || appName}`);
+            
+            // Simulate app launch
+            setTimeout(() => {
+                const homeScreen = document.getElementById('homeScreen');
+                homeScreen.innerHTML = `
+                    <h2>${appNames[appName]}</h2>
+                    <p style="margin-top: var(--space-md); opacity: 0.8;">App launched successfully</p>
+                    <button class="ai-btn ai-mt-lg" onclick="backToHome()">← Back to Home</button>
+                `;
+            }, 500);
+        }
+        
+        function backToHome() {
+            const homeScreen = document.getElementById('homeScreen');
+            homeScreen.innerHTML = `
+                <h2 style="margin-bottom: var(--space-lg);">Android Emulator</h2>
+                <div class="status-indicator status-online">
+                    <span style="width: 8px; height: 8px; background: currentColor; border-radius: 50%;"></span>
+                    Device Online
+                </div>
+                <p style="margin-top: var(--space-md); opacity: 0.8;">Tap apps to launch</p>
+            `;
+        }
+        
+        // Notification system
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--primary);
+                color: #000;
+                padding: var(--space-md) var(--space-lg);
+                border-radius: var(--radius-md);
+                font-weight: 500;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Add slideOut animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Sidebar navigation
+        function handleSectionChange(section) {
+            // Hide all sections
+            document.querySelectorAll('.section-content').forEach(s => {
+                s.style.display = 'none';
+            });
+            
+            // Show selected section
+            const targetSection = document.getElementById(section + '-section');
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+        }
+        
+        // AI-OS Core Integration
+        let aiOSIntegration = null;
+        
+        function handleAIOSCommand(command) {
+            switch (command.action) {
+                case 'startEmulator':
+                    addNotification('Android Emulator', 'Starting Android emulator...', 'info');
+                    break;
+                case 'stopEmulator':
+                    addNotification('Android Emulator', 'Stopping Android emulator...', 'info');
+                    break;
+                case 'createInstance':
+                    addNotification('Android Emulator', 'Creating new emulator instance...', 'info');
+                    break;
+                case 'installAPK':
+                    addNotification('Android Emulator', 'Installing APK...', 'info');
+                    break;
+                case 'openApp':
+                    addNotification('Android Emulator', 'Opening app...', 'info');
+                    break;
+                default:
+                    console.log('Unknown AI-OS command:', command);
+            }
+        }
+        
+        function updateEmulatorStatus(systemState) {
+            // Update emulator with system information
+            if (systemState) {
+                // Update emulator-related information
+                if (systemState.emulator !== undefined) {
+                    addNotification('System', `Emulator status: ${systemState.emulator}`, 'info');
+                }
+            }
+        }
+        
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🤖 Initializing Universal Android Emulator...');
+            
+            // Wait for AI-OS Core to be available
+            const initEmulator = () => {
+                // Setup sidebar navigation
+                const sidebarItems = document.querySelectorAll('.ai-sidebar-item');
+                sidebarItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        sidebarItems.forEach(i => i.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        const section = this.getAttribute('data-section');
+                        handleSectionChange(section);
+                    });
+                });
+                
+                // Setup AI-OS Core integration
+                if (window.aiOSCore && window.AIOSAppIntegration) {
+                    aiOSIntegration = new AIOSAppIntegration('android-emulator-universal', 'Android Emulator Universal', [
+                        'android_emulation', 'universal_interface', 'apk_management', 'multi_instance'
+                    ]);
+                    
+                    // Listen for AI-OS events
+                    aiOSIntegration.on('appMessage', (data) => {
+                        if (data.from === 'aiOS-core') {
+                            handleAIOSCommand(data.data);
+                        }
+                    });
+                    
+                    aiOSIntegration.on('systemStateUpdate', (data) => {
+                        updateEmulatorStatus(data);
+                    });
+                    
+                    console.log('✅ Universal Android Emulator integrated with AI-OS Core');
+                }
+            };
+            
+            if (window.aiOSCore) {
+                initEmulator();
+            } else {
+                setTimeout(initEmulator, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

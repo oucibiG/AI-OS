@@ -1,0 +1,449 @@
+/**
+ * Advanced AI-OS Pro CSS Module
+ * Advanced styling for iPhone 11 Pro and modern AI interfaces
+ */
+
+/* AI Agent Status Animations */
+@keyframes aiAgentPulse {
+    0%, 100% { 
+        opacity: 0.6; 
+        transform: scale(1);
+        box-shadow: 0 0 5px var(--glow-color);
+    }
+    50% { 
+        opacity: 1; 
+        transform: scale(1.05);
+        box-shadow: 0 0 20px var(--glow-color);
+    }
+}
+
+@keyframes aiThinking {
+    0% { content: "🤔"; }
+    25% { content: "💭"; }
+    50% { content: "🧠"; }
+    75% { content: "⚡"; }
+    100% { content: "✨"; }
+}
+
+.ai-agent-status {
+    position: relative;
+}
+
+.ai-agent-status::before {
+    animation: aiThinking 3s infinite;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 12px;
+}
+
+/* Advanced Neural Network Background */
+.neural-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.1;
+}
+
+.neural-node {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--primary-green);
+    border-radius: 50%;
+    animation: neuralPulse 2s infinite ease-in-out;
+}
+
+.neural-connection {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary-green), transparent);
+    animation: neuralFlow 3s infinite linear;
+}
+
+@keyframes neuralPulse {
+    0%, 100% { 
+        opacity: 0.3; 
+        transform: scale(0.8);
+    }
+    50% { 
+        opacity: 1; 
+        transform: scale(1.2);
+        box-shadow: 0 0 10px var(--primary-green);
+    }
+}
+
+@keyframes neuralFlow {
+    0% { transform: translateX(-100%); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateX(100%); opacity: 0; }
+}
+
+/* AI Contextual Interface */
+.ai-contextual-panel {
+    position: fixed;
+    top: calc(var(--safe-area-top) + 60px);
+    right: 20px;
+    width: 280px;
+    max-height: 400px;
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    transform: translateX(320px);
+    transition: transform var(--transition-slow);
+    backdrop-filter: blur(20px);
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.ai-contextual-panel.show {
+    transform: translateX(0);
+}
+
+.contextual-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.contextual-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.contextual-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.contextual-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0, 255, 0, 0.1);
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.contextual-item:last-child {
+    border-bottom: none;
+}
+
+.contextual-icon {
+    font-size: 14px;
+}
+
+/* AI Gesture Recognition */
+.gesture-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 999;
+}
+
+.gesture-trail {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: var(--primary-green);
+    border-radius: 50%;
+    opacity: 0.7;
+    animation: gestureTrail 0.5s ease-out forwards;
+}
+
+@keyframes gestureTrail {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(3);
+        opacity: 0;
+    }
+}
+
+/* Advanced AI App Card Variants */
+.ai-app-card.variant-primary {
+    background: linear-gradient(135deg, rgba(0, 255, 0, 0.1), rgba(0, 255, 0, 0.05));
+    border: 2px solid var(--primary-green);
+}
+
+.ai-app-card.variant-secondary {
+    background: linear-gradient(135deg, rgba(0, 255, 0, 0.05), rgba(0, 255, 0, 0.02));
+    border: 1px solid var(--border-color);
+}
+
+.ai-app-card.variant-ghost {
+    background: transparent;
+    border: 1px dashed var(--border-color);
+}
+
+.ai-app-card.variant-glowing {
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+    animation: cardGlow 3s ease-in-out infinite;
+}
+
+@keyframes cardGlow {
+    0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 0, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(0, 255, 0, 0.6); }
+}
+
+/* AI Performance Metrics */
+.ai-metrics-dashboard {
+    position: fixed;
+    bottom: calc(var(--safe-area-bottom) + 20px);
+    left: 20px;
+    width: 200px;
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-small);
+    padding: 12px;
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    transform: translateY(100px);
+    transition: transform var(--transition-slow);
+}
+
+.ai-metrics-dashboard.show {
+    transform: translateY(0);
+}
+
+.metric-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 10px;
+}
+
+.metric-label {
+    color: var(--text-secondary);
+}
+
+.metric-value {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.metric-bar {
+    width: 60px;
+    height: 3px;
+    background: rgba(0, 255, 0, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.metric-fill {
+    height: 100%;
+    background: var(--primary-green);
+    transition: width 0.5s ease;
+}
+
+/* AI Voice Visualization */
+.voice-visualizer {
+    position: fixed;
+    bottom: calc(var(--safe-area-bottom) + 100px);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    height: 40px;
+    z-index: 1000;
+}
+
+.voice-bar {
+    width: 3px;
+    height: 10px;
+    background: var(--primary-green);
+    border-radius: 2px;
+    animation: voiceWave 0.5s infinite ease-in-out alternate;
+}
+
+.voice-bar:nth-child(1) { animation-delay: 0.1s; }
+.voice-bar:nth-child(2) { animation-delay: 0.2s; }
+.voice-bar:nth-child(3) { animation-delay: 0.3s; }
+.voice-bar:nth-child(4) { animation-delay: 0.4s; }
+.voice-bar:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes voiceWave {
+    0% { height: 10px; opacity: 0.5; }
+    100% { height: 40px; opacity: 1; }
+}
+
+/* AI Notification System */
+.ai-notification {
+    position: fixed;
+    top: calc(var(--safe-area-top) + 20px);
+    left: 20px;
+    right: 20px;
+    background: rgba(0, 255, 0, 0.95);
+    color: var(--background-black);
+    padding: 12px 16px;
+    border-radius: var(--border-radius-small);
+    font-size: 12px;
+    font-weight: 500;
+    z-index: 1002;
+    transform: translateY(-100px);
+    transition: transform var(--transition-slow);
+    backdrop-filter: blur(10px);
+}
+
+.ai-notification.show {
+    transform: translateY(0);
+}
+
+.ai-notification.success {
+    background: rgba(0, 255, 0, 0.95);
+}
+
+.ai-notification.warning {
+    background: rgba(255, 255, 0, 0.95);
+    color: #000;
+}
+
+.ai-notification.error {
+    background: rgba(255, 0, 0, 0.95);
+    color: #fff;
+}
+
+.ai-notification.info {
+    background: rgba(0, 200, 255, 0.95);
+    color: #000;
+}
+
+/* AI Holographic Effects */
+.holographic {
+    background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(0, 255, 0, 0.1) 50%,
+        transparent 70%
+    );
+    background-size: 200% 200%;
+    animation: holographicShine 3s linear infinite;
+}
+
+@keyframes holographicShine {
+    0% { background-position: -200% -200%; }
+    100% { background-position: 200% 200%; }
+}
+
+/* AI Adaptive Layout */
+.ai-adaptive-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    padding: 20px;
+}
+
+@media (max-width: 375px) {
+    .ai-adaptive-layout {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        padding: 16px;
+    }
+}
+
+/* AI Dark Theme Enhancements */
+.ai-dark-theme {
+    --background-black: #000000;
+    --surface-dark: #0a0a0a;
+    --surface-light: #1a1a1a;
+    --text-primary: #00ff00;
+    --text-secondary: #00cc00;
+    --text-muted: #008800;
+    --border-color: rgba(0, 255, 0, 0.3);
+    --glow-color: rgba(0, 255, 0, 0.2);
+}
+
+/* AI Glassmorphism Effects */
+.glassmorphism {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 255, 0, 0.1);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* AI Micro-interactions */
+.ai-micro-interaction {
+    transition: all var(--transition-fast);
+    cursor: pointer;
+}
+
+.ai-micro-interaction:hover {
+    transform: translateY(-2px) scale(1.02);
+}
+
+.ai-micro-interaction:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* AI Loading States */
+.ai-skeleton {
+    background: linear-gradient(
+        90deg,
+        rgba(0, 255, 0, 0.1) 25%,
+        rgba(0, 255, 0, 0.2) 50%,
+        rgba(0, 255, 0, 0.1) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeletonLoading 1.5s infinite;
+}
+
+@keyframes skeletonLoading {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* AI Accessibility Enhancements */
+@media (prefers-reduced-motion: reduce) {
+    .ai-agent-status::before,
+    .neural-node,
+    .neural-connection,
+    .voice-bar,
+    .holographic,
+    .ai-skeleton {
+        animation: none;
+    }
+}
+
+@media (prefers-contrast: high) {
+    :root {
+        --border-color: rgba(0, 255, 0, 0.8);
+        --text-primary: #ffffff;
+        --text-secondary: #cccccc;
+    }
+}
+
+/* AI Print Styles */
+@media print {
+    .ai-os-container {
+        background: white !important;
+        color: black !important;
+    }
+    
+    .ai-app-card {
+        border: 1px solid #ccc !important;
+        background: white !important;
+    }
+}

@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Hlasové Rozhranie">
+    <meta name="app-id" content="voice-interface">
+    <meta name="description" content="AI hlasové rozhranie s rozpoznávaním reči v slovenčine">
+    <title>🎤 Hlasové Rozhranie - AI-OS</title>
+    
+    <!-- AI-OS Design System -->
+    <link rel="stylesheet" href="../css/ai-os-design-system.css">
+    
+    <!-- AI-OS Core Integration -->
+    <script src="../js/ai-os-core.js"></script>
+    <script src="../js/ai-os-app-integration.js"></script>
+    <script src="../js/ai-os-utils.js"></script>
+    
+    <style>
+        /* Voice Interface Specific Styles */
+        .voice-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #000000 0%, #001122 50%, #000000 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .voice-card {
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-xxl);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            z-index: 1;
+        }
+
+        .voice-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(0, 212, 255, 0.2) 0%, transparent 70%);
+            border-radius: var(--radius-2xl);
+            z-index: -1;
+        }
+
+        .voice-icon {
+            font-size: 5rem;
+            margin-bottom: var(--space-lg);
+            filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.8));
+            transition: all var(--transition-normal);
+        }
+
+        .voice-icon.listening {
+            animation: voiceListening 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px rgba(0, 212, 255, 1));
+        }
+
+        @keyframes voiceListening {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .voice-icon.processing {
+            animation: voiceProcessing 1.5s ease-in-out infinite;
+        }
+
+        @keyframes voiceProcessing {
+            0%, 100% { 
+                transform: scale(1) rotate(0deg);
+                filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.8));
+            }
+            25% { 
+                transform: scale(1.05) rotate(5deg);
+                filter: drop-shadow(0 0 25px rgba(0, 212, 255, 0.9));
+            }
+            50% { 
+                transform: scale(1.1) rotate(0deg);
+                filter: drop-shadow(0 0 30px rgba(0, 212, 255, 1));
+            }
+            75% { 
+                transform: scale(1.05) rotate(-5deg);
+                filter: drop-shadow(0 0 25px rgba(0, 212, 255, 0.9));
+            }
+        }
+
+        .status-text {
+            font-size: var(--text-xl);
+            font-weight: 600;
+            color: var(--ai-primary);
+            margin-bottom: var(--space-md);
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .transcript-display {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin: var(--space-lg) 0;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-lg);
+            line-height: 1.6;
+            color: var(--text-primary);
+            backdrop-filter: blur(10px);
+        }
+
+        .transcript-display.empty {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .command-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-sm);
+            justify-content: center;
+            margin-top: var(--space-lg);
+        }
+
+        .command-suggestion {
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xs) var(--space-sm);
+            font-size: var(--text-sm);
+            color: var(--ai-primary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            user-select: none;
+        }
+
+        .command-suggestion:hover {
+            background: rgba(0, 212, 255, 0.3);
+            border-color: var(--ai-primary);
+            transform: translateY(-1px);
+        }
+
+        .command-suggestion:active {
+            transform: translateY(0);
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+            margin-top: var(--space-xl);
+        }
+
+        .ai-btn {
+            min-width: 120px;
+        }
+
+        .voice-waves {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .voice-wave {
+            position: absolute;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 50%;
+            animation: voiceWave 3s ease-out infinite;
+        }
+
+        @keyframes voiceWave {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+            100% {
+                width: 200px;
+                height: 200px;
+                opacity: 0;
+            }
+        }
+
+        /* Responsive Design - Comprehensive */
+        
+        /* Tablets - 768px */
+        @media (max-width: 768px) {
+            .voice-container {
+                padding: var(--space-md);
+            }
+            
+            .voice-card {
+                padding: var(--space-xl);
+            }
+            
+            .voice-icon {
+                font-size: 4rem;
+            }
+            
+            .status-text {
+                font-size: var(--text-lg);
+            }
+            
+            .transcript-display {
+                font-size: var(--text-base);
+                min-height: 60px;
+            }
+            
+            .control-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .ai-btn {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+        
+        /* Large phones - 640px */
+        @media (max-width: 640px) {
+            .voice-container {
+                padding: var(--space-sm);
+            }
+            
+            .voice-card {
+                padding: var(--space-lg);
+                border-radius: var(--radius-xl);
+            }
+            
+            .voice-icon {
+                font-size: 3.5rem;
+            }
+            
+            .status-text {
+                font-size: var(--text-base);
+            }
+            
+            .transcript-display {
+                font-size: var(--text-sm);
+                min-height: 50px;
+                padding: var(--space-md);
+            }
+            
+            .control-buttons {
+                gap: var(--space-sm);
+            }
+            
+            .ai-btn {
+                max-width: 180px;
+                min-height: var(--touch-target-rec);
+            }
+            
+            .transcript-header {
+                font-size: var(--text-sm);
+            }
+        }
+        
+        /* Small phones - 480px */
+        @media (max-width: 480px) {
+            .voice-container {
+                padding: var(--space-xs);
+            }
+            
+            .voice-card {
+                padding: var(--space-md);
+                border-radius: var(--radius-lg);
+            }
+            
+            .voice-icon {
+                font-size: 3rem;
+                margin-bottom: var(--space-sm);
+            }
+            
+            .status-text {
+                font-size: var(--text-sm);
+                margin-bottom: var(--space-sm);
+            }
+            
+            .transcript-display {
+                font-size: var(--text-xs);
+                min-height: 40px;
+                padding: var(--space-sm);
+                border-radius: var(--radius-md);
+            }
+            
+            .transcript-header {
+                font-size: var(--text-xs);
+            }
+            
+            .control-buttons {
+                flex-direction: column;
+                gap: var(--space-xs);
+            }
+            
+            .ai-btn {
+                width: 100%;
+                max-width: none;
+                padding: var(--space-sm) var(--space-md);
+            }
+            
+            .voice-waves {
+                height: 60px;
+            }
+            
+            .voice-wave {
+                width: 6px;
+                height: 40px;
+            }
+        }
+        
+        /* Extra small phones - 360px */
+        @media (max-width: 360px) {
+            .voice-icon {
+                font-size: 2.5rem;
+            }
+            
+            .voice-card {
+                padding: var(--space-sm);
+            }
+            
+            .status-text {
+                font-size: 12px;
+            }
+        }
+        
+        /* Landscape orientation */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .voice-container {
+                padding: var(--space-xs);
+            }
+            
+            .voice-card {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                padding: var(--space-sm);
+            }
+            
+            .voice-icon {
+                font-size: 2rem;
+                margin-bottom: 0;
+                margin-right: var(--space-md);
+            }
+            
+            .voice-info {
+                flex: 1;
+            }
+            
+            .status-text {
+                font-size: var(--text-sm);
+                margin-bottom: var(--space-xs);
+            }
+            
+            .transcript-display {
+                min-height: 30px;
+            }
+            
+            .voice-waves {
+                height: 40px;
+                margin-right: var(--space-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="voice-container">
+        <!-- Voice Waves Background -->
+        <div class="voice-waves" id="voiceWaves"></div>
+        
+        <!-- Main Voice Interface -->
+        <div class="voice-card ai-animate-fade-in">
+            <div class="voice-icon" id="voiceIcon" aria-hidden="true">🎤</div>
+            
+            <h1 class="ai-heading-lg">Hlasové Rozhranie</h1>
+            <p class="ai-text-small ai-mb-lg">AI asistent s rozpoznávaním reči v slovenčine</p>
+            
+            <div class="status-text" id="statusText">Kliknite pre spustenie</div>
+            
+            <div class="transcript-display empty" id="transcriptDisplay" role="region" aria-live="polite">
+                Povedzte niečo...
+            </div>
+            
+            <div class="command-suggestions" id="commandSuggestions">
+                <div class="command-suggestion" data-command="otvor">Otvoriť</div>
+                <div class="command-suggestion" data-command="spusti">Spustiť</div>
+                <div class="command-suggestion" data-command="zastav">Zastaviť</div>
+                <div class="command-suggestion" data-command="domov">Domov</div>
+                <div class="command-suggestion" data-command="nastavenia">Nastavenia</div>
+                <div class="command-suggestion" data-command="pomoc">Pomoc</div>
+            </div>
+            
+            <div class="control-buttons">
+                <button class="ai-btn ai-btn-primary" id="startListeningBtn" aria-label="Spustiť počúvanie">
+                    <span aria-hidden="true">🎤</span> Spustiť
+                </button>
+                <button class="ai-btn ai-btn-outline" id="stopListeningBtn" aria-label="Zastaviť počúvanie" disabled>
+                    <span aria-hidden="true">⏹️</span> Zastaviť
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Voice Interface Application
+         * Standardized implementation using AI-OS Design System
+         */
+        class VoiceInterfaceApp {
+            constructor() {
+                this.isListening = false;
+                this.isProcessing = false;
+                this.recognition = null;
+                this.transcript = '';
+                this.confidence = 0;
+                this.commandHistory = [];
+                
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.initializeSpeechRecognition();
+                this.registerWithAIOSCore();
+                
+                // Show initial notification
+                AIOS.utils.showNotification('Hlasové rozhranie pripravené', 'success');
+            }
+
+            setupEventListeners() {
+                const startBtn = document.getElementById('startListeningBtn');
+                const stopBtn = document.getElementById('stopListeningBtn');
+                const transcriptDisplay = document.getElementById('transcriptDisplay');
+                const commandSuggestions = document.getElementById('commandSuggestions');
+
+                // Control buttons
+                startBtn.addEventListener('click', () => this.startListening());
+                stopBtn.addEventListener('click', () => this.stopListening());
+
+                // Command suggestions
+                commandSuggestions.addEventListener('click', (e) => {
+                    const suggestion = e.target.closest('.command-suggestion');
+                    if (suggestion) {
+                        this.executeCommand(suggestion.dataset.command);
+                    }
+                });
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.code === 'Space' && !e.target.matches('input, textarea')) {
+                        e.preventDefault();
+                        this.isListening ? this.stopListening() : this.startListening();
+                    }
+                    
+                    if (e.key === 'Escape') {
+                        this.stopListening();
+                    }
+                });
+
+                // Focus management
+                startBtn.focus();
+            }
+
+            initializeSpeechRecognition() {
+                if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                    AIOS.utils.showNotification('Rozpoznávanie reči nie je podporované', 'error');
+                    return;
+                }
+
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                this.recognition = new SpeechRecognition();
+
+                this.recognition.continuous = false;
+                this.recognition.interimResults = true;
+                this.recognition.lang = 'sk-SK';
+                this.recognition.maxAlternatives = 3;
+
+                this.recognition.onstart = () => {
+                    this.onRecognitionStart();
+                };
+
+                this.recognition.onresult = (event) => {
+                    this.onRecognitionResult(event);
+                };
+
+                this.recognition.onerror = (event) => {
+                    this.onRecognitionError(event);
+                };
+
+                this.recognition.onend = () => {
+                    this.onRecognitionEnd();
+                };
+            }
+
+            onRecognitionStart() {
+                this.isListening = true;
+                this.updateUI('listening');
+                
+                this.createVoiceWaves();
+                AIOS.utils.announceToScreenReader('Počúvam...');
+            }
+
+            onRecognitionResult(event) {
+                let interimTranscript = '';
+                let finalTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    const confidence = event.results[i][0].confidence;
+
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript;
+                        this.confidence = confidence;
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+
+                this.transcript = finalTranscript || interimTranscript;
+                this.updateTranscriptDisplay();
+            }
+
+            onRecognitionError(event) {
+                console.error('Speech recognition error:', event.error);
+                
+                let message = 'Chyba rozpoznávania reči';
+                switch (event.error) {
+                    case 'network':
+                        message = 'Sieťová chyba';
+                        break;
+                    case 'no-speech':
+                        message = 'Nepočujem žiadnu reč';
+                        break;
+                    case 'audio-capture':
+                        message = 'Chyba mikrofónu';
+                        break;
+                    case 'not-allowed':
+                        message = 'Prístup k mikrofónu zamietnutý';
+                        break;
+                }
+                
+                AIOS.utils.showNotification(message, 'error');
+                this.updateUI('error');
+            }
+
+            onRecognitionEnd() {
+                this.isListening = false;
+                this.removeVoiceWaves();
+                
+                if (this.transcript.trim()) {
+                    this.processTranscript();
+                } else {
+                    this.updateUI('idle');
+                }
+            }
+
+            startListening() {
+                if (this.isListening) return;
+
+                try {
+                    this.transcript = '';
+                    this.confidence = 0;
+                    this.recognition.start();
+                } catch (error) {
+                    console.error('Error starting speech recognition:', error);
+                    AIOS.utils.showNotification('Nepodarilo sa spustiť počúvanie', 'error');
+                }
+            }
+
+            stopListening() {
+                if (!this.isListening) return;
+
+                this.recognition.stop();
+                this.isListening = false;
+                this.removeVoiceWaves();
+                this.updateUI('processing');
+            }
+
+            processTranscript() {
+                if (!this.transcript.trim()) return;
+
+                this.isProcessing = true;
+                this.updateUI('processing');
+                
+                // Add to command history
+                this.commandHistory.push({
+                    command: this.transcript.trim(),
+                    confidence: this.confidence,
+                    timestamp: Date.now()
+                });
+
+                // Limit history size
+                if (this.commandHistory.length > 10) {
+                    this.commandHistory = this.commandHistory.slice(-10);
+                }
+
+                // Process the command
+                setTimeout(() => {
+                    this.executeCommand(this.transcript.trim().toLowerCase());
+                    this.isProcessing = false;
+                }, 1000);
+            }
+
+            executeCommand(command) {
+                const commands = {
+                    'otvor': () => this.handleOpenCommand(),
+                    'spusti': () => this.handleStartCommand(),
+                    'zastav': () => this.handleStopCommand(),
+                    'domov': () => this.handleHomeCommand(),
+                    'nastavenia': () => this.handleSettingsCommand(),
+                    'pomoc': () => this.handleHelpCommand(),
+                    'aká je doba': () => this.handleTimeCommand(),
+                    'aký je dátum': () => this.handleDateCommand(),
+                    'ako sa máš': () => this.handleStatusCommand()
+                };
+
+                // Check for exact matches first
+                for (let key in commands) {
+                    if (command.includes(key)) {
+                        commands[key]();
+                        return;
+                    }
+                }
+
+                // If no exact match, show suggestions
+                AIOS.utils.showNotification('Príkaz nerozpoznaný. Skúste: otvor, spusti, zastav, domov, nastavenia', 'warning');
+                this.updateUI('idle');
+            }
+
+            handleOpenCommand() {
+                AIOS.utils.showNotification('Použite: otvor [názov aplikácie]', 'info');
+                this.updateUI('idle');
+            }
+
+            handleStartCommand() {
+                AIOS.utils.showNotification('Použite: spusti [názov aplikácie]', 'info');
+                this.updateUI('idle');
+            }
+
+            handleStopCommand() {
+                this.updateUI('idle');
+                AIOS.utils.showNotification('Zastavené', 'success');
+            }
+
+            handleHomeCommand() {
+                if (window.opener) {
+                    window.close();
+                } else {
+                    window.location.href = '../ADVANCED-AI-OS.html';
+                }
+            }
+
+            handleSettingsCommand() {
+                AIOS.utils.showNotification('Otváram nastavenia...', 'info');
+                setTimeout(() => {
+                    AIOS.utils.showNotification('Nastavenia nie sú implementované', 'warning');
+                    this.updateUI('idle');
+                }, 1500);
+            }
+
+            handleHelpCommand() {
+                const helpContent = `
+                    <div class="ai-text-body">
+                        <h3 class="ai-heading-sm ai-mb-md">Dostupné príkazy:</h3>
+                        <ul style="text-align: left; line-height: 1.8;">
+                            <li><strong>otvor [aplikácia]</strong> - Otvorí aplikáciu</li>
+                            <li><strong>spusti [aplikácia]</strong> - Spustí aplikáciu</li>
+                            <li><strong>zastav</strong> - Zastaví počúvanie</li>
+                            <li><strong>domov</strong> - Vráti sa na hlavnú obrazovku</li>
+                            <li><strong>nastavenia</strong> - Otvorí nastavenia</li>
+                            <li><strong>pomoc</strong> - Zobrazí túto nápovedu</li>
+                            <li><strong>aká je doba</strong> - Zobrazí aktuálny čas</li>
+                            <li><strong>aký je dátum</strong> - Zobrazí aktuálny dátum</li>
+                        </ul>
+                        <p class="ai-text-small ai-mt-md" style="color: var(--text-muted);">
+                            <strong>Tip:</strong> Môžete tiež kliknúť na návrhy príkazov nižšie.
+                        </p>
+                    </div>
+                `;
+
+                AIOS.utils.showModal('Hlasové príkazy - Pomoc', helpContent, {
+                    size: 'lg'
+                });
+                
+                this.updateUI('idle');
+            }
+
+            handleTimeCommand() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('sk-SK', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                
+                AIOS.utils.showNotification(`Aktuálny čas: ${timeString}`, 'info');
+                this.updateUI('idle');
+            }
+
+            handleDateCommand() {
+                const now = new Date();
+                const dateString = now.toLocaleDateString('sk-SK', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                AIOS.utils.showNotification(`Dnes je: ${dateString}`, 'info');
+                this.updateUI('idle');
+            }
+
+            handleStatusCommand() {
+                const responses = [
+                    'Výborne, ďakujem!',
+                    'Pripravený na prácu!',
+                    'Všetko funguje správne!',
+                    'Som pripravený pomôcť!'
+                ];
+                
+                const response = responses[Math.floor(Math.random() * responses.length)];
+                AIOS.utils.showNotification(response, 'success');
+                this.updateUI('idle');
+            }
+
+            updateUI(state) {
+                const voiceIcon = document.getElementById('voiceIcon');
+                const statusText = document.getElementById('statusText');
+                const startBtn = document.getElementById('startListeningBtn');
+                const stopBtn = document.getElementById('stopListeningBtn');
+
+                // Remove all state classes
+                voiceIcon.classList.remove('listening', 'processing');
+
+                switch (state) {
+                    case 'listening':
+                        voiceIcon.classList.add('listening');
+                        statusText.textContent = 'Počúvam...';
+                        startBtn.disabled = true;
+                        stopBtn.disabled = false;
+                        startBtn.setAttribute('aria-pressed', 'true');
+                        stopBtn.setAttribute('aria-pressed', 'false');
+                        break;
+
+                    case 'processing':
+                        voiceIcon.classList.add('processing');
+                        statusText.textContent = 'Spracovávam...';
+                        startBtn.disabled = true;
+                        stopBtn.disabled = true;
+                        startBtn.setAttribute('aria-pressed', 'false');
+                        stopBtn.setAttribute('aria-pressed', 'true');
+                        break;
+
+                    case 'error':
+                        statusText.textContent = 'Chyba - skúste znovu';
+                        startBtn.disabled = false;
+                        stopBtn.disabled = true;
+                        startBtn.setAttribute('aria-pressed', 'false');
+                        stopBtn.setAttribute('aria-pressed', 'false');
+                        break;
+
+                    case 'idle':
+                    default:
+                        statusText.textContent = 'Kliknite pre spustenie';
+                        startBtn.disabled = false;
+                        stopBtn.disabled = true;
+                        startBtn.setAttribute('aria-pressed', 'false');
+                        stopBtn.setAttribute('aria-pressed', 'false');
+                        break;
+                }
+            }
+
+            updateTranscriptDisplay() {
+                const display = document.getElementById('transcriptDisplay');
+                
+               cript.trim()) {
+ if (this.trans                    display.textContent = this.transcript;
+                    display.classList.remove('empty');
+                } else {
+                    display.textContent = 'Povedzte niečo...';
+                    display.classList.add('empty');
+                }
+            }
+
+            createVoiceWaves() {
+                const wavesContainer = document.getElementById('voiceWaves');
+                
+                for (let i = 0; i < 3; i++) {
+                    const wave = document.createElement('div');
+                    wave.className = 'voice-wave';
+                    wave.style.animationDelay = `${i * 0.5}s`;
+                    wavesContainer.appendChild(wave);
+                }
+            }
+
+            removeVoiceWaves() {
+                const wavesContainer = document.getElementById('voiceWaves');
+                wavesContainer.innerHTML = '';
+            }
+
+            registerWithAIOSCore() {
+                if (window.aiOSCore) {
+                    window.aiOSCore.registerApplication('voice-interface', {
+                        name: 'Hlasové Rozhranie',
+                        description: 'AI asistent s rozpoznávaním reči v slovenčine',
+                        version: '1.0.0',
+                        category: 'interface',
+                        capabilities: ['speech-recognition', 'natural-language', 'slovak-support'],
+                        url: window.location.href
+                    });
+                }
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            window.voiceInterface = new VoiceInterfaceApp();
+        });
+
+        // Handle app lifecycle
+        window.addEventListener('beforeunload', () => {
+            if (window.voiceInterface && window.voiceInterface.isListening) {
+                window.voiceInterface.stopListening();
+            }
+        });
+    </script>
+</body>
+</html>

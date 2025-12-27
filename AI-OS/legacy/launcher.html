@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🚀 AI-OS Pro Launcher Mobile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #007AFF;
+            --primary-dark: #0056CC;
+            --secondary: #FF3B30;
+            --accent: #34C759;
+            --background: #000000;
+            --surface: #1C1C1E;
+            --surface-light: #2C2C2E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #8E8E93;
+            --border: rgba(255, 255, 255, 0.1);
+            --glass: rgba(255, 255, 255, 0.05);
+            --gradient: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* iPhone 11 Pro Safe Area */
+        .safe-area {
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }
+
+        .mobile-container {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: linear-gradient(180deg, #000000 0%, #1a1a1a 100%);
+            position: relative;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .status-left {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .status-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 17px;
+        }
+
+        /* AI Header */
+        .ai-header {
+            padding: 20px 24px;
+            background: var(--gradient);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>') repeat;
+            opacity: 0.3;
+        }
+
+        .ai-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ai-logo-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .ai-logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(45deg, #fff, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .ai-status {
+            background: rgba(52, 199, 89, 0.2);
+            border: 1px solid rgba(52, 199, 89, 0.5);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ai-status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        .ai-description {
+            font-size: 16px;
+            line-height: 1.5;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            padding: 24px;
+            background: var(--glass);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        /* Sections */
+        .launcher-sections {
+            padding: 0 24px 100px;
+        }
+
+        .launcher-section {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+
+        .launcher-section:active {
+            transform: scale(0.98);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-description {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .launcher-apps {
+            display: grid;
+            gap: 12px;
+        }
+
+        .launcher-app {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-primary);
+            backdrop-filter: blur(10px);
+        }
+
+        .launcher-app:active {
+            transform: scale(0.98);
+            background: rgba(0, 122, 255, 0.1);
+            border-color: var(--primary);
+        }
+
+        .app-icon {
+            font-size: 20px;
+            width: 40px;
+            height: 40px;
+            background: var(--gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .app-info {
+            flex: 1;
+        }
+
+        .app-name {
+            font-weight: 600;
+            margin-bottom: 2px;
+            font-size: 15px;
+        }
+
+        .app-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Dock */
+        .dock {
+            position: fixed;
+            bottom: 34px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 8px;
+            display: flex;
+            gap: 8px;
+            border: 1px solid var(--border);
+            z-index: 50;
+        }
+
+        .dock-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--gradient);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dock-icon:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Floating AI Button */
+        .floating-ai {
+            position: fixed;
+            bottom: 110px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(0, 122, 255, 0.4);
+            transition: all 0.3s ease;
+            z-index: 50;
+        }
+
+        .floating-ai:hover {
+            transform: scale(1.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 430px) {
+            .mobile-container {
+                max-width: 100%;
+            }
+            
+            .status-bar, .ai-header, .launcher-sections {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+            
+            .quick-stats {
+                padding: 16px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body class="safe-area">
+    <div class="mobile-container">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-left">
+                <span id="current-time">9:41</span>
+            </div>
+            <div class="status-right">
+                <span>📶</span>
+                <span>🔋</span>
+                <div class="battery-icon"></div>
+            </div>
+        </div>
+
+        <!-- AI Header -->
+        <div class="ai-header">
+            <div class="ai-logo">
+                <div class="ai-logo-icon">🚀</div>
+                <div class="ai-logo-text">AI-OS Pro</div>
+            </div>
+            
+            <div class="ai-status">
+                <div class="ai-status-dot"></div>
+                <span>Všetky systémy online</span>
+            </div>
+            
+            <div class="ai-description">
+                Pokročilý autonómny operačný systém s AI agentmi - Enhanced NetHunter Pro + iOS Environment
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+            <div class="stat-card">
+                <div class="stat-number">18</div>
+                <div class="stat-label">AI Aplikácií</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">70+</div>
+                <div class="stat-label">Security Tools</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">2</div>
+                <div class="stat-label">OS Environments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Mobile Ready</div>
+            </div>
+        </div>
+
+        <!-- Main Sections -->
+        <div class="launcher-sections">
+            <!-- Core System -->
+            <div class="launcher-section">
+                <div class="section-title">
+                    🖥️ Core System
+                </div>
+                <div class="section-description">
+                    Hlavné AI-OS rozhranie s autonómnymi agentmi a pokročilými funkciami.
+                </div>
+                <div class="launcher-apps">
+                    <div class="launcher-app" onclick="openApp('ADVANCED-AI-OS.html')">
+                        <div class="app-icon">🤖</div>
+                        <div class="app-info">
+                            <div class="app-name">AI-OS Pro Main</div>
+                            <div class="app-description">Hlavné rozhranie s AI agentmi</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- iOS Environment -->
+            <div class="launcher-section">
+                <div class="section-title">
+                    🍎 iOS Environment
+                </div>
+                <div class="section-description">
+                    Natívny iOS-style interface s Apple Design Language a plnou AI-OS integráciou.
+                </div>
+                <div class="launcher-apps">
+                    <div class="launcher-app" onclick="openApp('iOS-Environment.html')">
+                        <div class="app-icon">🍎</div>
+                        <div class="app-info">
+                            <div class="app-name">iOS Environment</div>
+                            <div class="app-description">Native iOS experience</div>
+                        </div>
+                    </div>
+                    <div class="launcher-app" onclick="openApp('iOS-Environment-Test.html')">
+                        <div class="app-icon">🧪</div>
+                        <div class="app-info">
+                            <div class="app-name">iOS Test Suite</div>
+                            <div class="app-description">Test a demo iOS funkcií</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Development & Security -->
+            <div class="launcher-section">
+                <div class="section-title">
+                    💻 Development & Security
+                </div>
+                <div class="section-description">
+                    Pokročilé development nástroje a bezpečnostné aplikácie s NetHunter integráciou.
+                </div>
+                <div class="launcher-apps">
+                    <div class="launcher-app" onclick="openApp('Apps/ai-terminal-shell-universal.html')">
+                        <div class="app-icon">💻</div>
+                        <div class="app-info">
+                            <div class="app-name">Enhanced Terminal</div>
+                            <div class="app-description">NetHunter Pro v2.0 s 70+ tools</div>
+                        </div>
+                    </div>
+                    <div class="launcher-app" onclick="openApp('Apps/ai-android-emulator-universal.html')">
+                        <div class="app-icon">🤖</div>
+                        <div class="app-info">
+                            <div class="app-name">Android Emulator</div>
+                            <div class="app-description">SDK Integration + Virtual Devices</div>
+                        </div>
+                    </div>
+                    <div class="launcher-app" onclick="openApp('Apps/ai-network-monitor.html')">
+                        <div class="app-icon">📡</div>
+                        <div class="app-info">
+                            <div class="app-name">Network Monitor</div>
+                            <div class="app-description">Real-time network analysis</div>
+                        </div>
+                    </div>
+                    <div class="launcher-app" onclick="openApp('Apps/ai-system-monitor.html')">
+                        <div class="app-icon">📊</div>
+                        <div class="app-info">
+                            <div class="app-name">System Monitor</div>
+                            <div class="app-description">Performance monitoring</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile & Interface -->
+            <div class="launcher-section">
+                <div class="section-title">
+                    📱 Mobile & Interface
+                </div>
+                <div class="section-description">
+                    Mobilné aplikácie a interface komponenty optimalizované pre iPhone 11 Pro.
+                </div>
+                <div class="launcher-apps">
+                    <div class="launcher-app" onclick="openApp('MOBILE/voice-interface.html')">
+                        <div class="app-icon">🎤</div>
+                        <div class="app-info">
+                            <div class="app-name">Voice Interface</div>
+                            <div class="app-description">AI speech recognition (slovak)</div>
+                        </div>
+                    </div>
+                    <div class="launcher-app" onclick="openApp('MOBILE/ai-universal-interface.html')">
+                        <div class="app-icon">🔄</div>
+                        <div class="app-info">
+                            <div class="app-name">Universal Interface</div>
+                            <div class="app-description">Cross-platform mobile/desktop</div>
+                        </div>
+                    </div>
+                    <div class="launcher-app" onclick="openApp('MOBILE/ai-learning-center.html')">
+                        <div class="app-icon">📚</div>
+                        <div class="app-info">
+                            <div class="app-name">Learning Center</div>
+                            <div class="app-description">Educational AI tools</div>
+                        </div>
+                    </div>
+                    <div class="launcher-app" onclick="openApp('MOBILE/ai-performance-optimizer.html')">
+                        <div class="app-icon">⚡</div>
+                        <div class="app-info">
+                            <div class="app-name">Performance Optimizer</div>
+                            <div class="app-description">System optimization</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- App Management -->
+            <div class="launcher-section">
+                <div class="section-title">
+                    🛒 App Management
+                </div>
+                <div class="section-description">
+                    Aplikačné obchody, plugin marketplace a systémové nastavenia.
+                </div>
+                <div class="launcher-apps">
+                    <div class="launcher-app" onclick="openApp('MOBILE/ai-plugin-marketplace.html')">
+                        <div class="app-icon">🔌</div>
+                        <div class="app-info">
+                            <div class="app-name">Plugin Marketplace</div>
+                            <div class="app-description">AI extensions & plugins</div>
+                        </div>
+                    </div>
+                    <div class="launcher-app" onclick="openApp('Apps/ai-app-store-universal.html')">
+                        <div class="app-icon">🛒</div>
+                        <div class="app-info">
+                            <div class="app-name">AI App Store</div>
+                            <div class="app-description">AI application hub</div>
+                        </div>
+                    </div>
+                    <div class="launcher-app" onclick="openApp('Apps/ai-android-app-store.html')">
+                        <div class="app-icon">📱</div>
+                        <div class="app-info">
+                            <div class="app-name">Android App Store</div>
+                            <div class="app-description">APK management & install</div>
+                        </div>
+                    </div>
+                    <div class="launcher-app" onclick="openApp('Apps/ai-system-settings.html')">
+                        <div class="app-icon">⚙️</div>
+                        <div class="app-info">
+                            <div class="app-name">System Settings</div>
+                            <div class="app-description">Configuration & preferences</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Tools -->
+            <div class="launcher-section">
+                <div class="section-title">
+                    🔧 Additional Tools
+                </div>
+                <div class="section-description">
+                    Rozšírené nástroje a utility pre pokročilé použitie.
+                </div>
+                <div class="launcher-apps">
+                    <div class="launcher-app" onclick="openApp('Apps/ai-file-manager.html')">
+                        <div class="app-icon">📁</div>
+                        <div class="app-info">
+                            <div class="app-name">File Manager</div>
+                            <div class="app-description">Advanced file management</div>
+                        </div>
+                    </div>
+                    <div class="launcher-app" onclick="openApp('Apps/ai-task-manager.html')">
+                        <div class="app-icon">⚡</div>
+                        <div class="app-info">
+                            <div class="app-name">Task Manager</div>
+                            <div class="app-description">Process management</div>
+                        </div>
+                    </div>
+                    <div class="launcher-app" onclick="openApp('Apps/ai-desktop-manager.html')">
+                        <div class="app-icon">🖥️</div>
+                        <div class="app-info">
+                            <div class="app-name">Desktop Manager</div>
+                            <div class="app-description">Desktop environment control</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testing & Documentation -->
+            <div class="launcher-section">
+                <div class="section-title">
+                    📋 Testing & Docs
+                </div>
+                <div class="section-description">
+                    Test nástroje, dokumentácia a help resources.
+                </div>
+                <div class="launcher-apps">
+                    <div class="launcher-app" onclick="openApp('AI-OS-Navigation-Test.html')">
+                        <div class="app-icon">🔄</div>
+                        <div class="app-info">
+                            <div class="app-name">Navigation Test Suite</div>
+                            <div class="app-description">Test all navigation features</div>
+                        </div>
+                    </div>
+                    <div class="launcher-app" onclick="openApp('SDK-Test.html')">
+                        <div class="app-icon">🔧</div>
+                        <div class="app-info">
+                            <div class="app-name">SDK Integration Test</div>
+                            <div class="app-description">Test Android SDK funkcií</div>
+                        </div>
+                    </div>
+                    <div class="launcher-app" onclick="openApp('Enhanced-Terminal-Test.html')">
+                        <div class="app-icon">🧪</div>
+                        <div class="app-info">
+                            <div class="app-name">Terminal Test Suite</div>
+                            <div class="app-description">Test NetHunter terminal</div>
+                        </div>
+                    </div>
+                    <div class="launcher-app" onclick="openApp('Navigation-Enhancement-Test.html')">
+                        <div class="app-icon">⚡</div>
+                        <div class="app-info">
+                            <div class="app-name">Navigation Enhancement</div>
+                            <div class="app-description">Back & Home buttons demo</div>
+                        </div>
+                    </div>
+                    <div class="launcher-app" onclick="openApp('Aplikacie-Stav-Sprava.md')">
+                        <div class="app-icon">📊</div>
+                        <div class="app-info">
+                            <div class="app-name">System Status Report</div>
+                            <div class="app-description">Detailed system analysis</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dock -->
+        <div class="dock">
+            <div class="dock-icon" onclick="openApp('ADVANCED-AI-OS.html')">🤖</div>
+            <div class="dock-icon" onclick="openApp('iOS-Environment.html')">🍎</div>
+            <div class="dock-icon" onclick="openApp('Apps/ai-terminal-shell-universal.html')">💻</div>
+            <div class="dock-icon" onclick="openApp('MOBILE/voice-interface.html')">🎤</div>
+        </div>
+
+        <!-- Floating AI Button -->
+        <div class="floating-ai" onclick="toggleAIMenu()">🚀</div>
+    </div>
+
+    <script>
+        // Update time every minute
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('sk-SK', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false 
+            });
+            document.getElementById('current-time').textContent = timeString;
+        }
+
+        // Open app function
+        function openApp(url) {
+            // Add haptic feedback simulation
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+            
+            // Create ripple effect
+            const ripple = document.createElement('div');
+            ripple.style.position = 'absolute';
+            ripple.style.borderRadius = '50%';
+            ripple.style.background = 'rgba(0, 122, 255, 0.3)';
+            ripple.style.transform = 'scale(0)';
+            ripple.style.animation = 'ripple 0.6s linear';
+            ripple.style.left = '50%';
+            ripple.style.top = '50%';
+            ripple.style.width = '20px';
+            ripple.style.height = '20px';
+            ripple.style.marginLeft = '-10px';
+            ripple.style.marginTop = '-10px';
+            
+            const target = event.currentTarget;
+            target.style.position = 'relative';
+            target.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+                window.location.href = url;
+            }, 300);
+        }
+
+        // Toggle AI menu
+        function toggleAIMenu() {
+            showAIFeedback('🚀 AI-OS Pro Launcher pripravený!');
+        }
+
+        // Show AI feedback
+        function showAIFeedback(message) {
+            const feedback = document.createElement('div');
+            feedback.style.cssText = `
+                position: fixed;
+                bottom: 200px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--gradient);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 12px;
+                font-size: 14px;
+                font-weight: 500;
+                z-index: 1000;
+                box-shadow: 0 4px 20px rgba(0, 122, 255, 0.3);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            `;
+            feedback.textContent = message;
+            document.body.appendChild(feedback);
+            
+            setTimeout(() => {
+                feedback.style.opacity = '0';
+                feedback.style.transform = 'translateX(-50%) translateY(20px)';
+                setTimeout(() => feedback.remove(), 300);
+            }, 2000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTime();
+            setInterval(updateTime, 60000);
+            
+            // Animate stats on load
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(stat => {
+                const finalValue = parseInt(stat.textContent);
+                if (!isNaN(finalValue)) {
+                    let currentValue = 0;
+                    const increment = finalValue / 50;
+                    const timer = setInterval(() => {
+                        currentValue += increment;
+                        if (currentValue >= finalValue) {
+                            currentValue = finalValue;
+                            clearInterval(timer);
+                        }
+                        stat.textContent = Math.floor(currentValue);
+                    }, 30);
+                }
+            });
+
+            // Animate elements on load
+            const elements = document.querySelectorAll('.launcher-section, .launcher-app');
+            elements.forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    el.style.transition = 'all 0.3s ease';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, index * 50);
+            });
+            
+            // Show welcome message
+            setTimeout(() => {
+                showAIFeedback('🚀 Vitajte v AI-OS Pro Launcher!');
+            }, 1000);
+        });
+
+        // Add CSS for ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

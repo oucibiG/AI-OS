@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="app-id" content="ai-os-mobile-shell">
+    <meta name="description" content="AI-OS Mobile Shell - Mobilná vrstva operačného systému">
+    <title>AI-OS Mobile Shell</title>
+    
+    <!-- AI-OS Design System -->
+    <link rel="stylesheet" href="../css/ai-os-design-system.css">
+    
+    <!-- AI-OS Core Integration -->
+    <script src="../js/ai-os-core.js"></script>
+    <script src="../js/ai-os-app-integration.js"></script>
+    <script src="../js/ai-os-utils.js"></script>
+    
+    <style>
+        /* === AI-OS Mobile Shell Styles === */
+        :root {
+            --mobile-shell-bg: #0f172a;
+            --mobile-panel-bg: rgba(30, 41, 59, 0.95);
+            --mobile-accent: #38bdf8;
+            --mobile-icon-inactive: #94a3b8;
+            --mobile-icon-active: #ffffff;
+            --nav-bar-height: 70px;
+            --status-bar-height: 28px;
+            --gesture-area-height: 20px;
+            --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+        }
+        
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--mobile-shell-bg);
+            color: var(--text-primary);
+        }
+        
+        /* === Mobile Shell Container === */
+        .mobile-shell {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            height: 100dvh;
+            background: var(--mobile-shell-bg);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* === Status Bar === */
+        .status-bar {
+            height: var(--status-bar-height);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 var(--space-md);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            font-size: 12px;
+            color: var(--mobile-icon-active);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .status-bar-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .status-time {
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .status-bar-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .status-icon {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .battery-indicator {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .battery-icon {
+            width: 18px;
+            height: 10px;
+            border: 1px solid var(--mobile-icon-active);
+            border-radius: 2px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 1px;
+        }
+        
+        .battery-level {
+            height: 100%;
+            background: var(--mobile-accent);
+            border-radius: 1px;
+            width: 75%;
+        }
+        
+        .battery-cap {
+            width: 2px;
+            height: 5px;
+            background: var(--mobile-icon-active);
+            border-radius: 0 1px 1px 0;
+        }
+        
+        /* === Main Content Area === */
+        .main-content {
+            flex: 1;
+            margin-top: var(--status-bar-height);
+            margin-bottom: calc(var(--nav-bar-height) + var(--safe-area-inset-bottom));
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .app-viewport {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            background: var(--mobile-shell-bg);
+        }
+        
+        .app-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            background: var(--mobile-shell-bg);
+        }
+        
+        .app-container.active {
+            transform: scale(1);
+            opacity: 1;
+            z-index: 10;
+        }
+        
+        .app-container.inactive {
+            transform: scale(0.95);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .app-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+        
+        /* === Home Screen / App Launcher === */
+        .home-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, var(--mobile-shell-bg) 0%, #0c1929 100%);
+            padding: var(--space-lg) var(--space-md);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .home-header {
+            text-align: center;
+            margin-bottom: var(--space-xl);
+            padding-top: var(--space-md);
+        }
+        
+        .home-logo {
+            font-size: 3rem;
+            margin-bottom: var(--space-sm);
+            filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.5));
+        }
+        
+        .home-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--mobile-accent);
+            margin-bottom: var(--space-xs);
+        }
+        
+        .home-subtitle {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+        }
+        
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .app-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-xs);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .app-icon:active {
+            transform: scale(0.9);
+        }
+        
+        .app-icon-image {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(56, 189, 248, 0.05) 100%);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            transition: all 0.2s ease;
+        }
+        
+        .app-icon:hover .app-icon-image,
+        .app-icon:focus .app-icon-image {
+            border-color: var(--mobile-accent);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+        }
+        
+        .app-icon-name {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-align: center;
+            max-width: 70px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        /* === Quick Actions === */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .quick-action-btn {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .quick-action-btn:active {
+            background: rgba(56, 189, 248, 0.2);
+            transform: scale(0.98);
+        }
+        
+        .quick-action-icon {
+            font-size: 1.5rem;
+        }
+        
+        .quick-action-text {
+            font-size: var(--text-sm);
+            color: var(--text-primary);
+        }
+        
+        /* === System Info === */
+        .system-info {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+        
+        .system-info-title {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--mobile-accent);
+            margin-bottom: var(--space-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .system-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-sm);
+        }
+        
+        .system-stat {
+            text-align: center;
+        }
+        
+        .system-stat-value {
+            font-size: var(--text-lg);
+            font-weight: 700;
+            color: var(--mobile-accent);
+        }
+        
+        .system-stat-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+        
+        /* === Bottom Navigation Bar === */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: calc(var(--nav-bar-height) + var(--safe-area-inset-bottom));
+            background: var(--mobile-panel-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            padding-bottom: var(--safe-area-inset-bottom);
+            z-index: 1000;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .nav-btn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: var(--space-sm);
+            color: var(--mobile-icon-inactive);
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .nav-btn:active {
+            color: var(--mobile-accent);
+        }
+        
+        .nav-btn.active {
+            color: var(--mobile-accent);
+        }
+        
+        .nav-btn-icon {
+            font-size: 1.5rem;
+            position: relative;
+            transition: transform 0.2s ease;
+        }
+        
+        .nav-btn:active .nav-btn-icon {
+            transform: scale(0.9);
+        }
+        
+        .nav-btn-indicator {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 8px;
+            height: 8px;
+            background: var(--mobile-accent);
+            border-radius: 50%;
+            display: none;
+        }
+        
+        .nav-btn.has-notification .nav-btn-indicator {
+            display: block;
+        }
+        
+        .nav-btn-label {
+            font-size: 10px;
+            font-weight: 500;
+        }
+        
+        /* === Center Home Button === */
+        .nav-btn-home {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--mobile-accent) 0%, #0ea5e9 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
+            transition: all 0.2s ease;
+        }
+        
+        .nav-btn-home:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 10px rgba(56, 189, 248, 0.3);
+        }
+        
+        .nav-btn-home .nav-btn-icon {
+            font-size: 1.5rem;
+        }
+        
+        .nav-btn-home + .nav-btn-label {
+            position: absolute;
+            bottom: 8px;
+        }
+        
+        /* === App Switcher === */
+        .app-switcher {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 999;
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding-top: calc(var(--status-bar-height) + var(--space-lg));
+        }
+        
+        .app-switcher.open {
+            transform: translateY(0);
+        }
+        
+        .app-switcher-header {
+            text-align: center;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .app-switcher-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .switcher-apps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-md);
+            padding: 0 var(--space-md);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .switcher-app {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-xs);
+            cursor: pointer;
+            opacity: 0.6;
+            transition: all 0.2s ease;
+        }
+        
+        .switcher-app:active {
+            opacity: 1;
+            transform: scale(0.95);
+        }
+        
+        .switcher-app.active {
+            opacity: 1;
+        }
+        
+        .switcher-app.active .switcher-app-icon {
+            border-color: var(--mobile-accent);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+        
+        .switcher-app-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(56, 189, 248, 0.05) 100%);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .switcher-app-name {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+        
+        .switcher-close-btn {
+            position: absolute;
+            bottom: calc(var(--nav-bar-height) + var(--space-lg));
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(56, 189, 248, 0.2);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: var(--mobile-accent);
+            padding: var(--space-sm) var(--space-xl);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            font-size: var(--text-sm);
+            transition: all 0.2s ease;
+        }
+        
+        .switcher-close-btn:active {
+            background: rgba(56, 189, 248, 0.3);
+        }
+        
+        /* === Gesture Area === */
+        .gesture-area {
+            position: fixed;
+            bottom: calc(var(--nav-bar-height) + var(--safe-area-inset-bottom));
+            left: 0;
+            right: 0;
+            height: var(--gesture-area-height);
+            z-index: 999;
+        }
+        
+        /* === Loading Overlay === */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--mobile-shell-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            transition: opacity 0.3s ease;
+        }
+        
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(56, 189, 248, 0.2);
+            border-top: 3px solid var(--mobile-accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            margin-top: var(--space-md);
+            color: var(--text-secondary);
+            font-size: var(--text-sm);
+        }
+        
+        /* === Notifications === */
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--error);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+        }
+        
+        /* === Pulse Animation for Active State === */
+        .pulse-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid var(--mobile-accent);
+            opacity: 0;
+            animation: pulse-ring 1s ease-out;
+        }
+        
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+        
+        /* === Responsive Adjustments === */
+        @media (max-width: 360px) {
+            .app-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: var(--space-sm);
+            }
+            
+            .app-icon-image {
+                width: 48px;
+                height: 48px;
+                font-size: 1.5rem;
+            }
+            
+            .app-icon-name {
+                font-size: 9px;
+            }
+            
+            .nav-btn-icon {
+                font-size: 1.25rem;
+            }
+            
+            .nav-btn-home {
+                width: 48px;
+                height: 48px;
+                margin-bottom: 4px;
+            }
+            
+            .nav-btn-home .nav-btn-icon {
+                font-size: 1.25rem;
+            }
+        }
+        
+        @media (max-height: 600px) and (orientation: landscape) {
+            .home-header {
+                padding-top: var(--space-xs);
+                margin-bottom: var(--space-md);
+            }
+            
+            .home-logo {
+                font-size: 2rem;
+            }
+            
+            .home-title {
+                font-size: 1.25rem;
+            }
+            
+            .app-grid {
+                grid-template-columns: repeat(8, 1fr);
+                margin-bottom: var(--space-md);
+            }
+            
+            .app-icon-image {
+                width: 40px;
+                height: 40px;
+                font-size: 1.25rem;
+            }
+            
+            .quick-actions {
+                display: none;
+            }
+            
+            .system-info {
+                margin-top: var(--space-sm);
+                padding: var(--space-sm);
+            }
+        }
+        
+        /* === Accessibility === */
+        @media (prefers-reduced-motion: reduce) {
+            .app-container,
+            .app-switcher,
+            .nav-btn,
+            .app-icon,
+            .quick-action-btn {
+                transition: none;
+            }
+        }
+        
+        @media (prefers-contrast: high) {
+            .nav-bar {
+                border-top-width: 2px;
+            }
+            
+            .nav-btn.active {
+                text-decoration: underline;
+            }
+            
+            .app-icon-image,
+            .switcher-app-icon {
+                border-width: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" role="alert" aria-live="polite">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Inicializácia AI-OS Mobile...</div>
+    </div>
+    
+    <!-- Mobile Shell Container -->
+    <div class="mobile-shell" role="application" aria-label="AI-OS Mobile Shell">
+        
+        <!-- Status Bar -->
+        <header class="status-bar" role="banner">
+            <div class="status-bar-left">
+                <span class="status-time" id="statusTime">12:00</span>
+            </div>
+            <div class="status-bar-right">
+                <span class="status-icon" aria-hidden="true">📶</span>
+                <span class="status-icon" aria-hidden="true">📡</span>
+                <div class="battery-indicator">
+                    <span class="battery-icon">
+                        <span class="battery-level"></span>
+                    </span>
+                    <span class="battery-cap"></span>
+                </div>
+                <span class="status-icon" style="margin-left: 4px;">78%</span>
+            </div>
+        </header>
+        
+        <!-- Main Content Area -->
+        <main class="main-content" role="main">
+            
+            <!-- App Viewport -->
+            <div class="app-viewport" id="appViewport">
+                
+                <!-- Home Screen / App Launcher -->
+                <div class="home-screen active" id="homeScreen" role="navigation" aria-label="Domovská obrazovka">
+                    <div class="home-header">
+                        <div class="home-logo" aria-hidden="true">🧠</div>
+                        <h1 class="home-title">AI-OS</h1>
+                        <p class="home-subtitle">Váš inteligentný asistent</p>
+                    </div>
+                    
+                    <!-- App Grid -->
+                    <div class="app-grid" id="appGrid" role="list" aria-label="Aplikácie">
+                        <!-- Apps will be dynamically generated -->
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="quick-actions" role="list" aria-label="Rýchle akcie">
+                        <button class="quick-action-btn" role="listitem" onclick="mobileShell.openApp('voice-interface')">
+                            <span class="quick-action-icon" aria-hidden="true">🎤</span>
+                            <span class="quick-action-text">Hlasový asistent</span>
+                        </button>
+                        <button class="quick-action-btn" role="listitem" onclick="mobileShell.openApp('ai-learning-center')">
+                            <span class="quick-action-icon" aria-hidden="true">📚</span>
+                            <span class="quick-action-text">Vzdelávanie</span>
+                        </button>
+                        <button class="quick-action-btn" role="listitem" onclick="mobileShell.openApp('ai-performance-optimizer')">
+                            <span class="quick-action-icon" aria-hidden="true">⚡</span>
+                            <span class="quick-action-text">Optimalizácia</span>
+                        </button>
+                        <button class="quick-action-btn" role="listitem" onclick="mobileShell.openApp('ai-plugin-marketplace')">
+                            <span class="quick-action-icon" aria-hidden="true">🔌</span>
+                            <span class="quick-action-text">Marketplace</span>
+                        </button>
+                    </div>
+                    
+                    <!-- System Info -->
+                    <div class="system-info">
+                        <div class="system-info-title">
+                            <span aria-hidden="true">💻</span>
+                            Stav systému
+                        </div>
+                        <div class="system-stats">
+                            <div class="system-stat">
+                                <div class="system-stat-value" id="systemRam">68%</div>
+                                <div class="system-stat-label">Pamäť RAM</div>
+                            </div>
+                            <div class="system-stat">
+                                <div class="system-stat-value" id="systemCpu">23%</div>
+                                <div class="system-stat-label">CPU</div>
+                            </div>
+                            <div class="system-stat">
+                                <div class="system-stat-value" id="systemTemp">42°C</div>
+                                <div class="system-stat-label">Teplota</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- App Containers with Inline Content -->
+                <div class="app-container inactive" id="app-container-voice-interface" data-app="voice-interface">
+                    <div class="app-content" style="height: 100%; overflow: auto; background: linear-gradient(135deg, #000000 0%, #001122 100%); padding: var(--space-lg) var(--space-md);">
+                        <div style="text-align: center; padding-top: 20vh;">
+                            <div style="font-size: 5rem; margin-bottom: var(--space-lg); animation: pulse 2s ease-in-out infinite;">🎤</div>
+                            <h1 style="font-size: 1.5rem; color: var(--ai-primary); margin-bottom: var(--space-md);">Hlasový asistent</h1>
+                            <p style="color: var(--text-secondary); margin-bottom: var(--space-xl);">Povedzte niečo...</p>
+                            <button class="ai-btn ai-btn-primary ai-btn-lg" style="width: 120px; height: 120px; border-radius: 50%; font-size: 2rem;" aria-label="Stlačte a hovorte">
+                                🎤
+                            </button>
+                            <div style="margin-top: var(--space-xl);">
+                                <div style="display: flex; align-items: center; justify-content: center; gap: var(--space-sm); color: var(--text-muted);">
+                                    <span>Počujem...</span>
+                                    <span style="animation: pulse 1s ease-in-out infinite;">●</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="app-container inactive" id="app-container-ai-learning-center" data-app="ai-learning-center">
+                    <div class="app-content" style="height: 100%; overflow: auto; background: linear-gradient(135deg, #000000 0%, #001122 100%); padding: var(--space-lg) var(--space-md);">
+                        <div style="text-align: center; padding-top: 10vh; margin-bottom: var(--space-xl);">
+                            <div style="font-size: 4rem; margin-bottom: var(--space-md); filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5));">🧠</div>
+                            <h1 style="font-size: 1.5rem; color: var(--ai-primary); margin-bottom: var(--space-sm);">AI Vzdelávacie Centrum</h1>
+                            <p style="color: var(--text-secondary); font-size: var(--text-sm);">Interaktívne učenie AI technológií</p>
+                        </div>
+                        
+                        <!-- Stats -->
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); margin-bottom: var(--space-lg);">
+                            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: var(--radius-lg); padding: var(--space-md); text-align: center;">
+                                <div style="font-size: var(--text-xl); font-weight: 700; color: var(--ai-primary);">12</div>
+                                <div style="font-size: 10px; color: var(--text-secondary);">Dokončené lekcie</div>
+                            </div>
+                            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: var(--radius-lg); padding: var(--space-md); text-align: center;">
+                                <div style="font-size: var(--text-xl); font-weight: 700; color: var(--ai-primary);">8.5h</div>
+                                <div style="font-size: 10px; color: var(--text-secondary);">Čas učenia</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Module Progress -->
+                        <div style="background: var(--surface); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: var(--radius-lg); padding: var(--space-md);">
+                            <h3 style="color: var(--ai-primary); margin-bottom: var(--space-md); font-size: var(--text-sm);">Aktuálny modul</h3>
+                            <div style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-sm);">Strojové Učenie</div>
+                            <div style="height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: var(--radius-sm); margin-bottom: var(--space-sm);">
+                                <div style="height: 100%; width: 60%; background: linear-gradient(90deg, var(--ai-primary), var(--ai-secondary)); border-radius: var(--radius-sm);"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted);">
+                                <span>60% dokončené</span>
+                                <span>5/8 lekcií</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="app-container inactive" id="app-container-ai-performance-optimizer" data-app="ai-performance-optimizer">
+                    <div class="app-content" style="height: 100%; overflow: auto; background: linear-gradient(135deg, #000000 0%, #001122 100%); padding: var(--space-lg) var(--space-md);">
+                        <div style="text-align: center; padding-top: 8vh; margin-bottom: var(--space-lg);">
+                            <div style="font-size: 4rem; margin-bottom: var(--space-md); filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5));">⚡</div>
+                            <h1 style="font-size: 1.5rem; color: var(--ai-primary); margin-bottom: var(--space-sm);">Performance Optimizer</h1>
+                            <div style="display: inline-block; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: var(--radius-lg); padding: var(--space-sm) var(--space-lg); margin-top: var(--space-md);">
+                                <span style="font-size: 2.5rem; font-weight: 700; color: var(--info); font-family: var(--font-mono);">85</span>
+                                <span style="display: block; font-size: var(--text-sm); color: var(--text-secondary);">Výkon systému</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Metrics Grid -->
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-sm); margin-bottom: var(--space-lg);">
+                            <div style="text-align: center; padding: var(--space-sm); background: rgba(0, 0, 0, 0.3); border-radius: var(--radius-lg);">
+                                <div style="font-size: var(--text-md); font-weight: 700; color: var(--ai-primary);">23%</div>
+                                <div style="font-size: 9px; color: var(--text-secondary);">CPU</div>
+                            </div>
+                            <div style="text-align: center; padding: var(--space-sm); background: rgba(0, 0, 0, 0.3); border-radius: var(--radius-lg);">
+                                <div style="font-size: var(--text-md); font-weight: 700; color: var(--ai-primary);">67%</div>
+                                <div style="font-size: 9px; color: var(--text-secondary);">RAM</div>
+                            </div>
+                            <div style="text-align: center; padding: var(--space-sm); background: rgba(0, 0, 0, 0.3); border-radius: var(--radius-lg);">
+                                <div style="font-size: var(--text-md); font-weight: 700; color: var(--ai-primary);">45%</div>
+                                <div style="font-size: 9px; color: var(--text-secondary);">Disk</div>
+                            </div>
+                            <div style="text-align: center; padding: var(--space-sm); background: rgba(0, 0, 0, 0.3); border-radius: var(--radius-lg);">
+                                <div style="font-size: var(--text-md); font-weight: 700; color: var(--ai-primary);">89%</div>
+                                <div style="font-size: 9px; color: var(--text-secondary);">Batéria</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Actions -->
+                        <div style="display: flex; gap: var(--space-sm);">
+                            <button class="ai-btn ai-btn-primary" style="flex: 1;">🚀 Optimalizovať</button>
+                            <button class="ai-btn ai-btn-outline" style="flex: 1;">🔍 Analyzovať</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="app-container inactive" id="app-container-ai-plugin-marketplace" data-app="ai-plugin-marketplace">
+                    <div class="app-content" style="height: 100%; overflow: auto; background: linear-gradient(135deg, #000000 0%, #001122 100%); padding: var(--space-lg) var(--space-md);">
+                        <div style="text-align: center; padding-top: 5vh; margin-bottom: var(--space-lg);">
+                            <div style="font-size: 4rem; margin-bottom: var(--space-md); filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5));">🔌</div>
+                            <h1 style="font-size: 1.5rem; color: var(--ai-primary); margin-bottom: var(--space-sm);">Plugin Marketplace</h1>
+                            <p style="color: var(--text-secondary); font-size: var(--text-sm);">247 pluginov dostupných</p>
+                        </div>
+                        
+                        <!-- Search -->
+                        <div style="display: flex; gap: var(--space-sm); margin-bottom: var(--space-lg);">
+                            <input type="text" placeholder="Hľadať pluginy..." style="flex: 1; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: var(--radius-lg); padding: var(--space-sm) var(--space-md); color: var(--text-primary);">
+                            <button class="ai-btn ai-btn-primary">🔍</button>
+                        </div>
+                        
+                        <!-- Categories -->
+                        <div style="display: flex; gap: var(--space-xs); overflow-x: auto; padding-bottom: var(--space-sm); margin-bottom: var(--space-lg); scrollbar-width: none;">
+                            <span style="padding: var(--space-xs) var(--space-sm); background: var(--ai-primary); border-radius: var(--radius-lg); font-size: 10px; white-space: nowrap;">Všetky</span>
+                            <span style="padding: var(--space-xs) var(--space-sm); background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: var(--radius-lg); font-size: 10px; white-space: nowrap;">Audio</span>
+                            <span style="padding: var(--space-xs) var(--space-sm); background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: var(--radius-lg); font-size: 10px; white-space: nowrap;">Produktivita</span>
+                            <span style="padding: var(--space-xs) var(--space-sm); background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: var(--radius-lg); font-size: 10px; white-space: nowrap;">Bezpečnosť</span>
+                            <span style="padding: var(--space-xs) var(--space-sm); background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: var(--radius-lg); font-size: 10px; white-space: nowrap;">Vývoj</span>
+                        </div>
+                        
+                        <!-- Featured Plugin -->
+                        <div style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: var(--radius-lg); padding: var(--space-md); margin-bottom: var(--space-md);">
+                            <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-sm);">
+                                <div style="font-size: 2.5rem;">🎤</div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600; color: var(--text-primary);">AI Voice Enhancer</div>
+                                    <div style="font-size: var(--text-sm); color: var(--text-secondary);">od AI Studios</div>
+                                </div>
+                                <span style="color: var(--ai-primary); font-weight: 600;">Zadarmo</span>
+                            </div>
+                            <p style="font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-sm);">Pokročilé vylepšenie kvality hlasu pomocou AI</p>
+                            <div style="display: flex; gap: var(--space-xs); margin-bottom: var(--space-sm);">
+                                <span style="padding: 2px 4px; background: rgba(0, 212, 255, 0.2); border-radius: var(--radius-sm); font-size: 9px;">hlas</span>
+                                <span style="padding: 2px 4px; background: rgba(0, 212, 255, 0.2); border-radius: var(--radius-sm); font-size: 9px;">AI</span>
+                            </div>
+                            <button class="ai-btn ai-btn-primary" style="width: 100%;">⬇️ Inštalovať</button>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <!-- App Switcher -->
+            <div class="app-switcher" id="appSwitcher" role="dialog" aria-label="Prepínač aplikácií">
+                <div class="app-switcher-header">
+                    <h2 class="app-switcher-title">Otvorené aplikácie</h2>
+                </div>
+                <div class="switcher-apps-grid" id="switcherAppsGrid" role="list" aria-label="Zoznam spustených aplikácií">
+                    <!-- Switcher apps will be dynamically generated -->
+                </div>
+                <button class="switcher-close-btn" onclick="mobileShell.closeAppSwitcher()" aria-label="Zavrieť prepínač">
+                    Prejsť na aplikáciu
+                </button>
+            </div>
+            
+        </main>
+        
+        <!-- Navigation Bar -->
+        <nav class="nav-bar" role="navigation" aria-label="Hlavná navigácia">
+            <button class="nav-btn" id="navBack" onclick="mobileShell.goBack()" aria-label="Späť">
+                <span class="nav-btn-icon" aria-hidden="true">←</span>
+                <span class="nav-btn-label">Späť</span>
+            </button>
+            
+            <button class="nav-btn nav-btn-home" id="navHome" onclick="mobileShell.goHome()" aria-label="Domov">
+                <span class="nav-btn-icon" aria-hidden="true">⌂</span>
+            </button>
+            
+            <button class="nav-btn" id="navApps" onclick="mobileShell.toggleAppSwitcher()" aria-label="Aplikácie">
+                <span class="nav-btn-icon" aria-hidden="true">⊞</span>
+                <span class="nav-btn-label">Aplikácie</span>
+                <span class="nav-btn-indicator"></span>
+            </button>
+        </nav>
+        
+        <!-- Gesture Area -->
+        <div class="gesture-area" id="gestureArea"></div>
+        
+    </div>
+
+    <script>
+        /**
+         * AI-OS Mobile Shell Application
+         * Main mobile navigation and app management system
+         */
+        class MobileShellApp {
+            constructor() {
+                this.currentApp = null;
+                this.appHistory = [];
+                this.openApps = new Set(['home']);
+                this.lastUpdate = Date.now();
+                this.gestureStartY = 0;
+                this.isGestureActive = false;
+                this.userHasInteracted = false;
+                
+                this.apps = [
+                    { id: 'voice-interface', name: 'Hlasový asistent', icon: '🎤', file: 'voice-interface.html' },
+                    { id: 'ai-learning-center', name: 'Vzdelávanie', icon: '📚', file: 'ai-learning-center.html' },
+                    { id: 'ai-performance-optimizer', name: 'Optimalizácia', icon: '⚡', file: 'ai-performance-optimizer.html' },
+                    { id: 'ai-plugin-marketplace', name: 'Marketplace', icon: '🔌', file: 'ai-plugin-marketplace.html' }
+                ];
+                
+                this.init();
+            }
+            
+            init() {
+                this.renderAppGrid();
+                this.renderSwitcherApps();
+                this.updateTime();
+                this.startTimeUpdate();
+                this.setupGestureArea();
+                this.setupKeyboardNavigation();
+                this.setupUserInteraction();
+                this.loadSavedState();
+                this.simulateSystemStats();
+                
+                // Hide loading overlay
+                setTimeout(() => {
+                    document.getElementById('loadingOverlay').classList.add('hidden');
+                    this.provideHapticFeedback();
+                }, 1000);
+                
+                // Register with AI-OS Core
+                this.registerWithAIOSCore();
+            }
+            
+            setupUserInteraction() {
+                // Track user interaction for haptic feedback
+                const markInteraction = () => {
+                    this.userHasInteracted = true;
+                };
+                
+                document.addEventListener('click', markInteraction, { once: true });
+                document.addEventListener('touchstart', markInteraction, { once: true });
+                document.addEventListener('keydown', markInteraction, { once: true });
+            }
+            
+            renderAppGrid() {
+                const grid = document.getElementById('appGrid');
+                if (!grid) return;
+                
+                grid.innerHTML = this.apps.map(app => `
+                    <div class="app-icon" 
+                         role="button" 
+                         tabindex="0"
+                         aria-label="${app.name}"
+                         onclick="mobileShell.openApp('${app.id}')"
+                         onkeydown="if(event.key==='Enter'||event.key===' ')mobileShell.openApp('${app.id}')">
+                        <div class="app-icon-image">${app.icon}</div>
+                        <span class="app-icon-name">${app.name}</span>
+                    </div>
+                `).join('');
+            }
+            
+            renderSwitcherApps() {
+                const grid = document.getElementById('switcherAppsGrid');
+                if (!grid) return;
+                
+                const allApps = [
+                    { id: 'home', name: 'Domov', icon: '⌂' },
+                    ...this.apps
+                ];
+                
+                grid.innerHTML = allApps.map(app => {
+                    const isActive = this.currentApp === app.id || (app.id === 'home' && !this.currentApp);
+                    return `
+                        <div class="switcher-app ${isActive ? 'active' : ''}" 
+                             role="button"
+                             tabindex="0"
+                             aria-label="${app.name}"
+                             aria-pressed="${isActive}"
+                             onclick="mobileShell.switchToApp('${app.id}')"
+                             onkeydown="if(event.key==='Enter'||event.key===' ')mobileShell.switchToApp('${app.id}')">
+                            <div class="switcher-app-icon">${app.icon}</div>
+                            <span class="switcher-app-name">${app.name}</span>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            openApp(appId) {
+                // Hide home screen
+                document.getElementById('homeScreen').classList.remove('active');
+                document.getElementById('homeScreen').classList.add('inactive');
+                
+                // Hide all app containers
+                document.querySelectorAll('.app-container').forEach(container => {
+                    container.classList.remove('active');
+                    container.classList.add('inactive');
+                });
+                
+                // Show selected app
+                const appContainer = document.getElementById(`app-container-${appId}`);
+                if (appContainer) {
+                    appContainer.classList.remove('inactive');
+                    appContainer.classList.add('active');
+                    this.currentApp = appId;
+                    this.openApps.add(appId);
+                    this.appHistory.push(appId);
+                    this.saveState();
+                    this.provideHapticFeedback();
+                    this.updateNavBar();
+                    this.renderSwitcherApps();
+                }
+            }
+            
+            goBack() {
+                if (this.currentApp) {
+                    // Always go directly home when back is pressed
+                    this.goHome();
+                    this.provideHapticFeedback();
+                }
+            }
+            
+            goHome() {
+                // Show home screen
+                document.getElementById('homeScreen').classList.remove('inactive');
+                document.getElementById('homeScreen').classList.add('active');
+                
+                // Hide all app containers
+                document.querySelectorAll('.app-container').forEach(container => {
+                    container.classList.remove('active');
+                    container.classList.add('inactive');
+                });
+                
+                this.currentApp = null;
+                this.saveState();
+                this.updateNavBar();
+                this.renderSwitcherApps();
+                this.provideHapticFeedback();
+            }
+            
+            switchToApp(appId) {
+                if (appId === 'home') {
+                    this.goHome();
+                } else {
+                    this.openApp(appId);
+                }
+                this.closeAppSwitcher();
+            }
+            
+            toggleAppSwitcher() {
+                const switcher = document.getElementById('appSwitcher');
+                if (switcher.classList.contains('open')) {
+                    this.closeAppSwitcher();
+                } else {
+                    this.openAppSwitcher();
+                }
+            }
+            
+            openAppSwitcher() {
+                document.getElementById('appSwitcher').classList.add('open');
+                this.renderSwitcherApps();
+                this.provideHapticFeedback();
+            }
+            
+            closeAppSwitcher() {
+                document.getElementById('appSwitcher').classList.remove('open');
+            }
+            
+            updateNavBar() {
+                const backBtn = document.getElementById('navBack');
+                const homeBtn = document.getElementById('navHome');
+                const appsBtn = document.getElementById('navApps');
+                
+                // Update back button
+                backBtn.classList.toggle('active', this.currentApp !== null);
+                
+                // Update home button (always active when on home)
+                homeBtn.classList.toggle('active', this.currentApp === null);
+                
+                // Update apps button
+                appsBtn.classList.toggle('active', document.getElementById('appSwitcher').classList.contains('open'));
+            }
+            
+            updateTime() {
+                const now = new Date();
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                document.getElementById('statusTime').textContent = `${hours}:${minutes}`;
+            }
+            
+            startTimeUpdate() {
+                setInterval(() => this.updateTime(), 1000);
+            }
+            
+            setupGestureArea() {
+                const gestureArea = document.getElementById('gestureArea');
+                
+                gestureArea.addEventListener('touchstart', (e) => {
+                    this.gestureStartY = e.touches[0].clientY;
+                    this.isGestureActive = true;
+                }, { passive: true });
+                
+                gestureArea.addEventListener('touchmove', (e) => {
+                    if (!this.isGestureActive) return;
+                    
+                    const currentY = e.touches[0].clientY;
+                    const diff = this.gestureStartY - currentY;
+                    
+                    // Swipe up to open app switcher
+                    if (diff > 100) {
+                        this.openAppSwitcher();
+                        this.isGestureActive = false;
+                    }
+                }, { passive: true });
+                
+                gestureArea.addEventListener('touchend', () => {
+                    this.isGestureActive = false;
+                });
+                
+                // Mouse gestures for testing
+                gestureArea.addEventListener('mousedown', (e) => {
+                    this.gestureStartY = e.clientY;
+                });
+                
+                gestureArea.addEventListener('mousemove', (e) => {
+                    if (e.buttons !== 1) return;
+                    const diff = this.gestureStartY - e.clientY;
+                    if (diff > 50) {
+                        this.openAppSwitcher();
+                        this.gestureStartY = e.clientY;
+                    }
+                });
+            }
+            
+            setupKeyboardNavigation() {
+                document.addEventListener('keydown', (e) => {
+                    // Escape to go back or close switcher
+                    if (e.key === 'Escape') {
+                        if (document.getElementById('appSwitcher').classList.contains('open')) {
+                            this.closeAppSwitcher();
+                        } else if (this.currentApp) {
+                            this.goBack();
+                        }
+                    }
+                    
+                    // Number keys for quick app launch (1-4)
+                    const keyNum = parseInt(e.key);
+                    if (keyNum >= 1 && keyNum <= 4 && !this.currentApp) {
+                        const appIndex = keyNum - 1;
+                        if (this.apps[appIndex]) {
+                            this.openApp(this.apps[appIndex].id);
+                        }
+                    }
+                    
+                    // Arrow keys for navigation
+                    if (e.key === 'ArrowLeft') {
+                        this.goBack();
+                    } else if (e.key === 'ArrowRight' && !this.currentApp) {
+                        // Could open next app
+                    }
+                    
+                    // Home key to go home
+                    if (e.key === 'Home') {
+                        this.goHome();
+                    }
+                });
+            }
+            
+            provideHapticFeedback() {
+                // Only vibrate if user has interacted with the page
+                if (navigator.vibrate && this.userHasInteracted) {
+                    navigator.vibrate(10);
+                }
+            }
+            
+            setUserInteracted() {
+                this.userHasInteracted = true;
+            }
+            
+            saveState() {
+                const state = {
+                    currentApp: this.currentApp,
+                    appHistory: this.appHistory.slice(-10), // Keep last 10
+                    openApps: Array.from(this.openApps)
+                };
+                sessionStorage.setItem('ai-os-mobile-state', JSON.stringify(state));
+            }
+            
+            loadSavedState() {
+                try {
+                    const savedState = sessionStorage.getItem('ai-os-mobile-state');
+                    if (savedState) {
+                        const state = JSON.parse(savedState);
+                        if (state.currentApp && state.currentApp !== 'home') {
+                            // Auto-open last app (optional, disabled for better UX)
+                            // this.openApp(state.currentApp);
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Could not load saved state:', e);
+                }
+            }
+            
+            simulateSystemStats() {
+                // Simulate real-time system updates
+                setInterval(() => {
+                    // Update RAM
+                    const ram = 60 + Math.random() * 20;
+                    document.getElementById('systemRam').textContent = `${Math.round(ram)}%`;
+                    
+                    // Update CPU
+                    const cpu = 15 + Math.random() * 20;
+                    document.getElementById('systemCpu').textContent = `${Math.round(cpu)}%`;
+                    
+                    // Update Temperature
+                    const temp = 38 + Math.random() * 8;
+                    document.getElementById('systemTemp').textContent = `${Math.round(temp)}°C`;
+                }, 5000);
+            }
+            
+            registerWithAIOSCore() {
+                if (window.aiOSCore) {
+                    window.aiOSCore.registerApplication('ai-os-mobile-shell', {
+                        name: 'AI-OS Mobile Shell',
+                        description: 'Mobilná vrstva operačného systému AI-OS',
+                        version: '1.0.0',
+                        category: 'system',
+                        capabilities: ['app-launcher', 'navigation', 'app-switching', 'gestures'],
+                        url: window.location.href
+                    });
+                }
+            }
+        }
+        
+        // Initialize Mobile Shell
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                window.mobileShell = new MobileShellApp();
+            } catch (error) {
+                console.warn('Mobile Shell initialization warning:', error);
+                // Continue without full initialization
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }
+        });
+        
+        // Handle visibility change
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && window.mobileShell) {
+                window.mobileShell.updateTime();
+            }
+        });
+        
+        // Handle back button on Android
+        document.addEventListener('backbutton', () => {
+            if (window.mobileShell) {
+                if (window.mobileShell.currentApp) {
+                    window.mobileShell.goBack();
+                } else {
+                    // Exit app confirmation
+                    if (confirm('Chcete ukončiť AI-OS Mobile?')) {
+                        navigator.app.exitApp();
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
