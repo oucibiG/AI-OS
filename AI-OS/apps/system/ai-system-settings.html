@@ -622,11 +622,43 @@
             border: 1px solid rgba(0, 212, 255, 0.3);
             border-radius: 8px;
             padding: 15px 20px;
+            padding-right: 45px;
             z-index: 3000;
-            max-width: 300px;
+            max-width: 350px;
             color: white;
             font-size: 14px;
             animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .notification-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 24px;
+            height: 24px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .notification-close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .notification-close-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
         }
         
         @keyframes slideIn {
@@ -3695,6 +3727,12 @@
                 const notification = document.createElement('div');
                 notification.className = `notification ${type}`;
                 notification.innerHTML = `
+                    <button class="notification-close-btn" onclick="this.closest('.notification').remove()" aria-label="Zatvoriť notifikáciu">
+                        <svg viewBox="0 0 24 24">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
                     <div style="font-weight: 600; color: #00d4ff; margin-bottom: 5px;">${title}</div>
                     <div>${message}</div>
                 `;
@@ -3702,7 +3740,15 @@
                 document.body.appendChild(notification);
                 
                 setTimeout(() => {
-                    notification.remove();
+                    if (notification.parentElement) {
+                        notification.style.transform = 'translateX(100%)';
+                        notification.style.opacity = '0';
+                        setTimeout(() => {
+                            if (notification.parentElement) {
+                                notification.parentElement.removeChild(notification);
+                            }
+                        }, 300);
+                    }
                 }, 3000);
             }
         }
