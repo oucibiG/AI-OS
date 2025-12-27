@@ -1,0 +1,13 @@
+{
+    "name": "weather",
+    "description": "Získanie informácií o počasí pre danú lokáciu",
+    "meta": {
+        "author": "demo",
+        "version": "1.0.0",
+        "license": "MIT"
+    },
+    "build": {
+        "entry": "entry.py",
+        "module": "WeatherTool"
+    }
+}

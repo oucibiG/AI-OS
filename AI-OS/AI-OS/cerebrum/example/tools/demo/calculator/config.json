@@ -1,0 +1,13 @@
+{
+    "name": "calculator",
+    "description": "Jednoduchá kalkulačka pre základné matematické operácie",
+    "meta": {
+        "author": "demo",
+        "version": "1.0.0",
+        "license": "MIT"
+    },
+    "build": {
+        "entry": "entry.py",
+        "module": "CalculatorTool"
+    }
+}

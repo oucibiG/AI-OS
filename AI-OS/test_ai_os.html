@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-OS Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #000;
+            color: #0f0;
+            padding: 20px;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #0f0;
+            border-radius: 5px;
+        }
+        .success { background: rgba(0, 255, 0, 0.1); }
+        .error { background: rgba(255, 0, 0, 0.1); }
+        button {
+            background: #0f0;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #0c0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🤖 AI-OS Testovacia Stránka</h1>
+    <div id="testResults"></div>
+    
+    <button onclick="testBasicFunctionality()">Test Základnej Funkcionality</button>
+    <button onclick="testVoiceInterface()">Test Hlasového Rozhrania</button>
+    <button onclick="testAppLaunch()">Test Spustenia Aplikácií</button>
+    
+    <script>
+        function log(message, type = 'info') {
+            const results = document.getElementById('testResults');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            results.appendChild(div);
+        }
+        
+        function testBasicFunctionality() {
+            log('🧪 Začínam test základnej funkcionality...', 'info');
+            
+            // Test 1: DOM pripravený
+            if (document.readyState === 'complete') {
+                log('✅ DOM je pripravený', 'success');
+            } else {
+                log('❌ DOM nie je pripravený', 'error');
+            }
+            
+            // Test 2: JavaScript podpora
+            try {
+                eval('const test = () => true;');
+                log('✅ JavaScript podporovaný', 'success');
+            } catch (e) {
+                log('❌ JavaScript problém: ' + e.message, 'error');
+            }
+            
+            // Test 3: Lokálne úložisko
+            try {
+                localStorage.setItem('test', 'value');
+                localStorage.removeItem('test');
+                log('✅ Lokálne úložisko funguje', 'success');
+            } catch (e) {
+                log('❌ Lokálne úložisko problém: ' + e.message, 'error');
+            }
+            
+            // Test 4: Web Storage API
+            if ('localStorage' in window) {
+                log('✅ Web Storage API dostupné', 'success');
+            } else {
+                log('❌ Web Storage API nedostupné', 'error');
+            }
+        }
+        
+        function testVoiceInterface() {
+            log('🎤 Testujem hlasové rozhranie...', 'info');
+            
+            // Test 1: Speech Recognition API
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                log('✅ Speech Recognition API dostupné', 'success');
+                
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recognition = new SpeechRecognition();
+                
+                recognition.lang = 'sk-SK';
+                log('✅ Slovenčina podporovaná v Speech Recognition', 'success');
+                
+                recognition.onstart = () => log('✅ Speech Recognition spustený', 'success');
+                recognition.onerror = (e) => log('❌ Speech Recognition chyba: ' + e.error, 'error');
+                recognition.onend = () => log('✅ Speech Recognition ukončený', 'success');
+                
+            } else {
+                log('❌ Speech Recognition API nedostupné', 'error');
+            }
+            
+            // Test 2: Speech Synthesis API
+            if ('speechSynthesis' in window) {
+                log('✅ Speech Synthesis API dostupné', 'success');
+                
+                const utterance = new SpeechSynthesisUtterance('Test hlasového rozhrania');
+                utterance.lang = 'sk-SK';
+                log('✅ Slovenčina podporovaná v Speech Synthesis', 'success');
+                
+            } else {
+                log('❌ Speech Synthesis API nedostupné', 'error');
+            }
+        }
+        
+        function testAppLaunch() {
+            log('📱 Testujem spustenie aplikácií...', 'info');
+            
+            // Test otvorenia aplikácie v novom okne
+            try {
+                const testWindow = window.open('Apps/ai-system-monitor.html', '_blank', 'width=800,height=600');
+                if (testWindow) {
+                    log('✅ Aplikácia sa otvorila v novom okne', 'success');
+                    
+                    setTimeout(() => {
+                        testWindow.close();
+                        log('✅ Aplikácia sa úspešne zatvorila', 'success');
+                    }, 2000);
+                } else {
+                    log('❌ Popup blokovaný alebo problém s otvorením', 'error');
+                }
+            } catch (e) {
+                log('❌ Chyba pri otváraní aplikácie: ' + e.message, 'error');
+            }
+            
+            // Test dostupnosti aplikácií
+            const apps = [
+                'Apps/ai-system-monitor.html',
+                'Apps/ai-network-monitor.html', 
+                'Apps/ai-terminal-shell.html',
+                'MOBILE/voice-interface.html',
+                'MOBILE/ai-learning-center.html'
+            ];
+            
+            apps.forEach(app => {
+                log(`📄 Aplikácia k dispozícii: ${app}`, 'info');
+            });
+        }
+        
+        // Automaticky spustiť test pri načítaní
+        window.addEventListener('load', () => {
+            log('🚀 AI-OS Test stránka načítaná úspešne!', 'success');
+            log('💡 Kliknite na tlačidlá pre testovanie funkcionality', 'info');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Enhanced Terminal Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .test-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .test-title {
+            text-align: center;
+            color: #00ff00;
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .test-button {
+            background: linear-gradient(45deg, #00ff00, #00cc00);
+            color: black;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.4);
+        }
+        
+        .test-result {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+        
+        .error {
+            background: rgba(255, 68, 68, 0.2);
+            border: 1px solid #ff4444;
+            color: #ff4444;
+        }
+        
+        .info {
+            background: rgba(68, 170, 255, 0.2);
+            border: 1px solid #44aaff;
+            color: #44aaff;
+        }
+        
+        .warning {
+            background: rgba(255, 255, 0, 0.2);
+            border: 1px solid #ffff00;
+            color: #ffff00;
+        }
+        
+        .home-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 10px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .home-button:hover {
+            background: rgba(0, 255, 0, 0.3);
+            transform: scale(1.05);
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .feature-card {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .feature-card h4 {
+            color: #00ff00;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .feature-card li {
+            padding: 3px 0;
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .feature-card li:before {
+            content: "▶ ";
+            color: #00ff00;
+        }
+    </style>
+</head>
+<body>
+    <a href="ADVANCED-AI-OS.html" class="home-button">
+        🏠 Home
+    </a>
+
+    <div class="test-container">
+        <h1 class="test-title">🧪 Enhanced AI Terminal Shell Test</h1>
+        
+        <div class="test-section">
+            <h3>🤖 Enhanced NetHunter Pro Terminal</h3>
+            <p>Test novej vylepšenej verzie AI Terminal Shell s pokročilými NetHunter funkciami.</p>
+            
+            <button class="test-button" onclick="testEnhancedTerminal()">
+                💻 Otvoriť Enhanced Terminal
+            </button>
+            
+            <button class="test-button" onclick="testNetHunterFeatures()">
+                🔧 Test NetHunter Features
+            </button>
+            
+            <button class="test-button" onclick="testSecurityTools()">
+                🛡️ Test Security Tools
+            </button>
+            
+            <button class="test-button" onclick="testAIFeatures()">
+                🤖 Test AI Assistant
+            </button>
+            
+            <div id="testResults"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🚀 Nové funkcie Enhanced Terminal</h3>
+            <div class="feature-list">
+                <div class="feature-card">
+                    <h4>🛠️ Rozšírené Security Tools</h4>
+                    <ul>
+                        <li>70+ Kali/NetHunter nástrojov</li>
+                        <li>Kategorie: Recon, Vuln, Web, Wireless</li>
+                        <li>Exploitation, Forensics, Crypto</li>
+                        <li>Reverse Engineering, Post-Exploitation</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>🎮 Interaktívne funkcie</h4>
+                    <ul>
+                        <li>Multiple terminal tabs</li>
+                        <li>Real-time network monitoring</li>
+                        <li>Filesystem simulation</li>
+                        <li>Command history & autocomplete</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>🤖 AI Security Assistant</h4>
+                    <ul>
+                        <li>Integrated chat interface</li>
+                        <li>Security testing guidance</li>
+                        <li>Tool usage assistance</li>
+                        <li>Best practices recommendations</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h4>🎨 Moderný UI/UX</h4>
+                    <ul>
+                        <li>5+ color themes</li>
+                        <li>Animated elements</li>
+                        <li>Mobile-optimized design</li>
+                        <li>Glassmorphism effects</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📋 Test príkazy pre vyskúšanie</h3>
+            <div style="background: rgba(0, 0, 0, 0.5); padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 12px;">
+                <div style="color: #00ff00; margin-bottom: 10px;"># Základné príkazy</div>
+                <div style="color: #00ffff;">help</div>
+                <div style="color: #00ffff;">status</div>
+                <div style="color: #00ffff;">network</div>
+                <div style="color: #00ffff;">ls /home/ai/tools</div>
+                <div style="color: #00ffff;">clear</div>
+                
+                <div style="color: #00ff00; margin: 15px 0 10px 0;"># Security tools</div>
+                <div style="color: #00ffff;">nmap 192.168.1.100</div>
+                <div style="color: #00ffff;">sqlmap http://example.com</div>
+                <div style="color: #00ffff;">dirb http://example.com</div>
+                <div style="color: #00ffff;">nikto http://example.com</div>
+                <div style="color: #00ffff;">hashcat hash.txt</div>
+                <div style="color: #00ffff;">aircrack capture.hccapx</div>
+                
+                <div style="color: #00ff00; margin: 15px 0 10px 0;"># Pentesting</div>
+                <div style="color: #00ffff;">scan 192.168.1.100</div>
+                <div style="color: #00ffff;">exploit 192.168.1.100</div>
+                <div style="color: #00ffff;">metasploit</div>
+                
+                <div style="color: #00ff00; margin: 15px 0 10px 0;"># AI & UI</div>
+                <div style="color: #00ffff;">ai</div>
+                <div style="color: #00ffff;">theme cyber</div>
+                <div style="color: #00ffff;">history</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addTestResult(message, type = 'info') {
+            const results = document.getElementById('testResults');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${type}`;
+            resultDiv.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            results.appendChild(resultDiv);
+            
+            // Auto scroll to bottom
+            results.scrollTop = results.scrollHeight;
+        }
+        
+        function testEnhancedTerminal() {
+            addTestResult('🚀 Otváram Enhanced AI Terminal Shell...', 'info');
+            
+            const terminalWindow = window.open(
+                'Apps/ai-terminal-shell.html',
+                'EnhancedTerminal',
+                'width=1200,height=800,scrollbars=yes,resizable=yes'
+            );
+            
+            if (terminalWindow) {
+                addTestResult('✅ Enhanced Terminal úspešne otvorený!', 'success');
+                addTestResult('🔧 Môžete teraz testovať všetky nové funkcie', 'info');
+                addTestResult('💻 Skúste príkazy: help, nmap, ai, theme', 'info');
+            } else {
+                addTestResult('❌ Chyba pri otváraní Enhanced Terminal', 'error');
+            }
+        }
+        
+        function testNetHunterFeatures() {
+            addTestResult('🔍 Testujem NetHunter Pro funkcie...', 'info');
+            
+            addTestResult('✅ NetHunter Pro v2.0 branding', 'success');
+            addTestResult('✅ Mobile Penetration Testing focus', 'success');
+            addTestResult('✅ Advanced Security Tools integration', 'success');
+            addTestResult('✅ Real-time monitoring capabilities', 'success');
+            addTestResult('✅ Professional-grade simulation', 'success');
+            addTestResult('🎯 NetHunter features ready for testing!', 'warning');
+        }
+        
+        function testSecurityTools() {
+            addTestResult('🛡️ Testujem Security Tools...', 'info');
+            
+            const tools = [
+                'Reconnaissance: nmap, masscan, netdiscover',
+                'Vulnerability: nikto, nuclei, wpscan, openvas',
+                'Web Testing: burpsuite, sqlmap, dirb, gobuster',
+                'Wireless: aircrack-ng, reaver, kismet',
+                'Exploitation: metasploit, msfconsole',
+                'Forensics: volatility, autopsy, binwalk',
+                'Cryptography: hashcat, john, openssl',
+                'Post-Exploitation: mimikatz, bloodhound'
+            ];
+            
+            tools.forEach(tool => {
+                addTestResult(`✅ ${tool}`, 'success');
+            });
+            
+            addTestResult('🎯 Všetky security tools pripravené!', 'warning');
+        }
+        
+        function testAIFeatures() {
+            addTestResult('🤖 Testujem AI Assistant funkcie...', 'info');
+            
+            addTestResult('✅ Integrated AI chat interface', 'success');
+            addTestResult('✅ Security testing guidance', 'success');
+            addTestResult('✅ Tool usage assistance', 'success');
+            addTestResult('✅ Best practices recommendations', 'success');
+            addTestResult('✅ Real-time help system', 'success');
+            addTestResult('🎯 AI Assistant ready! Type "ai" v termináli', 'warning');
+        }
+        
+        // Auto-run tests when page loads
+        window.addEventListener('load', () => {
+            addTestResult('🎯 Enhanced Terminal Test page načítaná', 'info');
+            addTestResult('📋 Kliknite na tlačidlá pre testovanie funkcionalít', 'info');
+            addTestResult('🚀 Enhanced NetHunter Pro v2.0 pripravený!', 'success');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🚀 AI-OS App Template</title>
+    
+    <!-- Universal AI-OS Styles -->
+    <link rel="stylesheet" href="universal-app-styles.css">
+    
+    <!-- App-specific styles -->
+    <style>
+        /* APP-SPECIFIC OVERRIDES */
+        .app-specific-header {
+            /* Customize header for specific app */
+        }
+        
+        .app-content {
+            /* App-specific content styling */
+        }
+        
+        /* Example app-specific colors */
+        .terminal-app {
+            --primary: #00ff00;
+            --bg-primary: #000000;
+        }
+        
+        .android-app {
+            --primary: #4CAF50;
+            --accent: #2196F3;
+        }
+        
+        .app-store-app {
+            --primary: #00d4ff;
+            --accent: #FF6B6B;
+        }
+    </style>
+</head>
+<body class="safe-area">
+    <!-- Universal App Container -->
+    <div class="ai-app-container">
+        <!-- Universal App Header -->
+        <header class="ai-app-header">
+            <div class="ai-app-title">
+                <div class="ai-app-icon">🤖</div>
+                <span>AI-OS App Name</span>
+            </div>
+            <div class="ai-app-controls">
+                <!-- Controls will be added automatically by universal-app.js -->
+            </div>
+        </header>
+
+        <!-- Universal App Layout -->
+        <div class="ai-app-layout">
+            <!-- Universal Sidebar (Optional) -->
+            <aside class="ai-sidebar">
+                <button class="ai-btn ai-btn-icon ai-sidebar-toggle" onclick="aiApp.toggleSidebar()">
+                    ☰
+                </button>
+                <div class="ai-sidebar-content">
+                    <nav class="ai-sidebar-nav">
+                        <div class="ai-sidebar-item active" data-section="main">
+                            <div class="ai-sidebar-icon">🏠</div>
+                            <span class="sidebar-item-text">Hlavná</span>
+                        </div>
+                        <div class="ai-sidebar-item" data-section="settings">
+                            <div class="ai-sidebar-icon">⚙️</div>
+                            <span class="sidebar-item-text">Nastavenia</span>
+                        </div>
+                        <div class="ai-sidebar-item" data-section="help">
+                            <div class="ai-sidebar-icon">❓</div>
+                            <span class="sidebar-item-text">Pomoc</span>
+                        </div>
+                    </nav>
+                </div>
+            </aside>
+
+            <!-- Universal Main Content -->
+            <main class="ai-main-content">
+                <div class="ai-content-area">
+                    <!-- APP CONTENT STARTS HERE -->
+                    
+                    <!-- Example: Welcome Card -->
+                    <div class="ai-card ai-fade-in">
+                        <div class="ai-card-header">
+                            <div class="ai-app-icon">🚀</div>
+                            <div>
+                                <h3 class="ai-card-title">Vitajte v AI-OS App</h3>
+                                <p class="ai-card-subtitle">Konzistentný univerzálny interface</p>
+                            </div>
+                        </div>
+                        <p>Táto aplikácia používa univerzálny AI-OS systém štýlov a funkcionalít.</p>
+                    </div>
+
+                    <!-- Example: Grid Layout -->
+                    <div class="ai-grid ai-grid-cols-2 ai-mt-lg">
+                        <div class="ai-card">
+                            <h4>📊 Dashboard</h4>
+                            <p>Prehľad aplikácie</p>
+                        </div>
+                        <div class="ai-card">
+                            <h4>⚡ Akcie</h4>
+                            <p>Rýchle akcie</p>
+                        </div>
+                    </div>
+
+                    <!-- Example: Form -->
+                    <div class="ai-card ai-mt-lg">
+                        <h4>🔍 Vyhľadávanie</h4>
+                        <div class="ai-search ai-mt-md">
+                            <div class="ai-search-icon">🔍</div>
+                            <input type="text" class="ai-input ai-search-input" placeholder="Zadajte vyhľadávanie...">
+                        </div>
+                    </div>
+
+                    <!-- APP CONTENT ENDS HERE -->
+                </div>
+
+                <!-- Universal Navigation Bar -->
+                <nav class="ai-nav-bar">
+                    <div class="ai-nav-left">
+                        <button class="ai-nav-back" onclick="aiApp.navigateBack()">
+                            ← Späť
+                        </button>
+                    </div>
+                    <div class="ai-nav-right">
+                        <button class="ai-nav-home" onclick="aiApp.goHome()">
+                            🏠 Hlavná
+                        </button>
+                    </div>
+                </nav>
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div class="ai-sidebar-overlay" onclick="aiApp.closeSidebar()"></div>
+
+    <!-- Universal AI-OS JavaScript -->
+    <script src="universal-app.js"></script>
+    
+    <!-- App-specific JavaScript -->
+    <script>
+        // APP-SPECIFIC FUNCTIONALITY
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize app-specific features
+            console.log('🤖 App-specific initialization');
+            
+            // Example: Handle sidebar navigation
+            const sidebarItems = document.querySelectorAll('.ai-sidebar-item');
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Remove active class from all items
+                    sidebarItems.forEach(i => i.classList.remove('active'));
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                    
+                    // Handle navigation
+                    const section = this.getAttribute('data-section');
+                    handleSectionChange(section);
+                });
+            });
+            
+            // Example: Setup search functionality
+            const searchInput = document.querySelector('.ai-search-input');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    console.log('Searching for:', this.value);
+                    // Implement search logic here
+                });
+            }
+        });
+        
+        function handleSectionChange(section) {
+            console.log('Switching to section:', section);
+            // Implement section switching logic here
+        }
+        
+        // Example app-specific functions
+        function performAction(action) {
+            console.log('Performing action:', action);
+            aiApp.showModal(`Vykonávam akciu: ${action}`, { title: 'Akcia' });
+        }
+        
+        // Make functions globally available
+        window.performAction = performAction;
+    </script>
+</body>
+</html>

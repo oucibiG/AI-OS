@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AI Vzdelávacie Centrum">
+    <meta name="app-id" content="ai-learning-center">
+    <meta name="description" content="Interaktívne vzdelávacie centrum pre AI technológie a učenie">
+    <title>🧠 AI Vzdelávacie Centrum - AI-OS</title>
+    
+    <!-- AI-OS Design System -->
+    <link rel="stylesheet" href="../css/ai-os-design-system.css">
+    
+    <!-- AI-OS Core Integration -->
+    <script src="../js/ai-os-core.js"></script>
+    <script src="../js/ai-os-app-integration.js"></script>
+    <script src="../js/ai-os-utils.js"></script>
+    
+    <style>
+        /* Learning Center Specific Styles */
+        .learning-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #000000 0%, #001122 30%, #000000 100%);
+            padding: var(--space-lg) var(--space-md);
+            position: relative;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .learning-header {
+            text-align: center;
+            margin-bottom: var(--space-xl);
+            position: relative;
+            z-index: 1;
+        }
+
+        .learning-icon {
+            font-size: 4rem;
+            margin-bottom: var(--space-md);
+            filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.8));
+            animation: brainPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes brainPulse {
+            0%, 100% { 
+                transform: scale(1);
+                filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.8));
+            }
+            50% { 
+                transform: scale(1.05);
+                filter: drop-shadow(0 0 30px rgba(0, 212, 255, 1));
+            }
+        }
+
+        .learning-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        .stat-card {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: all var(--transition-normal);
+        }
+
+        .stat-card:hover {
+            border-color: var(--ai-primary);
+            background: rgba(0, 212, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .stat-value {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--ai-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .stat-label {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+        }
+
+        .learning-modules {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+
+        .module-card {
+            background: var(--surface);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: var(--radius-xl);
+            padding: var(--space-lg);
+            transition: all var(--transition-normal);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(0, 212, 255, 0.1) 0%, 
+                rgba(0, 212, 255, 0.05) 50%, 
+                transparent 100%);
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+            pointer-events: none;
+        }
+
+        .module-card:hover::before {
+            opacity: 1;
+        }
+
+        .module-card:hover {
+            border-color: var(--ai-primary);
+            background: rgba(0, 212, 255, 0.05);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .module-icon {
+            font-size: 2.5rem;
+            margin-bottom: var(--space-md);
+            display: block;
+        }
+
+        .module-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-sm);
+        }
+
+        .module-description {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: var(--space-md);
+        }
+
+        .module-progress {
+            margin-bottom: var(--space-md);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            margin-bottom: var(--space-xs);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--ai-primary), var(--ai-secondary));
+            border-radius: var(--radius-sm);
+            transition: width var(--transition-slow);
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.3), 
+                transparent);
+            animation: progressShine 2s infinite;
+        }
+
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .module-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+        }
+
+        .difficulty-badge {
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .difficulty-beginner {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .difficulty-intermediate {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .difficulty-advanced {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+        }
+
+        .learning-progress-section {
+            margin-bottom: var(--space-xl);
+        }
+
+        .section-title {
+            font-size: var(--text-xl);
+            font-weight: 600;
+            color: var(--ai-primary);
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .achievement-card {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            text-align: center;
+            transition: all var(--transition-normal);
+            cursor: pointer;
+        }
+
+        .achievement-card:hover {
+            border-color: var(--ai-primary);
+            background: rgba(0, 212, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .achievement-card.unlocked {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .achievement-icon {
+            font-size: 2rem;
+            margin-bottom: var(--space-sm);
+            opacity: 0.5;
+            transition: opacity var(--transition-normal);
+        }
+
+        .achievement-card.unlocked .achievement-icon {
+            opacity: 1;
+            animation: achievementUnlock 0.6s ease-out;
+        }
+
+        @keyframes achievementUnlock {
+            0% { 
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% { 
+                transform: scale(1.2);
+                opacity: 1;
+            }
+            100% { 
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .achievement-name {
+            font-size: var(--text-xs);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .achievement-description {
+            font-size: 10px;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+
+        /* === KOMPLEXNÁ RESPONZIVITA === */
+        
+        /* Veľké tablety - 1024px */
+        @media (max-width: 1024px) {
+            .learning-container {
+                padding: var(--space-lg) var(--space-lg);
+            }
+            
+            .learning-header {
+                margin-bottom: var(--space-lg);
+            }
+            
+            .learning-icon {
+                font-size: 3.5rem;
+            }
+            
+            .learning-stats {
+                grid-template-columns: repeat(4, 1fr);
+                gap: var(--space-md);
+            }
+            
+            .stat-card {
+                padding: var(--space-md);
+            }
+            
+            .stat-value {
+                font-size: var(--text-xl);
+            }
+            
+            .learning-modules {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--space-md);
+            }
+            
+            .module-card {
+                padding: var(--space-md);
+            }
+            
+            .module-icon {
+                font-size: 2rem;
+            }
+            
+            .module-title {
+                font-size: var(--text-lg);
+            }
+            
+            .achievements-grid {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+                gap: var(--space-md);
+            }
+            
+            .achievement-card {
+                padding: var(--space-md);
+            }
+            
+            .achievement-icon {
+                font-size: 1.75rem;
+            }
+        }
+        
+        /* Tablety - 768px */
+        @media (max-width: 768px) {
+            .learning-container {
+                padding: var(--space-md) var(--space-md);
+            }
+            
+            .learning-header {
+                margin-bottom: var(--space-lg);
+            }
+            
+            .learning-icon {
+                font-size: 3rem;
+                margin-bottom: var(--space-sm);
+            }
+            
+            h1.ai-heading-xl {
+                font-size: 1.75rem;
+            }
+            
+            .learning-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--space-sm);
+                margin-bottom: var(--space-lg);
+            }
+            
+            .stat-card {
+                padding: var(--space-md);
+            }
+            
+            .stat-value {
+                font-size: var(--text-xl);
+            }
+            
+            .stat-label {
+                font-size: var(--text-xs);
+            }
+            
+            .learning-modules {
+                grid-template-columns: 1fr;
+                gap: var(--space-md);
+                margin-bottom: var(--space-lg);
+            }
+            
+            .module-card {
+                padding: var(--space-md);
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                text-align: left;
+            }
+            
+            .module-card .module-icon {
+                font-size: 2rem;
+                margin-bottom: 0;
+                margin-right: var(--space-md);
+                flex-shrink: 0;
+            }
+            
+            .module-card .module-content {
+                flex: 1;
+                min-width: 0;
+            }
+            
+            .module-title {
+                font-size: var(--text-md);
+                margin-bottom: var(--space-xs);
+            }
+            
+            .module-description {
+                font-size: var(--text-sm);
+                margin-bottom: var(--space-sm);
+            }
+            
+            .module-progress {
+                margin-bottom: var(--space-sm);
+            }
+            
+            .achievements-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: var(--space-sm);
+            }
+            
+            .achievement-card {
+                padding: var(--space-sm);
+            }
+            
+            .achievement-icon {
+                font-size: 1.5rem;
+                margin-bottom: var(--space-xs);
+            }
+            
+            .achievement-name {
+                font-size: 10px;
+            }
+            
+            .achievement-description {
+                font-size: 9px;
+            }
+            
+            .section-title {
+                font-size: var(--text-lg);
+                margin-bottom: var(--space-md);
+            }
+            
+            .learning-progress-section {
+                margin-bottom: var(--space-lg);
+            }
+        }
+        
+        /* Veľké telefóny - 640px */
+        @media (max-width: 640px) {
+            .learning-container {
+                padding: var(--space-sm) var(--space-sm);
+            }
+            
+            .learning-header {
+                margin-bottom: var(--space-md);
+            }
+            
+            .learning-icon {
+                font-size: 2.75rem;
+            }
+            
+            h1.ai-heading-xl {
+                font-size: 1.5rem;
+            }
+            
+            .ai-text-body {
+                font-size: var(--text-sm);
+            }
+            
+            .learning-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--space-sm);
+            }
+            
+            .stat-card {
+                padding: var(--space-sm);
+            }
+            
+            .stat-value {
+                font-size: var(--text-lg);
+            }
+            
+            .stat-label {
+                font-size: 10px;
+            }
+            
+            .learning-modules {
+                gap: var(--space-sm);
+                margin-bottom: var(--space-md);
+            }
+            
+            .module-card {
+                padding: var(--space-sm);
+            }
+            
+            .module-card .module-icon {
+                font-size: 1.75rem;
+            }
+            
+            .module-title {
+                font-size: var(--text-md);
+            }
+            
+            .module-description {
+                font-size: var(--text-xs);
+                margin-bottom: var(--space-xs);
+            }
+            
+            .progress-bar {
+                height: 4px;
+                margin-bottom: var(--space-xs);
+            }
+            
+            .module-meta {
+                font-size: 10px;
+            }
+            
+            .difficulty-badge {
+                padding: 2px var(--space-xs);
+                font-size: 9px;
+            }
+            
+            .achievements-grid {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+                gap: var(--space-xs);
+            }
+            
+            .achievement-card {
+                padding: var(--space-xs);
+            }
+            
+            .achievement-icon {
+                font-size: 1.25rem;
+            }
+            
+            .achievement-name {
+                font-size: 9px;
+            }
+            
+            .achievement-description {
+                font-size: 8px;
+                display: none;
+            }
+            
+            .section-title {
+                font-size: var(--text-md);
+            }
+            
+            .learning-progress-section {
+                margin-bottom: var(--space-md);
+            }
+        }
+        
+        /* Štandardné telefóny - 480px */
+        @media (max-width: 480px) {
+            .learning-container {
+                padding: var(--space-xs) var(--space-xs);
+            }
+            
+            .learning-header {
+                margin-bottom: var(--space-sm);
+            }
+            
+            .learning-icon {
+                font-size: 2.5rem;
+            }
+            
+            h1.ai-heading-xl {
+                font-size: 1.25rem;
+            }
+            
+            .ai-text-body {
+                font-size: var(--text-xs);
+            }
+            
+            .learning-stats {
+                grid-template-columns: 1fr 1fr;
+                gap: var(--space-xs);
+            }
+            
+            .stat-card {
+                padding: var(--space-sm);
+            }
+            
+            .stat-value {
+                font-size: var(--text-lg);
+            }
+            
+            .stat-label {
+                font-size: 10px;
+            }
+            
+            .learning-modules {
+                gap: var(--space-xs);
+            }
+            
+            .module-card {
+                padding: var(--space-sm);
+            }
+            
+            .module-card .module-icon {
+                font-size: 1.5rem;
+                margin-right: var(--space-sm);
+            }
+            
+            .module-title {
+                font-size: var(--text-sm);
+            }
+            
+            .module-description {
+                font-size: 10px;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            
+            .module-progress {
+                display: none;
+            }
+            
+            .achievements-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: var(--space-xs);
+            }
+            
+            .achievement-card {
+                padding: var(--space-xs);
+            }
+            
+            .achievement-icon {
+                font-size: 1.25rem;
+            }
+            
+            .achievement-name {
+                display: none;
+            }
+            
+            .achievement-description {
+                display: none;
+            }
+            
+            .section-title {
+                font-size: var(--text-sm);
+                margin-bottom: var(--space-sm);
+            }
+            
+            .learning-progress-section {
+                margin-bottom: var(--space-sm);
+            }
+        }
+        
+        /* Malé telefóny - 360px */
+        @media (max-width: 360px) {
+            .learning-container {
+                padding: var(--space-xs);
+            }
+            
+            .learning-header {
+                margin-bottom: var(--space-sm);
+            }
+            
+            .learning-icon {
+                font-size: 2rem;
+            }
+            
+            h1.ai-heading-xl {
+                font-size: 1.125rem;
+            }
+            
+            .learning-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .stat-card {
+                padding: var(--space-xs) var(--space-sm);
+            }
+            
+            .stat-value {
+                font-size: var(--text-md);
+            }
+            
+            .stat-label {
+                font-size: 9px;
+            }
+            
+            .module-card .module-icon {
+                font-size: 1.25rem;
+            }
+            
+            .module-title {
+                font-size: var(--text-xs);
+            }
+            
+            .achievements-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .achievement-icon {
+                font-size: 1rem;
+            }
+        }
+        
+        /* Landscape orientácia pre mobilné zariadenia */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .learning-container {
+                padding: var(--space-sm) var(--space-md);
+            }
+            
+            .learning-header {
+                margin-bottom: var(--space-sm);
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                text-align: left;
+                gap: var(--space-md);
+            }
+            
+            .learning-icon {
+                font-size: 2rem;
+                margin-bottom: 0;
+            }
+            
+            h1.ai-heading-xl {
+                font-size: 1.25rem;
+            }
+            
+            .ai-text-body {
+                display: none;
+            }
+            
+            .learning-stats {
+                grid-template-columns: repeat(4, 1fr);
+                gap: var(--space-sm);
+                margin-bottom: var(--space-sm);
+            }
+            
+            .stat-card {
+                padding: var(--space-sm);
+            }
+            
+            .stat-value {
+                font-size: var(--text-md);
+            }
+            
+            .learning-modules {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--space-sm);
+                margin-bottom: var(--space-sm);
+            }
+            
+            .module-card {
+                flex-direction: row;
+                padding: var(--space-sm);
+            }
+            
+            .module-card .module-icon {
+                font-size: 1.5rem;
+                margin-right: var(--space-sm);
+            }
+            
+            .module-title {
+                font-size: var(--text-sm);
+            }
+            
+            .module-description {
+                display: none;
+            }
+            
+            .module-progress {
+                display: none;
+            }
+            
+            .achievements-grid {
+                grid-template-columns: repeat(6, 1fr);
+                gap: var(--space-xs);
+            }
+            
+            .achievement-icon {
+                font-size: 1rem;
+            }
+            
+            .achievement-name {
+                display: none;
+            }
+        }
+        
+        /* Vysoký kontrast pre lepšiu čitateľnosť */
+        @media (prefers-contrast: high) {
+            .stat-card {
+                border-width: 2px;
+                border-color: var(--ai-primary);
+            }
+            
+            .module-card {
+                border-width: 2px;
+            }
+            
+            .achievement-card {
+                border-width: 2px;
+            }
+            
+            .progress-bar {
+                border: 1px solid var(--text-primary);
+            }
+        }
+        
+        /* Znížený pohyb pre používateľov s vestibulárnymi poruchami */
+        @media (prefers-reduced-motion: reduce) {
+            .learning-icon {
+                animation: none;
+            }
+            
+            .stat-card:hover,
+            .module-card:hover,
+            .achievement-card:hover {
+                transform: none;
+            }
+            
+            .module-card::before {
+                transition: none;
+            }
+            
+            .progress-fill::after {
+                animation: none;
+            }
+            
+            .achievement-card.unlocked .achievement-icon {
+                animation: none;
+            }
+        }
+
+        /* Learning Modal Styles */
+        .learning-modal {
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .lesson-content {
+            line-height: 1.8;
+            margin-bottom: var(--space-lg);
+        }
+
+        .code-example {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            margin: var(--space-md) 0;
+            overflow-x: auto;
+        }
+
+        .quiz-question {
+            margin-bottom: var(--space-lg);
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+        }
+
+        .quiz-option {
+            background: var(--surface);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .quiz-option:hover {
+            border-color: var(--ai-primary);
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .quiz-option.selected {
+            border-color: var(--ai-primary);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .quiz-option.correct {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .quiz-option.incorrect {
+            border-color: var(--error);
+            background: rgba(239, 68, 68, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="learning-container" id="main-content">
+        <!-- Header -->
+        <header class="learning-header ai-animate-fade-in">
+            <div class="learning-icon" aria-hidden="true">🧠</div>
+            <h1 class="ai-heading-xl">AI Vzdelávacie Centrum</h1>
+            <p class="ai-text-body">Interaktívne učenie AI technológií a pokročilých konceptov</p>
+        </header>
+
+        <!-- Learning Statistics -->
+        <section class="learning-stats">
+            <div class="stat-card ai-animate-fade-in">
+                <div class="stat-value" id="totalLessons">12</div>
+                <div class="stat-label">Dokončené lekcie</div>
+            </div>
+            <div class="stat-card ai-animate-fade-in" style="animation-delay: 0.1s">
+                <div class="stat-value" id="totalTime">8.5h</div>
+                <div class="stat-label">Čas učenia</div>
+            </div>
+            <div class="stat-card ai-animate-fade-in" style="animation-delay: 0.2s">
+                <div class="stat-value" id="currentLevel">3</div>
+                <div class="stat-label">Aktuálna úroveň</div>
+            </div>
+            <div class="stat-card ai-animate-fade-in" style="animation-delay: 0.3s">
+                <div class="stat-value" id="achievementsCount">5</div>
+                <div class="stat-label">Úspechy</div>
+            </div>
+        </section>
+
+        <!-- Learning Modules -->
+        <section class="learning-modules" id="learningModules">
+            <!-- Modules will be dynamically generated -->
+        </section>
+
+        <!-- Achievements Section -->
+        <section class="learning-progress-section">
+            <h2 class="section-title">
+                <span aria-hidden="true">🏆</span>
+                Úspechy a ocenenia
+            </h2>
+            <div class="achievements-grid" id="achievementsGrid">
+                <!-- Achievements will be dynamically generated -->
+            </div>
+        </section>
+    </div>
+
+    <script>
+        /**
+         * AI Learning Center Application
+         * Standardized implementation using AI-OS Design System
+         */
+        class LearningCenterApp {
+            constructor() {
+                this.learningData = {
+                    modules: [],
+                    achievements: [],
+                    progress: {},
+                    userLevel: 1,
+                    totalTime: 0,
+                    completedLessons: 0
+                };
+                
+                this.init();
+            }
+
+            init() {
+                this.loadLearningData();
+                this.renderModules();
+                this.renderAchievements();
+                this.updateStats();
+                this.registerWithAIOSCore();
+                
+                AIOS.utils.showNotification('Vzdelávacie centrum pripravené', 'success');
+            }
+
+            loadLearningData() {
+                // Sample learning modules data
+                this.learningData.modules = [
+                    {
+                        id: 'ai-basics',
+                        title: 'Základy Umelej Inteligencie',
+                        description: 'Úvod do AI, strojového učenia a základných konceptov',
+                        icon: '🤖',
+                        difficulty: 'beginner',
+                        progress: 100,
+                        totalLessons: 5,
+                        completedLessons: 5,
+                        estimatedTime: '2 hodiny',
+                        lessons: [
+                            { id: 'ai-intro', title: 'Úvod do AI', completed: true },
+                            { id: 'ml-basics', title: 'Základy ML', completed: true },
+                            { id: 'types-ai', title: 'Typy AI', completed: true },
+                            { id: 'applications', title: 'Aplikácie AI', completed: true },
+                            { id: 'ethics', title: 'Etika v AI', completed: true }
+                        ]
+                    },
+                    {
+                        id: 'machine-learning',
+                        title: 'Strojové Učenie',
+                        description: 'Algoritmy, modely a praktické implementácie ML',
+                        icon: '📊',
+                        difficulty: 'intermediate',
+                        progress: 60,
+                        totalLessons: 8,
+                        completedLessons: 5,
+                        estimatedTime: '4 hodiny',
+                        lessons: [
+                            { id: 'ml-intro', title: 'Úvod do ML', completed: true },
+                            { id: 'supervised', title: 'Učenie s dohľadom', completed: true },
+                            { id: 'unsupervised', title: 'Učenie bez dohľadu', completed: true },
+                            { id: 'reinforcement', title: 'Posilňovacie učenie', completed: true },
+                            { id: 'neural-networks', title: 'Neurónové siete', completed: true },
+                            { id: 'deep-learning', title: 'Deep Learning', completed: false },
+                            { id: 'evaluation', title: 'Vyhodnocovanie modelov', completed: false },
+                            { id: 'deployment', title: 'Nasadenie modelov', completed: false }
+                        ]
+                    },
+                    {
+                        id: 'nlp-fundamentals',
+                        title: 'Spracovanie Prirodzeného Jazyka',
+                        description: 'Text mining, sentiment analysis a jazykové modely',
+                        icon: '💬',
+                        difficulty: 'advanced',
+                        progress: 25,
+                        totalLessons: 6,
+                        completedLessons: 2,
+                        estimatedTime: '3 hodiny',
+                        lessons: [
+                            { id: 'nlp-intro', title: 'Úvod do NLP', completed: true },
+                            { id: 'text-preprocessing', title: 'Predspracovanie textu', completed: true },
+                            { id: 'tokenization', title: 'Tokenizácia', completed: false },
+                            { id: 'sentiment-analysis', title: 'Analýza sentimentu', completed: false },
+                            { id: 'language-models', title: 'Jazykové modely', completed: false },
+                            { id: 'transformers', title: 'Transformers', completed: false }
+                        ]
+                    },
+                    {
+                        id: 'computer-vision',
+                        title: 'Počítačové Videnie',
+                        description: 'Spracovanie obrazu, detekcia objektov a rozpoznávanie',
+                        icon: '👁️',
+                        difficulty: 'advanced',
+                        progress: 0,
+                        totalLessons: 7,
+                        completedLessons: 0,
+                        estimatedTime: '4 hodiny',
+                        lessons: [
+                            { id: 'cv-intro', title: 'Úvod do CV', completed: false },
+                            { id: 'image-processing', title: 'Spracovanie obrazu', completed: false },
+                            { id: 'feature-extraction', title: 'Extrakcia prvkov', completed: false },
+                            { id: 'object-detection', title: 'Detekcia objektov', completed: false },
+                            { id: 'face-recognition', title: 'Rozpoznávanie tváre', completed: false },
+                            { id: 'segmentation', title: 'Segmentácia', completed: false },
+                            { id: 'generative-models', title: 'Generatívne modely', completed: false }
+                        ]
+                    }
+                ];
+
+                // Sample achievements data
+                this.learningData.achievements = [
+                    {
+                        id: 'first-lesson',
+                        name: 'Prvý krok',
+                        description: 'Dokončte svoju prvú lekciu',
+                        icon: '🎯',
+                        unlocked: true,
+                        unlockedAt: Date.now() - 86400000
+                    },
+                    {
+                        id: 'ai-explorer',
+                        name: 'AI Prieskumník',
+                        description: 'Dokončte všetky základné lekcie',
+                        icon: '🧭',
+                        unlocked: true,
+                        unlockedAt: Date.now() - 3600000
+                    },
+                    {
+                        id: 'ml-beginner',
+                        name: 'Začiatočník ML',
+                        description: 'Dokončte 3 lekcie o strojovom učení',
+                        icon: '📈',
+                        unlocked: true,
+                        unlockedAt: Date.now() - 1800000
+                    },
+                    {
+                        id: 'knowledge-seeker',
+                        name: 'Hľadač Vedomostí',
+                        description: 'Učte sa 5 hodín',
+                        icon: '📚',
+                        unlocked: false,
+                        unlockedAt: null
+                    },
+                    {
+                        id: 'ai-master',
+                        name: 'AI Majster',
+                        description: 'Dokončte všetky moduly',
+                        icon: '👑',
+                        unlocked: false,
+                        unlockedAt: null
+                    },
+                    {
+                        id: 'consistent-learner',
+                        name: 'Konzistentný Študent',
+                        description: 'Učte sa 7 dní po sebe',
+                        icon: '🔥',
+                        unlocked: false,
+                        unlockedAt: null
+                    }
+                ];
+
+                // Calculate totals
+                this.learningData.completedLessons = this.learningData.modules
+                    .reduce((total, module) => total + module.completedLessons, 0);
+                
+                this.learningData.userLevel = Math.floor(this.learningData.completedLessons / 10) + 1;
+                this.learningData.totalTime = this.learningData.completedLessons * 0.5; // 30 min per lesson average
+            }
+
+            renderModules() {
+                const container = document.getElementById('learningModules');
+                
+                this.learningData.modules.forEach((module, index) => {
+                    const moduleCard = this.createModuleCard(module);
+                    moduleCard.style.animationDelay = `${index * 0.1}s`;
+                    container.appendChild(moduleCard);
+                });
+            }
+
+            createModuleCard(module) {
+                const card = document.createElement('div');
+                card.className = 'module-card ai-animate-fade-in';
+                card.setAttribute('role', 'button');
+                card.setAttribute('tabindex', '0');
+                card.setAttribute('aria-label', `${module.title}: ${module.description}`);
+                
+                card.innerHTML = `
+                    <div class="module-icon" aria-hidden="true">${module.icon}</div>
+                    <h3 class="module-title">${module.title}</h3>
+                    <p class="module-description">${module.description}</p>
+                    
+                    <div class="module-progress">
+                        <div class="progress-bar" role="progressbar" 
+                             aria-valuenow="${module.progress}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            <div class="progress-fill" style="width: ${module.progress}%"></div>
+                        </div>
+                        <div class="module-meta">
+                            <span>${module.completedLessons}/${module.totalLessons} lekcií</span>
+                            <span class="difficulty-badge difficulty-${module.difficulty}">
+                                ${this.getDifficultyLabel(module.difficulty)}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-text-small ai-mt-md" style="text-align: center;">
+                        📅 ${module.estimatedTime}
+                    </div>
+                `;
+
+                // Add click event
+                card.addEventListener('click', () => this.openModule(module));
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.openModule(module);
+                    }
+                });
+
+                return card;
+            }
+
+            renderAchievements() {
+                const container = document.getElementById('achievementsGrid');
+                
+                this.learningData.achievements.forEach(achievement => {
+                    const achievementCard = this.createAchievementCard(achievement);
+                    container.appendChild(achievementCard);
+                });
+            }
+
+            createAchievementCard(achievement) {
+                const card = document.createElement('div');
+                card.className = `achievement-card ${achievement.unlocked ? 'unlocked' : ''}`;
+                card.setAttribute('role', 'button');
+                card.setAttribute('tabindex', '0');
+                card.setAttribute('aria-label', `${achievement.name}: ${achievement.description}`);
+                
+                card.innerHTML = `
+                    <div class="achievement-icon" aria-hidden="true">${achievement.icon}</div>
+                    <div class="achievement-name">${achievement.name}</div>
+                    <div class="achievement-description">${achievement.description}</div>
+                `;
+
+                // Add hover effect
+                card.addEventListener('mouseenter', () => {
+                    if (achievement.unlocked) {
+                        AIOS.utils.showNotification(`${achievement.name}: ${achievement.description}`, 'success');
+                    }
+                });
+
+                return card;
+            }
+
+            updateStats() {
+                document.getElementById('totalLessons').textContent = this.learningData.completedLessons;
+                document.getElementById('totalTime').textContent = `${this.learningData.totalTime.toFixed(1)}h`;
+                document.getElementById('currentLevel').textContent = this.learningData.userLevel;
+                
+                const unlockedAchievements = this.learningData.achievements.filter(a => a.unlocked).length;
+                document.getElementById('achievementsCount').textContent = unlockedAchievements;
+            }
+
+            openModule(module) {
+                const content = this.generateModuleContent(module);
+                
+                AIOS.utils.showModal(
+                    module.title,
+                    content,
+                    {
+                        size: 'xl',
+                        showFooter: true,
+                        footerButtons: [
+                            {
+                                text: 'Spustiť lekciu',
+                                class: 'ai-btn-primary',
+                                onclick: `learningApp.startLesson('${module.id}')`
+                            },
+                            {
+                                text: 'Zavrieť',
+                                class: 'ai-btn-outline',
+                                onclick: null
+                            }
+                        ]
+                    }
+                );
+            }
+
+            generateModuleContent(module) {
+                const completedLessons = module.lessons.filter(l => l.completed).length;
+                const progressPercent = (completedLessons / module.totalLessons) * 100;
+                
+                let lessonsHtml = module.lessons.map(lesson => `
+                    <div class="quiz-option ${lesson.completed ? 'correct' : ''}" 
+                         onclick="learningApp.toggleLesson('${module.id}', '${lesson.id}')"
+                         style="margin-bottom: var(--space-sm);">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <span>${lesson.title}</span>
+                            <span>${lesson.completed ? '✅' : '⏳'}</span>
+                        </div>
+                    </div>
+                `).join('');
+
+                return `
+                    <div class="lesson-content">
+                        <div class="ai-text-body ai-mb-lg">
+                            <strong>Popis:</strong> ${module.description}
+                        </div>
+                        
+                        <div class="ai-mb-lg">
+                            <strong>Pokrok:</strong> ${completedLessons}/${module.totalLessons} lekcií (${progressPercent.toFixed(0)}%)
+                            <div class="progress-bar ai-mt-sm">
+                                <div class="progress-fill" style="width: ${progressPercent}%"></div>
+                            </div>
+                        </div>
+                        
+                        <h4 class="ai-heading-sm ai-mb-md">Lekcie:</h4>
+                        <div class="quiz-options">
+                            ${lessonsHtml}
+                        </div>
+                        
+                        <div class="ai-mt-lg ai-text-small" style="color: var(--text-muted);">
+                            <strong>Čas:</strong> ${module.estimatedTime} | 
+                            <strong>Obtiažnosť:</strong> ${this.getDifficultyLabel(module.difficulty)}
+                        </div>
+                    </div>
+                `;
+            }
+
+            startLesson(moduleId, lessonId) {
+                AIOS.utils.showNotification('Spúšťam lekciu...', 'info');
+                
+                // Simulate lesson start
+                setTimeout(() => {
+                    AIOS.utils.showNotification('Lekcia spustená! (Ukážka)', 'success');
+                }, 1500);
+            }
+
+            toggleLesson(moduleId, lessonId) {
+                const module = this.learningData.modules.find(m => m.id === moduleId);
+                const lesson = module.lessons.find(l => l.id === lessonId);
+                
+                lesson.completed = !lesson.completed;
+                
+                // Update progress
+                module.completedLessons = module.lessons.filter(l => l.completed).length;
+                module.progress = (module.completedLessons / module.totalLessons) * 100;
+                
+                // Update display
+                this.renderModules();
+                this.updateStats();
+                
+                // Show feedback
+                const message = lesson.completed ? 'Lekcia označená ako dokončená' : 'Lekcia označená ako nedokončená';
+                AIOS.utils.showNotification(message, lesson.completed ? 'success' : 'info');
+                
+                // Check for new achievements
+                this.checkAchievements();
+            }
+
+            checkAchievements() {
+                // Check for new achievements based on progress
+                const newAchievements = [];
+                
+                this.learningData.achievements.forEach(achievement => {
+                    if (!achievement.unlocked) {
+                        let shouldUnlock = false;
+                        
+                        switch (achievement.id) {
+                            case 'knowledge-seeker':
+                                shouldUnlock = this.learningData.totalTime >= 5;
+                                break;
+                            case 'ai-master':
+                                shouldUnlock = this.learningData.modules.every(m => m.progress === 100);
+                                break;
+                        }
+                        
+                        if (shouldUnlock) {
+                            achievement.unlocked = true;
+                            achievement.unlockedAt = Date.now();
+                            newAchievements.push(achievement);
+                        }
+                    }
+                });
+                
+                // Show achievement notifications
+                newAchievements.forEach(achievement => {
+                    AIOS.utils.showNotification(
+                        `🎉 Nový úspech: ${achievement.name}!`,
+                        'success',
+                        5000
+                    );
+                });
+                
+                this.renderAchievements();
+                this.updateStats();
+            }
+
+            getDifficultyLabel(difficulty) {
+                const labels = {
+                    beginner: 'Začiatočník',
+                    intermediate: 'Stredne pokročilý',
+                    advanced: 'Pokročilý'
+                };
+                return labels[difficulty] || difficulty;
+            }
+
+            registerWithAIOSCore() {
+                if (window.aiOSCore) {
+                    window.aiOSCore.registerApplication('ai-learning-center', {
+                        name: 'AI Vzdelávacie Centrum',
+                        description: 'Interaktívne vzdelávacie centrum pre AI technológie',
+                        version: '1.0.0',
+                        category: 'education',
+                        capabilities: ['interactive-learning', 'progress-tracking', 'achievements'],
+                        url: window.location.href
+                    });
+                }
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            window.learningApp = new LearningCenterApp();
+        });
+
+        // Handle keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                // Close any open modals
+                const modals = document.querySelectorAll('.ai-modal');
+                modals.forEach(modal => {
+                    const backdrop = modal.closest('.ai-modal-backdrop');
+                    if (backdrop) {
+                        AIOS.utils.closeModal(modal.id.replace('modal-', ''));
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AI System Monitor">
+    <meta name="app-id" content="ai-system-monitor">
+    <meta name="description" content="Pokročilý monitorovací systém s real-time metrikami a analýzou výkonu">
+    <title>📊 AI System Monitor - AI-OS</title>
+    
+    <!-- AI-OS Design System -->
+    <link rel="stylesheet" href="../css/ai-os-design-system.css">
+    
+    <!-- AI-OS Core Integration -->
+    <script src="../js/ai-os-core.js"></script>
+    <script src="../js/ai-os-app-integration.js"></script>
+    <script src="../js/ai-os-utils.js"></script>
+    
+    <style>
+        /* System Monitor Specific Styles */
+        .monitor-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #000000 0%, #001122 30%, #000000 100%);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .monitor-header {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            padding: var(--space-lg) var(--space-md);
+            position: sticky;
+            top: 0;
+            z-index: var(--z-sticky);
+        }
+
+        .monitor-title {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .monitor-icon {
+            font-size: 2rem;
+            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.8));
+            animation: monitorPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes monitorPulse {
+            0%, 100% { 
+                filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.8));
+            }
+            50% { 
+                filter: drop-shadow(0 0 20px rgba(0, 212, 255, 1));
+            }
+        }
+
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            font-size: var(--text-sm);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: statusPulse 2s infinite;
+        }
+
+        .status-dot.healthy {
+            background: var(--success);
+        }
+
+        .status-dot.warning {
+            background: var(--warning);
+        }
+
+        .status-dot.critical {
+            background: var(--error);
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        .monitor-content {
+            flex: 1;
+            padding: var(--space-lg) var(--space-md);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+
+        .metric-card {
+            background: var(--surface);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: var(--radius-xl);
+            padding: var(--space-lg);
+            backdrop-filter: blur(10px);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--ai-primary), var(--ai-secondary));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform var(--transition-slow);
+        }
+
+        .metric-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .metric-card:hover {
+            border-color: var(--ai-primary);
+            background: rgba(0, 212, 255, 0.05);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+        }
+
+        .metric-title {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .metric-icon {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        .metric-value {
+            font-size: var(--text-3xl);
+            font-weight: 700;
+            color: var(--ai-primary);
+            margin-bottom: var(--space-sm);
+            font-family: var(--font-mono);
+        }
+
+        .metric-description {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .progress-section {
+            margin-bottom: var(--space-xl);
+        }
+
+        .section-title {
+            font-size: var(--text-xl);
+            font-weight: 600;
+            color: var(--ai-primary);
+            margin-bottom: var(--space-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .progress-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+        }
+
+        .progress-item {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: var(--text-sm);
+            color: var(--text-primary);
+        }
+
+        .progress-bar-container {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: var(--radius-sm);
+            transition: width var(--transition-slow);
+            position: relative;
+            background: linear-gradient(90deg, var(--ai-primary), var(--ai-secondary));
+        }
+
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.3), 
+                transparent);
+            animation: progressShine 2s infinite;
+        }
+
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-bar-fill.warning {
+            background: linear-gradient(90deg, var(--warning), #ff9500);
+        }
+
+        .progress-bar-fill.critical {
+            background: linear-gradient(90deg, var(--error), #ff3333);
+        }
+
+        .alerts-section {
+            margin-bottom: var(--space-xl);
+        }
+
+        .alert-item {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            margin-bottom: var(--space-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            transition: all var(--transition-fast);
+        }
+
+        .alert-item:hover {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: var(--error);
+        }
+
+        .alert-item.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .alert-item.warning:hover {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: var(--warning);
+        }
+
+        .alert-icon {
+            font-size: 1.2rem;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .alert-description {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+        }
+
+        .alert-time {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .processes-section {
+            margin-bottom: var(--space-xl);
+        }
+
+        .process-list {
+            background: var(--surface);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .process-item {
+            display: grid;
+            grid-template-columns: 1fr auto auto auto;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+            align-items: center;
+            transition: all var(--transition-fast);
+        }
+
+        .process-item:hover {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .process-item:last-child {
+            border-bottom: none;
+        }
+
+        .process-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .process-cpu, .process-memory {
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            text-align: right;
+        }
+
+        .process-status {
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            font-size: var(--text-xs);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .process-status.running {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .process-status.sleeping {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--info);
+        }
+
+        .monitor-controls {
+            position: fixed;
+            bottom: var(--space-lg);
+            right: var(--space-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+            z-index: var(--z-fixed);
+        }
+
+        .control-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(0, 212, 255, 0.2);
+            border: 2px solid var(--ai-primary);
+            color: var(--ai-primary);
+            font-size: var(--text-lg);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            backdrop-filter: blur(10px);
+        }
+
+        .control-btn:hover {
+            background: var(--ai-primary);
+            color: var(--background);
+            transform: scale(1.1);
+        }
+
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+
+        .control-btn.paused {
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .monitor-container {
+                padding: 0;
+            }
+            
+            .monitor-header {
+                padding: var(--space-md);
+            }
+            
+            .monitor-content {
+                padding: var(--space-md);
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+                gap: var(--space-md);
+            }
+            
+            .progress-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .process-item {
+                grid-template-columns: 1fr auto;
+                gap: var(--space-sm);
+            }
+            
+            .process-cpu, .process-memory {
+                display: none;
+            }
+            
+            .monitor-controls {
+                bottom: var(--space-md);
+                right: var(--space-md);
+            }
+        }
+
+        @media (max-width: 414px) {
+            .monitor-icon {
+                font-size: 1.5rem;
+            }
+            
+            .metric-value {
+                font-size: var(--text-2xl);
+            }
+        }
+
+        /* Loading and Animation States */
+        .metric-updating {
+            animation: metricUpdate 0.5s ease-out;
+        }
+
+        @keyframes metricUpdate {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .value-decreasing {
+            color: var(--success);
+        }
+
+        .value-increasing {
+            color: var(--warning);
+        }
+
+        .value-critical {
+            color: var(--error);
+        }
+    </style>
+</head>
+<body>
+    <div class="monitor-container">
+        <!-- Header -->
+        <header class="monitor-header">
+            <div class="monitor-title">
+                <div class="monitor-icon" aria-hidden="true">📊</div>
+                <div>
+                    <h1 class="ai-heading-lg">AI System Monitor</h1>
+                    <p class="ai-text-small">Real-time monitoring systémových metrik</p>
+                </div>
+            </div>
+            
+            <div class="system-status">
+                <div class="status-indicator">
+                    <div class="status-dot healthy" id="systemStatusDot"></div>
+                    <span id="systemStatusText">Všetky systémy funkčné</span>
+                </div>
+                <div class="status-indicator">
+                    <span id="currentTime">--:--:--</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="monitor-content" id="main-content">
+            <!-- System Metrics -->
+            <section class="metrics-grid" id="metricsGrid">
+                <!-- Metrics will be dynamically generated -->
+            </section>
+
+            <!-- Resource Usage -->
+            <section class="progress-section">
+                <h2 class="section-title">
+                    <span aria-hidden="true">⚡</span>
+                    Využitie zdrojov
+                </h2>
+                <div class="progress-grid" id="resourceGrid">
+                    <!-- Resource usage will be dynamically generated -->
+                </div>
+            </section>
+
+            <!-- Active Alerts -->
+            <section class="alerts-section">
+                <h2 class="section-title">
+                    <span aria-hidden="true">⚠️</span>
+                    Aktívne upozornenia
+                </h2>
+                <div id="alertsList">
+                    <!-- Alerts will be dynamically generated -->
+                </div>
+            </section>
+
+            <!-- Running Processes -->
+            <section class="processes-section">
+                <h2 class="section-title">
+                    <span aria-hidden="true">🔄</span>
+                    Bežiace procesy
+                </h2>
+                <div class="process-list" id="processList">
+                    <!-- Processes will be dynamically generated -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Monitor Controls -->
+        <div class="monitor-controls">
+            <button class="control-btn" id="pauseBtn" aria-label="Pozastaviť aktualizácie" title="Pozastaviť aktualizácie">
+                ⏸️
+            </button>
+            <button class="control-btn" id="refreshBtn" aria-label="Obnoviť údaje" title="Obnoviť údaje">
+                🔄
+            </button>
+            <button class="control-btn" id="settingsBtn" aria-label="Nastavenia monitora" title="Nastavenia monitora">
+                ⚙️
+            </button>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * AI System Monitor Application
+         * Standardized implementation using AI-OS Design System
+         */
+        class SystemMonitorApp {
+            constructor() {
+                this.isMonitoring = true;
+                this.updateInterval = null;
+                this.systemData = {
+                    cpu: 0,
+                    memory: 0,
+                    disk: 0,
+                    network: 0,
+                    temperature: 0,
+                    uptime: 0,
+                    processes: [],
+                    alerts: []
+                };
+                
+                this.init();
+            }
+
+            init() {
+                this.loadSystemData();
+                this.renderMetrics();
+                this.renderResources();
+                this.renderAlerts();
+                this.renderProcesses();
+                this.startMonitoring();
+                this.setupEventListeners();
+                this.registerWithAIOSCore();
+                
+                // Update time
+                this.updateTime();
+                setInterval(() => this.updateTime(), 1000);
+                
+                AIOS.utils.showNotification('System Monitor spustený', 'success');
+            }
+
+            setupEventListeners() {
+                const pauseBtn = document.getElementById('pauseBtn');
+                const refreshBtn = document.getElementById('refreshBtn');
+                const settingsBtn = document.getElementById('settingsBtn');
+
+                pauseBtn.addEventListener('click', () => this.toggleMonitoring());
+                refreshBtn.addEventListener('click', () => this.refreshData());
+                settingsBtn.addEventListener('click', () => this.openSettings());
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === ' ') {
+                        e.preventDefault();
+                        this.toggleMonitoring();
+                    }
+                    if (e.key === 'r' && e.ctrlKey) {
+                        e.preventDefault();
+                        this.refreshData();
+                    }
+                });
+            }
+
+            loadSystemData() {
+                // Simulate system data
+                this.systemData = {
+                    cpu: Math.random() * 100,
+                    memory: Math.random() * 100,
+                    disk: Math.random() * 100,
+                    network: Math.random() * 1000,
+                    temperature: 35 + Math.random() * 20,
+                    uptime: Math.floor(Math.random() * 30 * 24 * 60 * 60), // Random uptime in seconds
+                    processes: this.generateMockProcesses(),
+                    alerts: this.generateMockAlerts()
+                };
+            }
+
+            generateMockProcesses() {
+                const processes = [
+                    { name: 'AI-OS Core', cpu: 2.3, memory: 145.2, status: 'running' },
+                    { name: 'System Monitor', cpu: 1.8, memory: 98.7, status: 'running' },
+                    { name: 'Voice Interface', cpu: 0.5, memory: 67.3, status: 'running' },
+                    { name: 'Learning Center', cpu: 0.2, memory: 123.8, status: 'sleeping' },
+                    { name: 'Performance Optimizer', cpu: 1.1, memory: 89.4, status: 'running' },
+                    { name: 'Plugin Marketplace', cpu: 0.3, memory: 56.2, status: 'sleeping' },
+                    { name: 'Terminal Shell', cpu: 0.8, memory: 134.6, status: 'running' },
+                    { name: 'Android Emulator', cpu: 15.7, memory: 1024.3, status: 'running' },
+                    { name: 'Network Scanner', cpu: 2.9, memory: 78.1, status: 'running' },
+                    { name: 'iOS Environment', cpu: 4.2, memory: 267.8, status: 'running' }
+                ];
+                
+                return processes.map(proc => ({
+                    ...proc,
+                    cpu: +(proc.cpu + (Math.random() - 0.5) * 0.5).toFixed(1),
+                    memory: +(proc.memory + (Math.random() - 0.5) * 10).toFixed(1)
+                }));
+            }
+
+            generateMockAlerts() {
+                const alerts = [];
+                
+                // Generate alerts based on system state
+                if (this.systemData.cpu > 80) {
+                    alerts.push({
+                        type: 'critical',
+                        title: 'Vysoké využitie CPU',
+                        description: `CPU využitie: ${this.systemData.cpu.toFixed(1)}%`,
+                        time: new Date().toISOString()
+                    });
+                }
+                
+                if (this.systemData.memory > 85) {
+                    alerts.push({
+                        type: 'warning',
+                        title: 'Vysoké využitie pamäte',
+                        description: `Pamäť: ${this.systemData.memory.toFixed(1)}%`,
+                        time: new Date(Date.now() - 300000).toISOString()
+                    });
+                }
+                
+                if (this.systemData.temperature > 70) {
+                    alerts.push({
+                        type: 'critical',
+                        title: 'Vysoká teplota',
+                        description: `Teplota: ${this.systemData.temperature.toFixed(1)}°C`,
+                        time: new Date(Date.now() - 600000).toISOString()
+                    });
+                }
+                
+                return alerts;
+            }
+
+            renderMetrics() {
+                const container = document.getElementById('metricsGrid');
+                
+                const metrics = [
+                    {
+                        title: 'CPU Využitie',
+                        value: `${this.systemData.cpu.toFixed(1)}%`,
+                        icon: '🖥️',
+                        description: 'Aktuálne využitie procesora',
+                        valueClass: this.getValueClass(this.systemData.cpu)
+                    },
+                    {
+                        title: 'Pamäť',
+                        value: `${this.systemData.memory.toFixed(1)}%`,
+                        icon: '💾',
+                        description: 'Využitie RAM',
+                        valueClass: this.getValueClass(this.systemData.memory)
+                    },
+                    {
+                        title: 'Disk',
+                        value: `${this.systemData.disk.toFixed(1)}%`,
+                        icon: '💿',
+                        description: 'Využitie úložiska',
+                        valueClass: this.getValueClass(this.systemData.disk)
+                    },
+                    {
+                        title: 'Sieť',
+                        value: `${this.systemData.network.toFixed(0)} MB/s`,
+                        icon: '🌐',
+                        description: 'Prenosová rýchlosť',
+                        valueClass: 'normal'
+                    },
+                    {
+                        title: 'Teplota',
+                        value: `${this.systemData.temperature.toFixed(1)}°C`,
+                        icon: '🌡️',
+                        description: 'Systémová teplota',
+                        valueClass: this.getTemperatureClass(this.systemData.temperature)
+                    },
+                    {
+                        title: 'Doba prevádzky',
+                        value: this.formatUptime(this.systemData.uptime),
+                        icon: '⏱️',
+                        description: 'Čas od posledného reštartu',
+                        valueClass: 'normal'
+                    }
+                ];
+
+                container.innerHTML = metrics.map((metric, index) => `
+                    <div class="metric-card ai-animate-fade-in" style="animation-delay: ${index * 0.1}s">
+                        <div class="metric-header">
+                            <div class="metric-title">${metric.title}</div>
+                            <div class="metric-icon">${metric.icon}</div>
+                        </div>
+                        <div class="metric-value ${metric.valueClass}" id="metric-${index}">
+                            ${metric.value}
+                        </div>
+                        <div class="metric-description">${metric.description}</div>
+                    </div>
+                `).join('');
+            }
+
+            renderResources() {
+                const container = document.getElementById('resourceGrid');
+                
+                const resources = [
+                    {
+                        label: 'CPU',
+                        value: this.systemData.cpu,
+                        max: 100,
+                        unit: '%'
+                    },
+                    {
+                        label: 'Pamäť RAM',
+                        value: this.systemData.memory,
+                        max: 100,
+                        unit: '%'
+                    },
+                    {
+                        label: 'Disk',
+                        value: this.systemData.disk,
+                        max: 100,
+                        unit: '%'
+                    },
+                    {
+                        label: 'Sieť',
+                        value: this.systemData.network,
+                        max: 1000,
+                        unit: 'MB/s'
+                    }
+                ];
+
+                container.innerHTML = resources.map(resource => {
+                    const percentage = (resource.value / resource.max) * 100;
+                    const barClass = percentage > 80 ? 'critical' : percentage > 60 ? 'warning' : '';
+                    
+                    return `
+                        <div class="progress-item">
+                            <div class="progress-label">
+                                <span>${resource.label}</span>
+                                <span>${resource.value.toFixed(1)}${resource.unit}</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill ${barClass}" 
+                                     style="width: ${Math.min(percentage, 100)}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            renderAlerts() {
+                const container = document.getElementById('alertsList');
+                
+                if (this.systemData.alerts.length === 0) {
+                    container.innerHTML = `
+                        <div class="ai-card ai-mt-md">
+                            <div class="ai-text-center ai-text-success">
+                                ✅ Žiadne aktívne upozornenia
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = this.systemData.alerts.map(alert => `
+                    <div class="alert-item ${alert.type === 'warning' ? 'warning' : ''} ai-animate-slide-in-up">
+                        <div class="alert-icon">${alert.type === 'warning' ? '⚠️' : '🚨'}</div>
+                        <div class="alert-content">
+                            <div class="alert-title">${alert.title}</div>
+                            <div class="alert-description">${alert.description}</div>
+                        </div>
+                        <div class="alert-time">${this.formatTimeAgo(alert.time)}</div>
+                    </div>
+                `).join('');
+            }
+
+            renderProcesses() {
+                const container = document.getElementById('processList');
+                
+                // Sort processes by CPU usage (descending)
+                const sortedProcesses = [...this.systemData.processes]
+                    .sort((a, b) => b.cpu - a.cpu)
+                    .slice(0, 10); // Show top 10 processes
+
+                container.innerHTML = sortedProcesses.map((process, index) => `
+                    <div class="process-item ai-animate-fade-in" style="animation-delay: ${index * 0.05}s">
+                        <div class="process-name">${process.name}</div>
+                        <div class="process-cpu">${process.cpu.toFixed(1)}%</div>
+                        <div class="process-memory">${process.memory.toFixed(1)}MB</div>
+                        <div class="process-status ${process.status}">${process.status}</div>
+                    </div>
+                `).join('');
+            }
+
+            updateMetrics() {
+                // Simulate real-time data updates
+                this.systemData.cpu = Math.max(0, Math.min(100, 
+                    this.systemData.cpu + (Math.random() - 0.5) * 10));
+                this.systemData.memory = Math.max(0, Math.min(100, 
+                    this.systemData.memory + (Math.random() - 0.5) * 5));
+                this.systemData.disk = Math.max(0, Math.min(100, 
+                    this.systemData.disk + (Math.random() - 0.5) * 2));
+                this.systemData.network = Math.max(0, Math.min(1000, 
+                    this.systemData.network + (Math.random() - 0.5) * 50));
+                this.systemData.temperature = Math.max(20, Math.min(90, 
+                    this.systemData.temperature + (Math.random() - 0.5) * 5));
+
+                // Update process data
+                this.systemData.processes = this.systemData.processes.map(proc => ({
+                    ...proc,
+                    cpu: Math.max(0, proc.cpu + (Math.random() - 0.5) * 2),
+                    memory: Math.max(0, proc.memory + (Math.random() - 0.5) * 5)
+                }));
+
+                // Update displays
+                this.updateMetricDisplay();
+                this.updateResourceDisplay();
+                this.updateProcessDisplay();
+                
+                // Check for new alerts
+                this.checkAlerts();
+            }
+
+            updateMetricDisplay() {
+                const metrics = [
+                    { index: 0, value: this.systemData.cpu.toFixed(1), class: this.getValueClass(this.systemData.cpu) },
+                    { index: 1, value: this.systemData.memory.toFixed(1), class: this.getValueClass(this.systemData.memory) },
+                    { index: 2, value: this.systemData.disk.toFixed(1), class: this.getValueClass(this.systemData.disk) },
+                    { index: 3, value: this.systemData.network.toFixed(0), class: 'normal' },
+                    { index: 4, value: this.systemData.temperature.toFixed(1), class: this.getTemperatureClass(this.systemData.temperature) },
+                    { index: 5, value: this.formatUptime(this.systemData.uptime), class: 'normal' }
+                ];
+
+                metrics.forEach(metric => {
+                    const element = document.getElementById(`metric-${metric.index}`);
+                    if (element) {
+                        element.textContent = metric.value + (metric.index < 3 ? '%' : 
+                                                              metric.index === 3 ? ' MB/s' :
+                                                              metric.index === 4 ? '°C' : '');
+                        element.className = `metric-value ${metric.class}`;
+                        element.parentElement.classList.add('metric-updating');
+                        setTimeout(() => {
+                            element.parentElement.classList.remove('metric-updating');
+                        }, 500);
+                    }
+                });
+            }
+
+            updateResourceDisplay() {
+                const resources = [
+                    { value: this.systemData.cpu, max: 100 },
+                    { value: this.systemData.memory, max: 100 },
+                    { value: this.systemData.disk, max: 100 },
+                    { value: this.systemData.network, max: 1000 }
+                ];
+
+                const bars = document.querySelectorAll('.progress-bar-fill');
+                bars.forEach((bar, index) => {
+                    const resource = resources[index];
+                    if (resource) {
+                        const percentage = Math.min((resource.value / resource.max) * 100, 100);
+                        bar.style.width = `${percentage}%`;
+                        
+                        // Update color class
+                        bar.className = `progress-bar-fill ${
+                            percentage > 80 ? 'critical' : 
+                            percentage > 60 ? 'warning' : ''
+                        }`;
+                    }
+                });
+            }
+
+            updateProcessDisplay() {
+                // Update CPU and memory values in process list
+                const processItems = document.querySelectorAll('.process-item');
+                const sortedProcesses = [...this.systemData.processes]
+                    .sort((a, b) => b.cpu - a.cpu)
+                    .slice(0, 10);
+
+                processItems.forEach((item, index) => {
+                    const process = sortedProcesses[index];
+                    if (process) {
+                        const cpuElement = item.querySelector('.process-cpu');
+                        const memoryElement = item.querySelector('.process-memory');
+                        
+                        if (cpuElement) cpuElement.textContent = `${process.cpu.toFixed(1)}%`;
+                        if (memoryElement) memoryElement.textContent = `${process.memory.toFixed(1)}MB`;
+                    }
+                });
+            }
+
+            checkAlerts() {
+                const newAlerts = [];
+                
+                if (this.systemData.cpu > 80 && !this.hasAlert('cpu-high')) {
+                    newAlerts.push({
+                        type: 'critical',
+                        title: 'Vysoké využitie CPU',
+                        description: `CPU využitie: ${this.systemData.cpu.toFixed(1)}%`,
+                        time: new Date().toISOString(),
+                        id: 'cpu-high'
+                    });
+                }
+                
+                if (this.systemData.memory > 85 && !this.hasAlert('memory-high')) {
+                    newAlerts.push({
+                        type: 'warning',
+                        title: 'Vysoké využitie pamäte',
+                        description: `Pamäť: ${this.systemData.memory.toFixed(1)}%`,
+                        time: new Date().toISOString(),
+                        id: 'memory-high'
+                    });
+                }
+
+                if (newAlerts.length > 0) {
+                    newAlerts.forEach(alert => {
+                        AIOS.utils.showNotification(
+                            `${alert.title}: ${alert.description}`,
+                            alert.type === 'critical' ? 'error' : 'warning',
+                            5000
+                        );
+                    });
+                    
+                    this.systemData.alerts.unshift(...newAlerts);
+                    this.renderAlerts();
+                }
+            }
+
+            hasAlert(alertId) {
+                return this.systemData.alerts.some(alert => alert.id === alertId);
+            }
+
+            startMonitoring() {
+                if (this.updateInterval) {
+                    clearInterval(this.updateInterval);
+                }
+                
+                this.updateInterval = setInterval(() => {
+                    if (this.isMonitoring) {
+                        this.updateMetrics();
+                    }
+                }, 2000); // Update every 2 seconds
+            }
+
+            toggleMonitoring() {
+                this.isMonitoring = !this.isMonitoring;
+                const pauseBtn = document.getElementById('pauseBtn');
+                
+                if (this.isMonitoring) {
+                    pauseBtn.textContent = '⏸️';
+                    pauseBtn.title = 'Pozastaviť aktualizácie';
+                    pauseBtn.classList.remove('paused');
+                    AIOS.utils.showNotification('Monitoring obnovený', 'success');
+                } else {
+                    pauseBtn.textContent = '▶️';
+                    pauseBtn.title = 'Pokračovať v monitoringu';
+                    pauseBtn.classList.add('paused');
+                    AIOS.utils.showNotification('Monitoring pozastavený', 'warning');
+                }
+            }
+
+            refreshData() {
+                this.loadSystemData();
+                this.renderMetrics();
+                this.renderResources();
+                this.renderAlerts();
+                this.renderProcesses();
+                
+                AIOS.utils.showNotification('Údaje obnovené', 'success');
+            }
+
+            openSettings() {
+                const content = `
+                    <div class="ai-form-group">
+                        <label class="ai-label">Interval aktualizácie (sekundy)</label>
+                        <select class="ai-select" id="updateInterval">
+                            <option value="1">1 sekunda</option>
+                            <option value="2" selected>2 sekundy</option>
+                            <option value="5">5 sekúnd</option>
+                            <option value="10">10 sekúnd</option>
+                        </select>
+                    </div>
+                    <div class="ai-form-group">
+                        <label class="ai-label">Zobrazené procesy</label>
+                        <select class="ai-select" id="processCount">
+                            <option value="5">5 procesov</option>
+                            <option value="10" selected>10 procesov</option>
+                            <option value="20">20 procesov</option>
+                        </select>
+                    </div>
+                    <div class="ai-form-group">
+                        <label style="display: flex; align-items: center; gap: var(--space-sm); cursor: pointer;">
+                            <input type="checkbox" id="showAlerts" checked style="margin: 0;">
+                            <span>Zobrazovať upozornenia</span>
+                        </label>
+                    </div>
+                `;
+
+                AIOS.utils.showModal('Nastavenia monitora', content, {
+                    size: 'md',
+                    footerButtons: [
+                        {
+                            text: 'Uložiť',
+                            class: 'ai-btn-primary',
+                            onclick: 'monitorApp.saveSettings()'
+                        },
+                        {
+                            text: 'Zrušiť',
+                            class: 'ai-btn-outline',
+                            onclick: null
+                        }
+                    ]
+                });
+            }
+
+            saveSettings() {
+                // In a real implementation, these would be saved to localStorage
+                AIOS.utils.showNotification('Nastavenia uložené', 'success');
+                AIOS.utils.closeModal('settings');
+            }
+
+            updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('sk-SK');
+                const timeElement = document.getElementById('currentTime');
+                if (timeElement) {
+                    timeElement.textContent = timeString;
+                }
+            }
+
+            getValueClass(value) {
+                if (value > 80) return 'value-critical';
+                if (value > 60) return 'value-increasing';
+                return 'normal';
+            }
+
+            getTemperatureClass(temp) {
+                if (temp > 70) return 'value-critical';
+                if (temp > 60) return 'value-increasing';
+                return 'normal';
+            }
+
+            formatUptime(seconds) {
+                const days = Math.floor(seconds / 86400);
+                const hours = Math.floor((seconds % 86400) / 3600);
+                const minutes = Math.floor((seconds % 3600) / 60);
+                
+                if (days > 0) {
+                    return `${days}d ${hours}h`;
+                } else if (hours > 0) {
+                    return `${hours}h ${minutes}m`;
+                } else {
+                    return `${minutes}m`;
+                }
+            }
+
+            formatTimeAgo(timestamp) {
+                const now = new Date();
+                const time = new Date(timestamp);
+                const diffMs = now - time;
+                const diffMins = Math.floor(diffMs / 60000);
+                
+                if (diffMins < 1) return 'Teraz';
+                if (diffMins < 60) return `Pred ${diffMins}m`;
+                if (diffMins < 1440) return `Pred ${Math.floor(diffMins / 60)}h`;
+                return `Pred ${Math.floor(diffMins / 1440)}d`;
+            }
+
+            registerWithAIOSCore() {
+                if (window.aiOSCore) {
+                    window.aiOSCore.registerApplication('ai-system-monitor', {
+                        name: 'AI System Monitor',
+                        description: 'Pokročilý monitorovací systém s real-time metrikami',
+                        version: '1.0.0',
+                        category: 'monitoring',
+                        capabilities: ['real-time-monitoring', 'metrics-tracking', 'alert-system'],
+                        url: window.location.href
+                    });
+                }
+            }
+
+            destroy() {
+                if (this.updateInterval) {
+                    clearInterval(this.updateInterval);
+                }
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            window.monitorApp = new SystemMonitorApp();
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (window.monitorApp) {
+                window.monitorApp.destroy();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌐 AI Network Monitor - Security Scanner</title>
+    
+    <!-- AI-OS Core Integration -->
+    <link rel="stylesheet" href="../css/ai-os-design-system.css">
+    <script src="../js/ai-os-core.js"></script>
+    <script src="../js/ai-os-utils.js"></script>
+    <script src="../js/ai-os-app-integration.js"></script>
+    <style>
+        /* === AI-OS NETWORK MONITOR OVERRIDES === */
+        :root {
+            /* Network monitor specific colors */
+            --network-primary: var(--info);
+            --network-secondary: var(--primary-500);
+            --network-background: #000000;
+            --network-surface: #0a0a0a;
+            --network-border: var(--info);
+            --network-text: var(--info);
+            --network-text-secondary: #0099ff;
+            --network-error: var(--error);
+            --network-success: var(--success);
+            --network-warning: var(--warning);
+        }
+
+        body {
+            font-family: var(--font-mono);
+            background: var(--background);
+            color: var(--network-text);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        /* === NETWORK MONITOR CONTAINER === */
+        .network-monitor {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        /* === HEADER === */
+        .nm-header {
+            height: var(--touch-target-large);
+            background: var(--network-background);
+            border-bottom: 2px solid var(--network-border);
+            border-top: 1px solid var(--network-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--space-lg);
+            position: relative;
+            z-index: var(--z-fixed);
+            box-shadow: var(--shadow-lg);
+        }
+        .nm-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-weight-bold);
+            color: var(--network-text);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            text-shadow: 0 0 var(--space-sm) var(--network-text);
+        }
+        
+        .nm-status {
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+        }
+        
+        .nm-status-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-size: var(--text-xs);
+        }
+        
+        .nm-controls {
+            display: flex;
+            gap: var(--space-sm);
+        }
+        /* === MAIN LAYOUT === */
+        .nm-main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: var(--space-lg);
+            padding: var(--space-lg);
+            overflow: hidden;
+        }
+        
+        .nm-sidebar {
+            background: var(--network-surface);
+            border: 1px solid var(--network-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .nm-panel-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-weight-bold);
+            color: var(--network-text);
+            margin-bottom: var(--space-lg);
+            text-shadow: 0 0 var(--space-sm) var(--network-text);
+        }
+        
+        .nm-interface-list {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--network-border) var(--network-surface);
+        }
+        
+        .nm-interface-list::-webkit-scrollbar {
+            width: var(--space-xs);
+        }
+        
+        .nm-interface-list::-webkit-scrollbar-track {
+            background: var(--network-surface);
+        }
+        
+        .nm-interface-list::-webkit-scrollbar-thumb {
+            background: var(--network-border);
+            border-radius: var(--radius-sm);
+        }
+        
+        .nm-interface-item {
+            padding: var(--space-md);
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-sm);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            min-height: var(--touch-target-min);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .nm-interface-item:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: rgba(0, 212, 255, 0.4);
+            transform: translateY(-1px);
+        }
+        
+        .nm-interface-item:focus {
+            outline: 2px solid var(--network-text);
+            outline-offset: 2px;
+            box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.1);
+        }
+        
+        .nm-interface-item.active {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: var(--network-text);
+            box-shadow: var(--shadow-md);
+        }
+        .nm-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+        
+        .nm-widget {
+            background: var(--network-surface);
+            border: 1px solid var(--network-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .widget-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-weight-bold);
+            color: var(--network-text);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            text-shadow: 0 0 var(--space-sm) var(--network-text);
+        }
+        .traffic-chart {
+            height: 200px;
+            background: var(--network-background);
+            border: 1px solid var(--network-border);
+            border-radius: var(--radius-sm);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .traffic-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, 
+                rgba(0, 212, 255, 0.8) 0%, 
+                rgba(0, 212, 255, 0.2) 100%);
+            animation: trafficFlow var(--transition-slow) ease-in-out infinite;
+        }
+        
+        @keyframes trafficFlow {
+            0%, 100% { transform: scaleY(0.3); }
+            50% { transform: scaleY(0.8); }
+        }
+        
+        .connection-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .connection-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.1);
+            font-size: 12px;
+        }
+        
+        .connection-item:last-child {
+            border-bottom: none;
+        }
+        
+        .port-status {
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .port-open {
+            background: rgba(46, 204, 113, 0.3);
+            color: #2ecc71;
+            border: 1px solid #2ecc71;
+        }
+        
+        .port-closed {
+            background: rgba(231, 76, 60, 0.3);
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+        }
+        
+        .port-filtered {
+            background: rgba(243, 156, 18, 0.3);
+            color: #f39c12;
+            border: 1px solid #f39c12;
+        }
+        
+        .scan-progress {
+            height: 6px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .scan-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #00cc00);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+            animation: scanPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes scanPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .security-alerts {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 2000;
+        }
+        
+        .alert-item {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            animation: alertSlide 0.3s ease;
+        }
+        
+        .alert-warning {
+            background: rgba(243, 156, 18, 0.2);
+            border-color: rgba(243, 156, 18, 0.5);
+        }
+        
+        .alert-info {
+            background: rgba(52, 152, 219, 0.2);
+            border-color: rgba(52, 152, 219, 0.5);
+        }
+        
+        /* === COMPREHENSIVE RESPONSIVE DESIGN === */
+        
+        /* Large tablets - 1024px */
+        @media (max-width: 1024px) {
+            .nm-main {
+                gap: var(--space-md);
+                padding: var(--space-md);
+            }
+            
+            .nm-sidebar {
+                width: 250px;
+            }
+        }
+        
+        /* Tablets - 768px */
+        @media (max-width: 768px) {
+            .nm-main {
+                grid-template-columns: 1fr;
+                gap: var(--space-md);
+                padding: var(--space-md);
+            }
+            
+            .nm-sidebar {
+                order: 2;
+                width: 100%;
+            }
+            
+            .nm-content {
+                order: 1;
+            }
+            
+            .nm-interface-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: var(--space-sm);
+            }
+            
+            .nm-interface-item {
+                flex: 1 1 calc(50% - var(--space-sm));
+                min-width: 150px;
+            }
+            
+            .traffic-chart {
+                height: 150px;
+            }
+        }
+        
+        /* Large phones - 640px */
+        @media (max-width: 640px) {
+            .nm-header {
+                padding: var(--space-sm) var(--space-md);
+                flex-wrap: wrap;
+                height: auto;
+                min-height: var(--touch-target-large);
+                gap: var(--space-sm);
+            }
+            
+            .nm-title {
+                font-size: var(--text-base);
+                width: 100%;
+            }
+            
+            .nm-status {
+                gap: var(--space-sm);
+                font-size: var(--text-xs);
+            }
+            
+            .nm-controls {
+                gap: var(--space-xs);
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .nm-main {
+                padding: var(--space-sm);
+                gap: var(--space-sm);
+            }
+            
+            .nm-widget {
+                padding: var(--space-md);
+            }
+            
+            .widget-header {
+                flex-wrap: wrap;
+                gap: var(--space-xs);
+            }
+            
+            .widget-title {
+                font-size: var(--text-sm);
+            }
+            
+            .traffic-chart {
+                height: 120px;
+            }
+            
+            .nm-interface-item {
+                flex: 1 1 100%;
+            }
+        }
+        
+        /* Small phones - 480px */
+        @media (max-width: 480px) {
+            .nm-header {
+                padding: var(--space-xs) var(--space-sm);
+            }
+            
+            .nm-title {
+                font-size: var(--text-sm);
+            }
+            
+            .nm-status-item {
+                font-size: 10px;
+            }
+            
+            .nm-main {
+                padding: var(--space-xs);
+            }
+            
+            .nm-sidebar {
+                padding: var(--space-md);
+            }
+            
+            .nm-panel-title {
+                font-size: var(--text-sm);
+                margin-bottom: var(--space-sm);
+            }
+            
+            .nm-widget {
+                padding: var(--space-sm);
+                border-radius: var(--radius-md);
+            }
+            
+            .widget-title {
+                font-size: var(--text-xs);
+            }
+            
+            .traffic-chart {
+                height: 100px;
+            }
+            
+            .connection-list {
+                font-size: var(--text-xs);
+            }
+            
+            .connection-item {
+                padding: var(--space-xs);
+            }
+            
+            .security-alerts {
+                max-height: 150px;
+            }
+            
+            .alert-item {
+                padding: var(--space-xs);
+                font-size: var(--text-xs);
+            }
+        }
+        
+        /* Extra small phones - 360px */
+        @media (max-width: 360px) {
+            .nm-controls {
+                flex-wrap: wrap;
+            }
+            
+            .nm-widget {
+                padding: var(--space-xs);
+            }
+            
+            .traffic-chart {
+                height: 80px;
+            }
+        }
+        
+        /* Landscape orientation */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .nm-header {
+                padding: var(--space-xs) var(--space-md);
+                min-height: auto;
+            }
+            
+            .nm-title {
+                font-size: var(--text-sm);
+            }
+            
+            .nm-main {
+                grid-template-columns: 250px 1fr;
+                gap: var(--space-sm);
+                padding: var(--space-sm);
+            }
+            
+            .nm-sidebar {
+                order: 1;
+                width: 250px;
+            }
+            
+            .nm-content {
+                order: 2;
+            }
+            
+            .traffic-chart {
+                height: 100px;
+            }
+        }
+
+        /* === ACCESSIBILITY === */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .nm-interface-item {
+                border-width: 2px;
+            }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            .traffic-line {
+                animation: none;
+            }
+            
+            .nm-interface-item {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- AI-OS Network Monitor Application -->
+    <div class="network-monitor" role="main" aria-label="AI Network Monitor">
+        <!-- Header -->
+        <header class="nm-header" role="banner">
+            <div class="nm-title">
+                <span aria-hidden="true">🌐</span>
+                <span>Network Monitor</span>
+                <span class="kali-status scanning" aria-hidden="true"></span>
+                <span style="font-size: var(--text-xs);">SCANNING</span>
+            </div>
+            <div class="nm-status" role="status" aria-label="Network Status">
+                <div class="nm-status-item">
+                    <span class="kali-status" aria-hidden="true"></span>
+                    <span>Online</span>
+                </div>
+                <div class="nm-status-item">
+                    <span style="color: var(--network-success); font-size: var(--text-xs);">192.168.1.100</span>
+                </div>
+            </div>
+            <nav class="nm-controls" role="toolbar" aria-label="Network Monitor Controls">
+                <button class="kali-button home-btn" onclick="goHome()" title="Domov" aria-label="Return to home">🏠</button>
+                <button class="kali-button" onclick="startScan()" aria-label="Start network scan">🔍 Scan</button>
+                <button class="kali-button primary" onclick="toggleMonitor()" aria-label="Toggle network monitoring">▶️ Monitor</button>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="nm-main" role="main">
+            <!-- Sidebar -->
+            <aside class="nm-sidebar" role="complementary" aria-label="Network Interfaces">
+                <h2 class="nm-panel-title">Network Interfaces</h2>
+                <div class="nm-interface-list" role="listbox" aria-label="Available Network Interfaces">
+                    <div class="nm-interface-item active" role="option" aria-selected="true" tabindex="0">
+                        <div style="font-weight: var(--font-weight-bold);">eth0</div>
+                        <div style="font-size: var(--text-xs); color: var(--network-success);">192.168.1.100 - ACTIVE</div>
+                    </div>
+                    <div class="nm-interface-item" role="option" aria-selected="false" tabindex="-1">
+                        <div style="font-weight: var(--font-weight-bold);">wlan0</div>
+                        <div style="font-size: var(--text-xs); color: var(--text-muted);">192.168.1.101 - DISABLED</div>
+                    </div>
+                    <div class="nm-interface-item" role="option" aria-selected="false" tabindex="-1">
+                        <div style="font-weight: var(--font-weight-bold);">lo</div>
+                        <div style="font-size: var(--text-xs); color: var(--network-success);">127.0.0.1 - LOCAL</div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Content Area -->
+            <section class="nm-content" aria-label="Network Monitoring Content">
+                <!-- Traffic Monitor -->
+                <div class="nm-widget" role="region" aria-labelledby="traffic-title">
+                    <div class="widget-header">
+                        <h3 class="widget-title" id="traffic-title">📊 Real-time Traffic</h3>
+                        <div style="color: var(--network-success); font-size: var(--text-xs);">
+                            <span id="uploadSpeed" aria-live="polite">↑ 1.2 KB/s</span> | 
+                            <span id="downloadSpeed" aria-live="polite">↓ 2.8 KB/s</span>
+                        </div>
+                    </div>
+                    <div class="traffic-chart" role="img" aria-label="Network traffic visualization">
+                        <div class="traffic-line" aria-hidden="true"></div>
+                    </div>
+                </div>
+
+                <!-- Active Connections -->
+                <div class="nm-widget" role="region" aria-labelledby="connections-title">
+                    <div class="widget-header">
+                        <h3 class="widget-title" id="connections-title">🔗 Active Connections</h3>
+                        <button class="kali-button" onclick="refreshConnections()" aria-label="Refresh connections list">Refresh</button>
+                    </div>
+                    <div class="connection-list" role="list" aria-label="Active Network Connections">
+                        <div class="connection-item" role="listitem">
+                            <span>192.168.1.1:80</span>
+                            <span style="color: var(--network-success);">ESTABLISHED</span>
+                        </div>
+                        <div class="connection-item">
+                            <span>8.8.8.8:53</span>
+                            <span style="color: #00cc00;">ESTABLISHED</span>
+                        </div>
+                        <div class="connection-item">
+                            <span>192.168.1.50:22</span>
+                            <span style="color: #00cc00;">ESTABLISHED</span>
+                        </div>
+                        <div class="connection-item">
+                            <span>203.0.113.1:443</span>
+                            <span style="color: #00cc00;">ESTABLISHED</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Port Scanner -->
+                <div class="nm-widget">
+                    <div class="widget-header">
+                        <div class="widget-title">🔍 Port Scanner</div>
+                        <div style="color: #00ff00; font-size: 12px;">Target: 192.168.1.0/24</div>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <div style="color: #00ff00; font-size: 12px; margin-bottom: 5px;">Scanning ports 1-1000...</div>
+                        <div class="scan-progress">
+                            <div class="scan-progress-bar" id="scanProgress" style="width: 0%"></div>
+                        </div>
+                        <div style="color: #00ff00; font-size: 12px;" id="scanStatus">Ready to scan</div>
+                    </div>
+                    <div class="connection-list">
+                        <div class="connection-item">
+                            <span>192.168.1.1:22</span>
+                            <span class="port-status port-open">OPEN</span>
+                        </div>
+                        <div class="connection-item">
+                            <span>192.168.1.1:80</span>
+                            <span class="port-status port-open">OPEN</span>
+                        </div>
+                        <div class="connection-item">
+                            <span>192.168.1.1:443</span>
+                            <span class="port-status port-open">OPEN</span>
+                        </div>
+                        <div class="connection-item">
+                            <span>192.168.1.1:8080</span>
+                            <span class="port-status port-closed">CLOSED</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Security Alerts -->
+    <div class="security-alerts" id="securityAlerts"></div>
+
+    <script>
+        // === AI-OS INTEGRATION ===
+        let aiOSIntegration = null;
+        let scanInterval;
+        let monitorInterval;
+        let isScanning = false;
+        let isMonitoring = false;
+
+        // === ACCESSIBILITY FUNCTIONS ===
+        function announceToScreenReader(message) {
+            // Create or update aria-live region for screen reader announcements
+            let announcer = document.getElementById('screen-reader-announcer');
+            if (!announcer) {
+                announcer = document.createElement('div');
+                announcer.id = 'screen-reader-announcer';
+                announcer.setAttribute('aria-live', 'polite');
+                announcer.setAttribute('aria-atomic', 'true');
+                announcer.className = 'sr-only';
+                document.body.appendChild(announcer);
+            }
+            announcer.textContent = message;
+        }
+
+        function updateAriaStates() {
+            // Update interface items ARIA states
+            document.querySelectorAll('.nm-interface-item').forEach(item => {
+                const isActive = item.classList.contains('active');
+                item.setAttribute('aria-selected', isActive);
+                item.setAttribute('tabindex', isActive ? '0' : '-1');
+            });
+        }
+
+        // === AI-OS COMMAND HANDLING ===
+        function handleAIOSCommand(command) {
+            switch (command.action) {
+                case 'startScan':
+                    startScan();
+                    break;
+                case 'toggleMonitor':
+                    toggleMonitor();
+                    break;
+                case 'refreshConnections':
+                    refreshConnections();
+                    break;
+                default:
+                    console.log('Unknown AI-OS command:', command);
+            }
+        }
+
+        function updateNetworkStatus(systemState) {
+            // Update network monitor with system information
+            if (systemState) {
+                // Update network-related metrics
+                if (systemState.network !== undefined) {
+                    console.log('🌐 Network status updated:', systemState.network);
+                    announceToScreenReader(`Network status updated: ${systemState.network}`);
+                }
+                
+                // Update security status
+                if (systemState.security !== undefined) {
+                    addSecurityAlert('info', 'Security status: ' + systemState.security);
+                }
+            }
+        }
+
+        function startScan() {
+            if (isScanning) return;
+            
+            isScanning = true;
+            const progressBar = document.getElementById('scanProgress');
+            const status = document.getElementById('scanStatus');
+            
+            // Announce scan start to screen readers
+            announceToScreenReader('Starting network port scan');
+            
+            let progress = 0;
+            scanInterval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress > 100) {
+                    progress = 100;
+                    clearInterval(scanInterval);
+                    isScanning = false;
+                    status.textContent = 'Scan completed - 3 open ports found';
+                    addSecurityAlert('info', 'Port scan completed successfully');
+                    announceToScreenReader('Port scan completed successfully');
+                }
+                
+                progressBar.style.width = progress + '%';
+                status.textContent = 'Scanning... ' + Math.round(progress) + '%';
+            }, 200);
+            
+            addSecurityAlert('info', 'Starting network port scan...');
+        }
+
+        function toggleMonitor() {
+            const btn = event.target;
+            
+            if (!isMonitoring) {
+                isMonitoring = true;
+                btn.textContent = '⏸️ Stop';
+                btn.setAttribute('aria-pressed', 'true');
+                btn.classList.remove('primary');
+                
+                announceToScreenReader('Network monitoring started');
+                
+                monitorInterval = setInterval(() => {
+                    // Simulate traffic updates
+                    const upload = (Math.random() * 5).toFixed(1);
+                    const download = (Math.random() * 10).toFixed(1);
+                    const uploadElement = document.getElementById('uploadSpeed');
+                    const downloadElement = document.getElementById('downloadSpeed');
+                    
+                    uploadElement.textContent = '↑ ' + upload + ' KB/s';
+                    downloadElement.textContent = '↓ ' + download + ' KB/s';
+                    
+                    // Random security events
+                    if (Math.random() < 0.1) {
+                        generateSecurityEvent();
+                    }
+                }, 1000);
+                
+                addSecurityAlert('info', 'Network monitoring started');
+            } else {
+                isMonitoring = false;
+                btn.textContent = '▶️ Monitor';
+                btn.setAttribute('aria-pressed', 'false');
+                btn.classList.add('primary');
+                clearInterval(monitorInterval);
+                addSecurityAlert('warning', 'Network monitoring stopped');
+                announceToScreenReader('Network monitoring stopped');
+            }
+        }
+
+        function refreshConnections() {
+            addSecurityAlert('info', 'Refreshing connection list...');
+            announceToScreenReader('Refreshing connection list');
+            
+            // Simulate connection refresh
+            setTimeout(() => {
+                addSecurityAlert('success', 'Connection list updated');
+                announceToScreenReader('Connection list updated successfully');
+            }, 1000);
+        }
+
+        function generateSecurityEvent() {
+            const events = [
+                { type: 'warning', message: 'Unusual traffic detected from 192.168.1.150' },
+                { type: 'warning', message: 'Port scan attempt from external IP' },
+                { type: 'error', message: 'Failed SSH login attempt detected' },
+                { type: 'info', message: 'New device connected to network' }
+            ];
+            
+            const event = events[Math.floor(Math.random() * events.length)];
+            addSecurityAlert(event.type, event.message);
+        }
+
+        function addSecurityAlert(type, message) {
+            const alertsContainer = document.getElementById('securityAlerts');
+            const alert = document.createElement('div');
+            alert.className = `alert-item alert-${type}`;
+            alert.innerHTML = `
+                <div style="font-weight: bold; margin-bottom: 5px;">
+                    ${type.toUpperCase()}
+                </div>
+                <div style="font-size: 12px;">${message}</div>
+                <div style="font-size: 10px; color: #666; margin-top: 5px;">
+                    ${new Date().toLocaleTimeString()}
+                </div>
+            `;
+            
+            alertsContainer.appendChild(alert);
+            
+            // Auto remove after 10 seconds
+            setTimeout(() => {
+                alert.style.animation = 'alertSlide 0.3s ease reverse';
+                setTimeout(() => {
+                    if (alert.parentNode) {
+                        alert.parentNode.removeChild(alert);
+                    }
+                }, 300);
+            }, 10000);
+            
+            // Keep only last 5 alerts
+            while (alertsContainer.children.length > 5) {
+                alertsContainer.removeChild(alertsContainer.firstChild);
+            }
+        }
+
+        // AI-OS Core Integration
+        let aiOSIntegration = null;
+        
+        function handleAIOSCommand(command) {
+            switch (command.action) {
+                case 'startScan':
+                    startNetworkScan();
+                    break;
+                case 'stopScan':
+                    stopNetworkScan();
+                    break;
+                case 'showConnections':
+                    showConnections();
+                    break;
+                case 'showTraffic':
+                    showTrafficAnalysis();
+                    break;
+                case 'securityCheck':
+                    performSecurityCheck();
+                    break;
+                default:
+                    console.log('Unknown AI-OS command:', command);
+            }
+        }
+        
+        function updateNetworkStatus(systemState) {
+            // Update network monitor with system information
+            if (systemState) {
+                // Update network-related metrics
+                if (systemState.network !== undefined) {
+                    console.log('🌐 Network status updated:', systemState.network);
+                }
+                
+                // Update security status
+                if (systemState.security !== undefined) {
+                    addSecurityAlert('info', 'Security status: ' + systemState.security);
+                }
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🌐 Initializing AI Network Monitor with AI-OS Standards...');
+            
+            // Wait for AI-OS Core to be available
+            const initNetworkMonitor = () => {
+                addSecurityAlert('info', 'Network Monitor initialized');
+                announceToScreenReader('AI Network Monitor initialized');
+                
+                // Initialize accessibility features
+                updateAriaStates();
+                
+                // Setup keyboard navigation for interface items
+                document.querySelectorAll('.nm-interface-item').forEach(item => {
+                    item.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            item.click();
+                        }
+                        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                            e.preventDefault();
+                            const items = Array.from(document.querySelectorAll('.nm-interface-item'));
+                            const currentIndex = items.indexOf(item);
+                            let nextIndex;
+                            
+                            if (e.key === 'ArrowUp') {
+                                nextIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
+                            } else {
+                                nextIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
+                            }
+                            
+                            items[nextIndex].focus();
+                        }
+                    });
+                });
+                
+                // Setup AI-OS Core integration
+                if (window.aiOSCore && window.AIOSAppIntegration) {
+                    aiOSIntegration = new AIOSAppIntegration('network-monitor', 'AI Network Monitor', [
+                        'network_monitoring', 'security_scanning', 'traffic_analysis', 'vulnerability_detection'
+                    ]);
+                    
+                    // Listen for AI-OS events
+                    aiOSIntegration.on('appMessage', (data) => {
+                        if (data.from === 'aiOS-core') {
+                            handleAIOSCommand(data.data);
+                        }
+                    });
+                    
+                    aiOSIntegration.on('systemStateUpdate', (data) => {
+                        updateNetworkStatus(data);
+                    });
+                    
+                    // Register app with AI-OS
+                    aiOSIntegration.registerApp({
+                        name: 'AI Network Monitor',
+                        category: 'security_tools',
+                        permissions: ['network_monitoring', 'security_scanning'],
+                        capabilities: ['traffic_analysis', 'vulnerability_detection', 'port_scanning']
+                    });
+                    
+                    console.log('✅ Network Monitor integrated with AI-OS Core');
+                }
+            };
+            
+            if (window.aiOSCore) {
+                initNetworkMonitor();
+            } else {
+                setTimeout(initNetworkMonitor, 1000);
+            }
+            
+            // Simulate some initial alerts
+            setTimeout(() => {
+                addSecurityAlert('success', 'Network interface eth0 is active');
+            }, 2000);
+            
+            setTimeout(() => {
+                addSecurityAlert('info', 'Scanning for vulnerabilities...');
+            }, 5000);
+        });
+
+        function goHome() {
+            // Create smooth transition effect
+            const networkMonitor = document.querySelector('.network-monitor');
+            networkMonitor.style.opacity = '0';
+            networkMonitor.style.transform = 'scale(0.9)';
+            
+            setTimeout(() => {
+                // Navigate back to main AI-OS
+                if (window.opener) {
+                    window.close();
+                } else {
+                    window.location.href = '../ADVANCED-AI-OS.html';
+                }
+            }, 300);
+        }
+
+        // Simulate real-time updates
+        setInterval(() => {
+            // Update connection status
+            const connections = document.querySelectorAll('.connection-item span:last-child');
+            connections.forEach(conn => {
+                if (Math.random() < 0.05) {
+                    conn.style.color = Math.random() > 0.5 ? '#00cc00' : '#666';
+                }
+            });
+        }, 3000);
+    </script>
+</body>
+</html>

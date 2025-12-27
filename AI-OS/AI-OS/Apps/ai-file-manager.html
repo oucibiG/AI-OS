@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📁 AI File Manager</title>
+    
+    <!-- AI-OS Core Integration -->
+    <script src="../js/ai-os-core.js"></script>
+    <script src="../js/ai-os-app-integration.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+            background: #000;
+            color: #00ff00;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                linear-gradient(90deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(rgba(0, 255, 0, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        .file-manager {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .fm-header {
+            height: 60px;
+            background: #000;
+            border-bottom: 2px solid #00ff00;
+            border-top: 1px solid #00ff00;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1000;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+        
+        .fm-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #00ff00;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        
+        .fm-breadcrumb {
+            flex: 1;
+            margin: 0 20px;
+            font-size: 14px;
+            color: #888;
+        }
+        
+        .fm-breadcrumb-path {
+            color: #00d4ff;
+        }
+        
+        .fm-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .fm-btn {
+            padding: 8px 16px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 6px;
+            color: #00d4ff;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .fm-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+        }
+        
+        .fm-btn.primary {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+        }
+        
+        .fm-main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        .fm-sidebar {
+            width: 200px;
+            background: rgba(0, 0, 0, 0.3);
+            border-right: 1px solid rgba(0, 212, 255, 0.2);
+            padding: 20px;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+        
+        .fm-sidebar.hidden {
+            transform: translateX(-100%);
+            width: 0;
+            padding: 0;
+            border: none;
+        }
+        
+        .fm-toggle-sidebar {
+            position: absolute;
+            top: 70px;
+            left: 210px;
+            width: 30px;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        
+        .fm-toggle-sidebar:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+        }
+        
+        .fm-toggle-sidebar.hidden {
+            left: 10px;
+        }
+        
+        .fm-toggle-icon {
+            color: #00d4ff;
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+        
+        .fm-toggle-sidebar.hidden .fm-toggle-icon {
+            transform: rotate(180deg);
+        }
+        
+        .fm-nav-section {
+            margin-bottom: 30px;
+        }
+        
+        .fm-nav-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #00d4ff;
+            margin-bottom: 15px;
+        }
+        
+        .fm-nav-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 5px;
+        }
+        
+        .fm-nav-item:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+        
+        .fm-nav-item.active {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+        }
+        
+        .fm-nav-icon {
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        
+        .fm-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .fm-toolbar {
+            height: 50px;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 15px;
+        }
+        
+        .fm-search {
+            flex: 1;
+            max-width: 300px;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 6px;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .fm-search::placeholder {
+            color: #888;
+        }
+        
+        .fm-search:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+        
+        .fm-view-controls {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .fm-view-btn {
+            width: 32px;
+            height: 32px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .fm-view-btn:hover,
+        .fm-view-btn.active {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+        }
+        
+        .fm-files {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .fm-files-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .fm-file {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .fm-file:hover {
+            background: rgba(0, 212, 255, 0.05);
+        }
+        
+        .fm-file.selected {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        
+        .fm-file-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: rgba(0, 212, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 16px;
+        }
+        
+        .fm-file-info {
+            flex: 1;
+        }
+        
+        .fm-file-name {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        
+        .fm-file-details {
+            font-size: 12px;
+            color: #888;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .fm-file-actions {
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .fm-file:hover .fm-file-actions {
+            opacity: 1;
+        }
+        
+        .fm-file-action {
+            padding: 4px 8px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 4px;
+            color: #00d4ff;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .fm-file-action:hover {
+            background: rgba(0, 212, 255, 0.2);
+        }
+        
+        .fm-file-action.danger {
+            border-color: rgba(231, 76, 60, 0.3);
+            color: #e74c3c;
+        }
+        
+        .fm-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .fm-grid-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .fm-grid-item:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: #00d4ff;
+            transform: translateY(-2px);
+        }
+        
+        .fm-grid-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .fm-grid-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            word-break: break-word;
+        }
+        
+        .fm-grid-size {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .fm-status-bar {
+            height: 30px;
+            background: rgba(0, 0, 0, 0.5);
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .fm-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        
+        .fm-dialog-content {
+            background: rgba(15, 15, 35, 0.95);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 12px;
+            padding: 30px;
+            min-width: 400px;
+        }
+        
+        .fm-dialog-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #00d4ff;
+            margin-bottom: 20px;
+        }
+        
+        .fm-form-group {
+            margin-bottom: 20px;
+        }
+        
+        .fm-form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #00d4ff;
+        }
+        
+        .fm-form-input {
+            width: 100%;
+            padding: 10px 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 6px;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .fm-form-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+        
+        .fm-form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .fm-ai-section {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .fm-ai-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #00d4ff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .fm-ai-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .fm-ai-feature {
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .fm-ai-feature:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: #00d4ff;
+        }
+        
+        .fm-ai-feature-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #00d4ff;
+            margin-bottom: 8px;
+        }
+        
+        .fm-ai-feature-desc {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 10px;
+        }
+        
+        .fm-ai-feature-action {
+            padding: 6px 12px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #00d4ff;
+            border-radius: 4px;
+            color: #00d4ff;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .fm-ai-feature-action:hover {
+            background: rgba(0, 212, 255, 0.2);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+    
+        /* Floating Home Button */
+        .floating-home-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 255, 0, 0.3);
+            border: 2px solid #00ff88;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            animation: homePulse 2s infinite;
+        }
+
+        .floating-home-btn:hover {
+            background: rgba(0, 255, 0, 0.5);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.7);
+            animation: none;
+        }
+
+        @keyframes homePulse {
+            0%, 100% { box-shadow: 0 0 5px rgba(0, 255, 0, 0.3); }
+            50% { box-shadow: 0 0 15px rgba(0, 255, 0, 0.6); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Home Button -->
+    <div class="floating-home-btn" onclick="goHome()" title="Domov">🏠</div>
+    <div class="file-manager">
+        <!-- Header -->
+        <div class="fm-header">
+            <div class="fm-title">
+                <span>📁</span>
+                <span>AI File Manager</span>
+            </div>
+            <div class="fm-breadcrumb">
+                <span class="fm-breadcrumb-path" id="breadcrumbPath">Home</span>
+            </div>
+            <div class="fm-controls">
+                <button class="fm-btn" onclick="goUp()">⬆️ Up</button>
+                <button class="fm-btn primary" onclick="openNewFolderDialog()">📁 New Folder</button>
+                <button class="fm-btn" onclick="openNewFileDialog()">📄 New File</button>
+                <button class="fm-btn" onclick="refreshFiles()">🔄 Refresh</button>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="fm-main">
+            <!-- Sidebar -->
+            <div class="fm-sidebar">
+                <div class="fm-nav-section">
+                    <div class="fm-nav-title">Quick Access</div>
+                    <div class="fm-nav-item active" onclick="navigateTo('Home')">
+                        <span class="fm-nav-icon">🏠</span>
+                        <span>Home</span>
+                    </div>
+                    <div class="fm-nav-item" onclick="navigateTo('Documents')">
+                        <span class="fm-nav-icon">📄</span>
+                        <span>Documents</span>
+                    </div>
+                    <div class="fm-nav-item" onclick="navigateTo('Downloads')">
+                        <span class="fm-nav-icon">⬇️</span>
+                        <span>Downloads</span>
+                    </div>
+                    <div class="fm-nav-item" onclick="navigateTo('Pictures')">
+                        <span class="fm-nav-icon">🖼️</span>
+                        <span>Pictures</span>
+                    </div>
+                    <div class="fm-nav-item" onclick="navigateTo('Music')">
+                        <span class="fm-nav-icon">🎵</span>
+                        <span>Music</span>
+                    </div>
+                </div>
+                
+                <div class="fm-nav-section">
+                    <div class="fm-nav-title">AI System</div>
+                    <div class="fm-nav-item" onclick="navigateTo('AI-System')">
+                        <span class="fm-nav-icon">🧠</span>
+                        <span>AI System</span>
+                    </div>
+                    <div class="fm-nav-item" onclick="navigateTo('System-Config')">
+                        <span class="fm-nav-icon">⚙️</span>
+                        <span>System Config</span>
+                    </div>
+                    <div class="fm-nav-item" onclick="navigateTo('User-Data')">
+                        <span class="fm-nav-icon">👤</span>
+                        <span>User Data</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Toggle Sidebar Button -->
+            <div class="fm-toggle-sidebar" onclick="toggleSidebar()" title="Toggle Sidebar">
+                <span class="fm-toggle-icon">◀</span>
+            </div>
+            
+            <!-- Content Area -->
+            <div class="fm-content">
+                <div class="fm-toolbar">
+                    <input type="text" class="fm-search" placeholder="🔍 Search files and folders..." onkeyup="searchFiles(this.value)">
+                    <div class="fm-view-controls">
+                        <div class="fm-view-btn active" onclick="setView('list')" title="List View">📋</div>
+                        <div class="fm-view-btn" onclick="setView('grid')" title="Grid View">⚏</div>
+                    </div>
+                </div>
+                
+                <div class="fm-files">
+                    <div class="fm-ai-section">
+                        <div class="fm-ai-title">
+                            <span>🤖</span>
+                            <span>AI File Intelligence</span>
+                        </div>
+                        <div class="fm-ai-features">
+                            <div class="fm-ai-feature">
+                                <div class="fm-ai-feature-title">Smart Search</div>
+                                <div class="fm-ai-feature-desc">AI-powered content search across all files</div>
+                                <button class="fm-ai-feature-action" onclick="openAISearch()">Search</button>
+                            </div>
+                            <div class="fm-ai-feature">
+                                <div class="fm-ai-feature-title">Auto Organization</div>
+                                <div class="fm-ai-feature-desc">AI automatically categorizes and organizes files</div>
+                                <button class="fm-ai-feature-action" onclick="organizeFiles()">Organize</button>
+                            </div>
+                            <div class="fm-ai-feature">
+                                <div class="fm-ai-feature-title">Duplicate Detection</div>
+                                <div class="fm-ai-feature-desc">Find and remove duplicate files to save space</div>
+                                <button class="fm-ai-feature-action" onclick="findDuplicates()">Scan</button>
+                            </div>
+                            <div class="fm-ai-feature">
+                                <div class="fm-ai-feature-title">File Analytics</div>
+                                <div class="fm-ai-feature-desc">Get insights about your file usage patterns</div>
+                                <button class="fm-ai-feature-action" onclick="showAnalytics()">Analyze</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="fm-files-list" id="filesList">
+                        <!-- Files will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="fm-status-bar">
+                    <div id="statusInfo">Ready</div>
+                    <div id="fileCount">0 items</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- New Folder Dialog -->
+    <div class="fm-dialog" id="newFolderDialog">
+        <div class="fm-dialog-content">
+            <div class="fm-dialog-title">Create New Folder</div>
+            <div class="fm-form-group">
+                <label class="fm-form-label">Folder Name</label>
+                <input type="text" class="fm-form-input" id="folderName" placeholder="Enter folder name...">
+            </div>
+            <div class="fm-form-actions">
+                <button class="fm-btn" onclick="closeDialog('newFolderDialog')">Cancel</button>
+                <button class="fm-btn primary" onclick="createFolder()">Create</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- New File Dialog -->
+    <div class="fm-dialog" id="newFileDialog">
+        <div class="fm-dialog-content">
+            <div class="fm-dialog-title">Create New File</div>
+            <div class="fm-form-group">
+                <label class="fm-form-label">File Name</label>
+                <input type="text" class="fm-form-input" id="fileName" placeholder="Enter file name...">
+            </div>
+            <div class="fm-form-group">
+                <label class="fm-form-label">File Type</label>
+                <select class="fm-form-input" id="fileType">
+                    <option value="txt">Text File (.txt)</option>
+                    <option value="md">Markdown (.md)</option>
+                    <option value="json">JSON (.json)</option>
+                    <option value="xml">XML (.xml)</option>
+                    <option value="html">HTML (.html)</option>
+                    <option value="css">CSS (.css)</option>
+                    <option value="js">JavaScript (.js)</option>
+                </select>
+            </div>
+            <div class="fm-form-actions">
+                <button class="fm-btn" onclick="closeDialog('newFileDialog')">Cancel</button>
+                <button class="fm-btn primary" onclick="createFile()">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class AIFileManager {
+            constructor() {
+                this.currentPath = 'Home';
+                this.files = [];
+                this.viewMode = 'list';
+                this.selectedFiles = new Set();
+                this.aiFeatures = {
+                    smartSearch: true,
+                    autoOrganization: true,
+                    duplicateDetection: true,
+                    fileAnalytics: true
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.generateFiles();
+                this.renderFiles();
+                this.updateStatus();
+            }
+            
+            generateFiles() {
+                this.files = [
+                    {
+                        name: 'Documents',
+                        type: 'folder',
+                        icon: '📁',
+                        size: '-',
+                        modified: '2025-12-15',
+                        aiManaged: true,
+                        path: 'Home/Documents'
+                    },
+                    {
+                        name: 'Pictures',
+                        type: 'folder',
+                        icon: '🖼️',
+                        size: '-',
+                        modified: '2025-12-14',
+                        aiManaged: true,
+                        path: 'Home/Pictures'
+                    },
+                    {
+                        name: 'Music',
+                        type: 'folder',
+                        icon: '🎵',
+                        size: '-',
+                        modified: '2025-12-13',
+                        aiManaged: false,
+                        path: 'Home/Music'
+                    },
+                    {
+                        name: 'Downloads',
+                        type: 'folder',
+                        icon: '⬇️',
+                        size: '-',
+                        modified: '2025-12-17',
+                        aiManaged: true,
+                        path: 'Home/Downloads'
+                    },
+                    {
+                        name: 'AI System Settings',
+                        type: 'file',
+                        icon: '⚙️',
+                        size: '12.5 KB',
+                        modified: '2025-12-17',
+                        aiManaged: true,
+                        extension: 'html',
+                        path: 'Home/AI-System-Settings.html'
+                    },
+                    {
+                        name: 'Task Manager',
+                        type: 'file',
+                        icon: '🧠',
+                        size: '45.2 KB',
+                        modified: '2025-12-17',
+                        aiManaged: true,
+                        extension: 'html',
+                        path: 'Home/Task-Manager.html'
+                    },
+                    {
+                        name: 'File Manager',
+                        type: 'file',
+                        icon: '📁',
+                        size: '38.7 KB',
+                        modified: '2025-12-17',
+                        aiManaged: true,
+                        extension: 'html',
+                        path: 'Home/File-Manager.html'
+                    },
+                    {
+                        name: 'System Configuration',
+                        type: 'file',
+                        icon: '🔧',
+                        size: '8.3 KB',
+                        modified: '2025-12-16',
+                        aiManaged: false,
+                        extension: 'json',
+                        path: 'Home/System-Configuration.json'
+                    },
+                    {
+                        name: 'User Preferences',
+                        type: 'file',
+                        icon: '👤',
+                        size: '2.1 KB',
+                        modified: '2025-12-15',
+                        aiManaged: false,
+                        extension: 'json',
+                        path: 'Home/User-Preferences.json'
+                    },
+                    {
+                        name: 'README',
+                        type: 'file',
+                        icon: '📋',
+                        size: '4.8 KB',
+                        modified: '2025-12-15',
+                        aiManaged: false,
+                        extension: 'md',
+                        path: 'Home/README.md'
+                    }
+                ];
+            }
+            
+            renderFiles() {
+                const container = document.getElementById('filesList');
+                const filteredFiles = this.getFilteredFiles();
+                
+                if (this.viewMode === 'grid') {
+                    container.className = 'fm-grid';
+                    container.innerHTML = filteredFiles.map(file => `
+                        <div class="fm-grid-item" onclick="selectFile('${file.name}')">
+                            <div class="fm-grid-icon">${file.icon}</div>
+                            <div class="fm-grid-name">${file.name}</div>
+                            <div class="fm-grid-size">${file.size} • ${file.modified}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.className = 'fm-files-list';
+                    container.innerHTML = filteredFiles.map(file => `
+                        <div class="fm-file" onclick="selectFile('${file.name}')" data-file="${file.name}">
+                            <div class="fm-file-icon">${file.icon}</div>
+                            <div class="fm-file-info">
+                                <div class="fm-file-name">${file.name}</div>
+                                <div class="fm-file-details">
+                                    <span>${file.size}</span>
+                                    <span>${file.modified}</span>
+                                    ${file.aiManaged ? '<span>🤖 AI Managed</span>' : ''}
+                                </div>
+                            </div>
+                            <div class="fm-file-actions">
+                                <button class="fm-file-action" onclick="openFile('${file.name}')">📂</button>
+                                <button class="fm-file-action" onclick="renameFile('${file.name}')">✏️</button>
+                                <button class="fm-file-action danger" onclick="deleteFile('${file.name}')">🗑️</button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+                
+                this.updateStatus();
+            }
+            
+            getFilteredFiles() {
+                // Apply current filters
+                return this.files.filter(file => {
+                    // All files in current directory
+                    return file.path.startsWith(this.currentPath + '/') || 
+                           file.path === this.currentPath;
+                });
+            }
+            
+            navigateTo(path) {
+                this.currentPath = path;
+                document.getElementById('breadcrumbPath').textContent = path;
+                
+                // Update navigation
+                document.querySelectorAll('.fm-nav-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.textContent.includes(path)) {
+                        item.classList.add('active');
+                    }
+                });
+                
+                this.renderFiles();
+                this.showNotification('Navigation', `Navigated to ${path}`);
+            }
+            
+            goUp() {
+                if (this.currentPath !== 'Home') {
+                    const parts = this.currentPath.split('/');
+                    parts.pop();
+                    const parentPath = parts.join('/') || 'Home';
+                    this.navigateTo(parentPath);
+                }
+            }
+            
+            searchFiles(query) {
+                const files = document.querySelectorAll('.fm-file, .fm-grid-item');
+                files.forEach(file => {
+                    const name = file.querySelector('.fm-file-name, .fm-grid-name')?.textContent.toLowerCase();
+                    if (name && name.includes(query.toLowerCase())) {
+                        file.style.display = this.viewMode === 'grid' ? 'block' : 'flex';
+                    } else {
+                        file.style.display = 'none';
+                    }
+                });
+                
+                this.updateStatus(`Search results for "${query}"`);
+            }
+            
+            selectFile(fileName) {
+                const file = this.files.find(f => f.name === fileName);
+                if (!file) return;
+                
+                if (file.type === 'folder') {
+                    this.navigateTo(file.path);
+                } else {
+                    this.openFile(fileName);
+                }
+            }
+            
+            openFile(fileName) {
+                const file = this.files.find(f => f.name === fileName);
+                if (!file) return;
+                
+                // Simulate opening file
+                this.showNotification('File Manager', `Opening ${fileName}`);
+                
+                if (file.extension === 'html') {
+                    // Open in new tab for HTML files
+                    window.open(file.path, '_blank');
+                } else {
+                    // Show file content in a modal or new window
+                    this.showFileContent(file);
+                }
+            }
+            
+            showFileContent(file) {
+                // Simple file content viewer
+                const content = this.generateFileContent(file);
+                const modal = document.createElement('div');
+                modal.className = 'fm-dialog';
+                modal.innerHTML = `
+                    <div class="fm-dialog-content" style="max-width: 80%; max-height: 80%; overflow-y: auto;">
+                        <div class="fm-dialog-title">${file.name}</div>
+                        <pre style="color: #00d4ff; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; white-space: pre-wrap; font-family: 'Courier New', monospace;">${content}</pre>
+                        <div class="fm-form-actions">
+                            <button class="fm-btn" onclick="this.closest('.fm-dialog').remove()">Close</button>
+                            <button class="fm-btn primary" onclick="downloadFile('${file.name}')">Download</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            }
+            
+            generateFileContent(file) {
+                const contentTemplates = {
+                    'txt': 'This is a sample text file.\n\nIt contains some placeholder content for demonstration purposes.\n\nAI File Manager can handle various file types and provide intelligent file management features.',
+                    'md': '# Sample Markdown File\n\nThis is a **markdown** file with some formatting.\n\n## Features\n\n- Bullet points\n- *Italic text*\n- **Bold text**\n- `Code blocks`\n\n> Blockquotes\n\n```javascript\nconsole.log("Hello World!");\n```',
+                    'json': '{\n  "name": "Sample Configuration",\n  "version": "1.0.0",\n  "settings": {\n    "theme": "dark",\n    "language": "sk",\n    "ai_features": {\n      "smart_search": true,\n      "auto_organization": true,\n      "duplicate_detection": true\n    }\n  }\n}',
+                    'xml': '<?xml version="1.0" encoding="UTF-8"?>\n<configuration>\n    <appSettings>\n        <add key="Theme" value="dark"/>\n        <add key="Language" value="sk"/>\n        <add key="AI_Features" value="enabled"/>\n    </appSettings>\n</configuration>',
+                    'html': '<!DOCTYPE html>\n<html lang="sk">\n<head>\n    <meta charset="UTF-8">\n    <title>Sample HTML File</title>\n</head>\n<body>\n    <h1>Sample HTML File</h1>\n    <p>This is a sample HTML file for demonstration.</p>\n    <div class="container">\n        <p>AI File Manager can open and preview various file types.</p>\n    </div>\n</body>\n</html>',
+                    'css': '/* Sample CSS File */\n\nbody {\n    font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;\n    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #2a2a5a 100%);\n    color: white;\n}\n\n.ai-feature {\n    background: rgba(0, 212, 255, 0.1);\n    border: 1px solid rgba(0, 212, 255, 0.3);\n    border-radius: 8px;\n    padding: 15px;\n}',
+                    'js': '// Sample JavaScript File\n\nclass AIFileManager {\n    constructor() {\n        this.files = [];\n        this.aiFeatures = {\n            smartSearch: true,\n            autoOrganization: true,\n            duplicateDetection: true\n        };\n    }\n    \n    searchFiles(query) {\n        // AI-powered file search\n        return this.files.filter(file => \n            file.name.toLowerCase().includes(query.toLowerCase())\n        );\n    }\n}\n\nconst fileManager = new AIFileManager();\nconsole.log("AI File Manager initialized");'
+                };
+                
+                return contentTemplates[file.extension] || 'File content not available for this type.';
+            }
+            
+            updateStatus(message = 'Ready') {
+                const files = this.getFilteredFiles();
+                const count = files.length;
+                document.getElementById('statusInfo').textContent = message;
+                document.getElementById('fileCount').textContent = `${count} items`;
+            }
+            
+            showNotification(title, message) {
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed; top: 80px; right: 20px; background: rgba(0, 212, 255, 0.1);
+                    border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 15px;
+                    color: white; z-index: 10000; min-width: 250px;
+                `;
+                notification.innerHTML = `<div style="font-weight: 600; color: #00d4ff;">${title}</div><div>${message}</div>`;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+            
+            // AI Features
+            openAISearch() {
+                this.showNotification('AI Search', 'Opening AI-powered search interface...');
+                // Simulate AI search
+                setTimeout(() => {
+                    const query = prompt('Enter search query:');
+                    if (query) {
+                        this.searchFiles(query);
+                        this.showNotification('AI Search', `Found ${this.getFilteredFiles().length} results for "${query}"`);
+                    }
+                }, 500);
+            }
+            
+            organizeFiles() {
+                this.showNotification('AI Organization', 'Analyzing files for optimal organization...');
+                // Simulate AI organization
+                setTimeout(() => {
+                    this.showNotification('AI Organization', 'Files organized by type and importance');
+                }, 2000);
+            }
+            
+            findDuplicates() {
+                this.showNotification('Duplicate Detection', 'Scanning for duplicate files...');
+                // Simulate duplicate detection
+                setTimeout(() => {
+                    this.showNotification('Duplicate Detection', 'No duplicate files found');
+                }, 3000);
+            }
+            
+            showAnalytics() {
+                const totalSize = this.files.length * 25; // Simulate total size
+                const aiManaged = this.files.filter(f => f.aiManaged).length;
+                this.showNotification('File Analytics', 
+                    `${this.files.length} files, ${aiManaged} AI-managed, ~${totalSize}MB total`);
+            }
+        }
+        
+        // Global variables
+        let fileManager;
+        let sidebarVisible = true;
+        
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.fm-sidebar');
+            const toggleBtn = document.querySelector('.fm-toggle-sidebar');
+            const toggleIcon = document.querySelector('.fm-toggle-icon');
+            
+            sidebarVisible = !sidebarVisible;
+            
+            if (sidebarVisible) {
+                sidebar.classList.remove('hidden');
+                toggleBtn.classList.remove('hidden');
+                toggleIcon.textContent = '◀';
+            } else {
+                sidebar.classList.add('hidden');
+                toggleBtn.classList.add('hidden');
+                toggleIcon.textContent = '▶';
+            }
+        }
+        
+        // Navigation functions
+        function navigateTo(path) {
+            fileManager.navigateTo(path);
+        }
+        
+        function goUp() {
+            fileManager.goUp();
+        }
+        
+        function refreshFiles() {
+            fileManager.renderFiles();
+            fileManager.showNotification('File Manager', 'Files refreshed');
+        }
+        
+        // View functions
+        function setView(mode) {
+            fileManager.viewMode = mode;
+            
+            // Update view buttons
+            document.querySelectorAll('.fm-view-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            fileManager.renderFiles();
+        }
+        
+        // Search functions
+        function searchFiles(query) {
+            fileManager.searchFiles(query);
+        }
+        
+        // File operations
+        function selectFile(fileName) {
+            fileManager.selectFile(fileName);
+        }
+        
+        function openFile(fileName) {
+            fileManager.openFile(fileName);
+        }
+        
+        function renameFile(fileName) {
+            const newName = prompt('Enter new name:', fileName);
+            if (newName && newName !== fileName) {
+                const file = fileManager.files.find(f => f.name === fileName);
+                if (file) {
+                    file.name = newName;
+                    fileManager.renderFiles();
+                    fileManager.showNotification('File Manager', `${fileName} renamed to ${newName}`);
+                }
+            }
+        }
+        
+        function deleteFile(fileName) {
+            if (confirm(`Delete ${fileName}?`)) {
+                fileManager.files = fileManager.files.filter(f => f.name !== fileName);
+                fileManager.renderFiles();
+                fileManager.showNotification('File Manager', `${fileName} deleted`);
+            }
+        }
+        
+        function downloadFile(fileName) {
+            fileManager.showNotification('Download', `Downloading ${fileName}...`);
+        }
+        
+        // Dialog functions
+        function openNewFolderDialog() {
+            document.getElementById('newFolderDialog').style.display = 'flex';
+            document.getElementById('folderName').focus();
+        }
+        
+        function openNewFileDialog() {
+            document.getElementById('newFileDialog').style.display = 'flex';
+            document.getElementById('fileName').focus();
+        }
+        
+        function closeDialog(dialogId) {
+            document.getElementById(dialogId).style.display = 'none';
+        }
+        
+        function createFolder() {
+            const name = document.getElementById('folderName').value.trim();
+            if (name) {
+                fileManager.files.push({
+                    name: name,
+                    type: 'folder',
+                    icon: '📁',
+                    size: '-',
+                    modified: new Date().toISOString().split('T')[0],
+                    aiManaged: true,
+                    path: `${fileManager.currentPath}/${name}`
+                });
+                fileManager.renderFiles();
+                closeDialog('newFolderDialog');
+                document.getElementById('folderName').value = '';
+                fileManager.showNotification('File Manager', `Folder "${name}" created`);
+            }
+        }
+        
+        function createFile() {
+            const name = document.getElementById('fileName').value.trim();
+            const type = document.getElementById('fileType').value;
+            
+            if (name) {
+                const extension = type === 'txt' ? 'txt' : type;
+                const fullName = name.endsWith('.' + extension) ? name : `${name}.${extension}`;
+                
+                fileManager.files.push({
+                    name: fullName,
+                    type: 'file',
+                    icon: this.getFileIcon(extension),
+                    size: '1.2 KB',
+                    modified: new Date().toISOString().split('T')[0],
+                    aiManaged: false,
+                    extension: extension,
+                    path: `${fileManager.currentPath}/${fullName}`
+                });
+                fileManager.renderFiles();
+                closeDialog('newFileDialog');
+                document.getElementById('fileName').value = '';
+                fileManager.showNotification('File Manager', `File "${fullName}" created`);
+            }
+        }
+        
+        function getFileIcon(extension) {
+            const icons = {
+                'txt': '📄',
+                'md': '📝',
+                'json': '🗃️',
+                'xml': '📋',
+                'html': '🌐',
+                'css': '🎨',
+                'js': '⚡'
+            };
+            return icons[extension] || '📄';
+        }
+        
+        // AI Feature functions
+        function openAISearch() {
+            fileManager.openAISearch();
+        }
+        
+        function organizeFiles() {
+            fileManager.organizeFiles();
+        }
+        
+        function findDuplicates() {
+            fileManager.findDuplicates();
+        }
+        
+        function showAnalytics() {
+            fileManager.showAnalytics();
+        }
+        
+        // AI-OS Core Integration
+        let aiOSIntegration = null;
+        
+        function handleAIOSCommand(command) {
+            if (fileManager) {
+                switch (command.action) {
+                    case 'refreshFiles':
+                        fileManager.refreshCurrentDirectory();
+                        break;
+                    case 'createFolder':
+                        fileManager.createNewFolder(command.name);
+                        break;
+                    case 'uploadFiles':
+                        fileManager.uploadFiles(command.files);
+                        break;
+                    case 'searchFiles':
+                        fileManager.searchFiles(command.query);
+                        break;
+                    default:
+                        console.log('Unknown AI-OS command:', command);
+                }
+            }
+        }
+        
+        function updateFileSystemStatus(systemState) {
+            // Update file manager with system information
+            if (fileManager && systemState) {
+                // Update storage information if available
+                if (systemState.storage !== undefined) {
+                    // Update storage indicators in the file manager
+                    console.log('📁 File system storage:', systemState.storage + '%');
+                }
+            }
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📁 Initializing AI File Manager...');
+            
+            // Wait for AI-OS Core to be available
+            const initFileManager = () => {
+                fileManager = new AIFileManager();
+                
+                // Setup AI-OS Core integration
+                if (window.aiOSCore && window.AIOSAppIntegration) {
+                    aiOSIntegration = new AIOSAppIntegration('file-manager', 'AI File Manager', [
+                        'file_operations', 'directory_management', 'file_search', 'storage_management'
+                    ]);
+                    
+                    // Listen for AI-OS events
+                    aiOSIntegration.on('appMessage', (data) => {
+                        if (data.from === 'aiOS-core') {
+                            handleAIOSCommand(data.data);
+                        }
+                    });
+                    
+                    aiOSIntegration.on('systemStateUpdate', (data) => {
+                        updateFileSystemStatus(data);
+                    });
+                    
+                    console.log('✅ File Manager integrated with AI-OS Core');
+                }
+            };
+            
+            if (window.aiOSCore) {
+                initFileManager();
+            } else {
+                setTimeout(initFileManager, 1000);
+            }
+        });
+        
+        // Close dialogs on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.fm-dialog').forEach(dialog => {
+                    dialog.style.display = 'none';
+                });
+            }
+        });
+    
+        function goHome() {
+            // Create smooth transition effect
+            const container = document.querySelector('.app-container, .main-container, body > div, body');
+            if (container) {
+                container.style.opacity = '0';
+                container.style.transform = 'scale(0.9)';
+            }
+            
+            setTimeout(() => {
+                // Navigate back to main AI-OS
+                if (window.opener) {
+                    window.close();
+                } else {
+                    const basePath = window.location.pathname.includes('/Apps/') ? '../' : '../../';
+                    window.location.href = basePath + 'ADVANCED-AI-OS.html';
+                }
+            }, 300);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 AI System Monitor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+            background: #000;
+            color: #00ff00;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                linear-gradient(90deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(rgba(0, 255, 0, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        .monitor {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .monitor-header {
+            height: 60px;
+            background: #000;
+            border-bottom: 2px solid #00ff00;
+            border-top: 1px solid #00ff00;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1000;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+        
+        .monitor-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #00ff00;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        
+        .monitor-status {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .monitor-status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2ecc71;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-indicator.warning {
+            background: #f39c12;
+        }
+        
+        .status-indicator.error {
+            background: #e74c3c;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .monitor-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .monitor-btn {
+            padding: 8px 16px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            border-radius: 6px;
+            color: #00ff00;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 5px #00ff00;
+        }
+        
+        .monitor-btn:hover {
+            background: rgba(0, 255, 0, 0.2);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        
+        .monitor-btn.primary {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+        
+        .monitor-main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-rows: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .monitor-widget {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+        }
+        
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .widget-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #00ff00;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-shadow: 0 0 8px #00ff00;
+        }
+        }
+        
+        .widget-controls {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .widget-btn {
+            width: 24px;
+            height: 24px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 10px;
+        }
+        
+        .widget-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+        }
+        
+        .widget-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* CPU Widget */
+        .cpu-widget .chart-container {
+            height: 150px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cpu-chart {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .cpu-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .cpu-stat {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+        }
+        
+        .cpu-stat-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #00d4ff;
+            margin-bottom: 5px;
+        }
+        
+        .cpu-stat-label {
+            font-size: 11px;
+            color: #888;
+        }
+        
+        /* Memory Widget */
+        .memory-widget .memory-visual {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .memory-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                #00d4ff 0deg,
+                #00d4ff var(--memory-deg),
+                rgba(255, 255, 255, 0.1) var(--memory-deg),
+                rgba(255, 255, 255, 0.1) 360deg
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .memory-circle::before {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: rgba(15, 15, 35, 0.95);
+            border-radius: 50%;
+        }
+        
+        .memory-percentage {
+            position: relative;
+            z-index: 1;
+            font-size: 14px;
+            font-weight: 600;
+            color: #00d4ff;
+        }
+        
+        .memory-details {
+            flex: 1;
+        }
+        
+        .memory-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        
+        .memory-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #0099cc);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .memory-info {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        /* Network Widget */
+        .network-widget .network-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .network-stat {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+        
+        .network-stat-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #00d4ff;
+            margin-bottom: 5px;
+        }
+        
+        .network-stat-label {
+            font-size: 11px;
+            color: #888;
+        }
+        
+        .network-activity {
+            height: 80px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Disk Widget */
+        .disk-widget .disk-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .disk-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+        }
+        
+        .disk-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(0, 212, 255, 0.2);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        
+        .disk-info {
+            flex: 1;
+        }
+        
+        .disk-name {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        
+        .disk-space {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .disk-bar {
+            width: 60px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .disk-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #e74c3c);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        /* Temperature Widget */
+        .temperature-widget .temp-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+        }
+        
+        .temp-item {
+            text-align: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+        }
+        
+        .temp-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #00d4ff;
+            margin-bottom: 5px;
+        }
+        
+        .temp-label {
+            font-size: 10px;
+            color: #888;
+        }
+        
+        /* AI Performance Widget */
+        .ai-widget .ai-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+        
+        .ai-metric {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+        
+        .ai-metric-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: #00d4ff;
+            margin-bottom: 5px;
+        }
+        
+        .ai-metric-label {
+            font-size: 11px;
+            color: #888;
+        }
+        
+        .ai-recommendation {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 8px;
+        }
+        
+        .ai-recommendation-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #00d4ff;
+            margin-bottom: 8px;
+        }
+        
+        .ai-recommendation-text {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 10px;
+        }
+        
+        .ai-recommendation-action {
+            padding: 6px 12px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #00d4ff;
+            border-radius: 4px;
+            color: #00d4ff;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .ai-recommendation-action:hover {
+            background: rgba(0, 212, 255, 0.2);
+        }
+        
+        /* Process Widget */
+        .process-widget .top-processes {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .process-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+        
+        .process-icon {
+            width: 24px;
+            height: 24px;
+            background: rgba(0, 212, 255, 0.2);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .process-name {
+            flex: 1;
+            font-size: 12px;
+        }
+        
+        .process-usage {
+            font-size: 12px;
+            color: #00d4ff;
+            font-weight: 600;
+        }
+        
+        /* Real-time chart styles */
+        .realtime-chart {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .chart-line {
+            stroke: #00d4ff;
+            stroke-width: 2;
+            fill: none;
+        }
+        
+        .chart-area {
+            fill: rgba(0, 212, 255, 0.1);
+        }
+        
+        .chart-grid {
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 1;
+        }
+        
+        .chart-axis {
+            fill: #888;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="monitor">
+        <!-- Header -->
+        <div class="monitor-header">
+            <div class="monitor-title">
+                <span>📊</span>
+                <span>AI System Monitor</span>
+            </div>
+            <div class="monitor-status">
+                <div class="monitor-status-item">
+                    <div class="status-indicator"></div>
+                    <span>System: Online</span>
+                </div>
+                <div class="monitor-status-item">
+                    <div class="status-indicator"></div>
+                    <span>AI: Active</span>
+                </div>
+                <div class="monitor-status-item">
+                    <div class="status-indicator"></div>
+                    <span>Monitoring: Running</span>
+                </div>
+            </div>
+            <div class="monitor-controls">
+                <button class="monitor-btn" onclick="toggleAutoRefresh()">⏸️ Pause</button>
+                <button class="monitor-btn" onclick="toggleDashboardMode()" id="dashboardToggle">📊 Dashboard</button>
+                <button class="monitor-btn primary" onclick="exportData()">📥 Export</button>
+                <button class="monitor-btn" onclick="resetAlerts()">🔄 Reset</button>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="monitor-main">
+            <!-- CPU Widget -->
+            <div class="monitor-widget cpu-widget">
+                <div class="widget-header">
+                    <div class="widget-title">🖥️ CPU Performance</div>
+                    <div class="widget-controls">
+                        <div class="widget-btn" onclick="minimizeWidget('cpu')">−</div>
+                        <div class="widget-btn" onclick="closeWidget('cpu')">×</div>
+                    </div>
+                </div>
+                <div class="widget-content">
+                    <div class="chart-container">
+                        <canvas class="cpu-chart" id="cpuChart"></canvas>
+                    </div>
+                    <div class="cpu-info">
+                        <div class="cpu-stat">
+                            <div class="cpu-stat-value" id="cpuUsage">23%</div>
+                            <div class="cpu-stat-label">Usage</div>
+                        </div>
+                        <div class="cpu-stat">
+                            <div class="cpu-stat-value" id="cpuTemp">45°C</div>
+                            <div class="cpu-stat-label">Temperature</div>
+                        </div>
+                        <div class="cpu-stat">
+                            <div class="cpu-stat-value" id="cpuFreq">2.4GHz</div>
+                            <div class="cpu-stat-label">Frequency</div>
+                        </div>
+                        <div class="cpu-stat">
+                            <div class="cpu-stat-value" id="cpuCores">4/8</div>
+                            <div class="cpu-stat-label">Cores Active</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Memory Widget -->
+            <div class="monitor-widget memory-widget">
+                <div class="widget-header">
+                    <div class="widget-title">💾 Memory Usage</div>
+                    <div class="widget-controls">
+                        <div class="widget-btn" onclick="minimizeWidget('memory')">−</div>
+                        <div class="widget-btn" onclick="closeWidget('memory')">×</div>
+                    </div>
+                </div>
+                <div class="widget-content">
+                    <div class="memory-visual">
+                        <div class="memory-circle" id="memoryCircle" style="--memory-deg: 216deg;">
+                            <div class="memory-percentage" id="memoryPercentage">60%</div>
+                        </div>
+                        <div class="memory-details">
+                            <div class="memory-bar">
+                                <div class="memory-bar-fill" id="memoryBarFill" style="width: 60%"></div>
+                            </div>
+                            <div class="memory-info">
+                                <div id="memoryUsed">4.8GB / 8GB</div>
+                                <div id="memoryAvailable">3.2GB Available</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Network Widget -->
+            <div class="monitor-widget network-widget">
+                <div class="widget-header">
+                    <div class="widget-title">🌐 Network Activity</div>
+                    <div class="widget-controls">
+                        <div class="widget-btn" onclick="minimizeWidget('network')">−</div>
+                        <div class="widget-btn" onclick="closeWidget('network')">×</div>
+                    </div>
+                </div>
+                <div class="widget-content">
+                    <div class="network-stats">
+                        <div class="network-stat">
+                            <div class="network-stat-value" id="uploadSpeed">1.2 MB/s</div>
+                            <div class="network-stat-label">Upload</div>
+                        </div>
+                        <div class="network-stat">
+                            <div class="network-stat-value" id="downloadSpeed">800 KB/s</div>
+                            <div class="network-stat-label">Download</div>
+                        </div>
+                    </div>
+                    <div class="network-activity">
+                        <canvas class="realtime-chart" id="networkChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Disk Widget -->
+            <div class="monitor-widget disk-widget">
+                <div class="widget-header">
+                    <div class="widget-title">💽 Storage</div>
+                    <div class="widget-controls">
+                        <div class="widget-btn" onclick="minimizeWidget('disk')">−</div>
+                        <div class="widget-btn" onclick="closeWidget('disk')">×</div>
+                    </div>
+                </div>
+                <div class="widget-content">
+                    <div class="disk-list">
+                        <div class="disk-item">
+                            <div class="disk-icon">💿</div>
+                            <div class="disk-info">
+                                <div class="disk-name">System Drive (C:)</div>
+                                <div class="disk-space">156GB / 500GB used</div>
+                            </div>
+                            <div class="disk-bar">
+                                <div class="disk-bar-fill" style="width: 31%"></div>
+                            </div>
+                        </div>
+                        <div class="disk-item">
+                            <div class="disk-icon">📁</div>
+                            <div class="disk-info">
+                                <div class="disk-name">Data Drive (D:)</div>
+                                <div class="disk-space">89GB / 1TB used</div>
+                            </div>
+                            <div class="disk-bar">
+                                <div class="disk-bar-fill" style="width: 9%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Temperature Widget -->
+            <div class="monitor-widget temperature-widget">
+                <div class="widget-header">
+                    <div class="widget-title">🌡️ Temperature</div>
+                    <div class="widget-controls">
+                        <div class="widget-btn" onclick="minimizeWidget('temperature')">−</div>
+                        <div class="widget-btn" onclick="closeWidget('temperature')">×</div>
+                    </div>
+                </div>
+                <div class="widget-content">
+                    <div class="temp-grid">
+                        <div class="temp-item">
+                            <div class="temp-value" id="cpuTempValue">45°C</div>
+                            <div class="temp-label">CPU</div>
+                        </div>
+                        <div class="temp-item">
+                            <div class="temp-value" id="gpuTempValue">38°C</div>
+                            <div class="temp-label">GPU</div>
+                        </div>
+                        <div class="temp-item">
+                            <div class="temp-value" id="systemTempValue">35°C</div>
+                            <div class="temp-label">System</div>
+                        </div>
+                        <div class="temp-item">
+                            <div class="temp-value" id="batteryTempValue">32°C</div>
+                            <div class="temp-label">Battery</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI Performance Widget -->
+            <div class="monitor-widget ai-widget">
+                <div class="widget-header">
+                    <div class="widget-title">🤖 AI Performance</div>
+                    <div class="widget-controls">
+                        <div class="widget-btn" onclick="minimizeWidget('ai')">−</div>
+                        <div class="widget-btn" onclick="closeWidget('ai')">×</div>
+                    </div>
+                </div>
+                <div class="widget-content">
+                    <div class="ai-metrics">
+                        <div class="ai-metric">
+                            <div class="ai-metric-value" id="aiEfficiency">87%</div>
+                            <div class="ai-metric-label">Efficiency</div>
+                        </div>
+                        <div class="ai-metric">
+                            <div class="ai-metric-value" id="aiResponseTime">12ms</div>
+                            <div class="ai-metric-label">Response Time</div>
+                        </div>
+                        <div class="ai-metric">
+                            <div class="ai-metric-value" id="aiAccuracy">94%</div>
+                            <div class="ai-metric-label">Accuracy</div>
+                        </div>
+                    </div>
+                    <div class="ai-recommendation" id="aiRecommendation">
+                        <div class="ai-recommendation-title">AI Optimization Suggestion</div>
+                        <div class="ai-recommendation-text">AI detected that process scheduling can be optimized for 15% better performance.</div>
+                        <button class="ai-recommendation-action" onclick="applyAIRecommendation()">Apply Optimization</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Top Processes Widget -->
+            <div class="monitor-widget process-widget">
+                <div class="widget-header">
+                    <div class="widget-title">⚡ Top Processes</div>
+                    <div class="widget-controls">
+                        <div class="widget-btn" onclick="minimizeWidget('process')">−</div>
+                        <div class="widget-btn" onclick="closeWidget('process')">×</div>
+                    </div>
+                </div>
+                <div class="widget-content">
+                    <div class="top-processes" id="topProcesses">
+                        <!-- Processes will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class AISystemMonitor {
+            constructor() {
+                this.isMonitoring = true;
+                this.updateInterval = null;
+                this.charts = {};
+                this.data = {
+                    cpu: [],
+                    memory: [],
+                    network: [],
+                    processes: []
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.setupCharts();
+                this.generateInitialData();
+                this.startMonitoring();
+                this.updateDisplay();
+            }
+            
+            setupCharts() {
+                // Setup CPU chart
+                const cpuCanvas = document.getElementById('cpuChart');
+                if (cpuCanvas) {
+                    this.charts.cpu = cpuCanvas.getContext('2d');
+                }
+                
+                // Setup network chart
+                const networkCanvas = document.getElementById('networkChart');
+                if (networkCanvas) {
+                    this.charts.network = networkCanvas.getContext('2d');
+                }
+            }
+            
+            generateInitialData() {
+                // Generate initial data points
+                for (let i = 0; i < 20; i++) {
+                    this.data.cpu.push(Math.random() * 40 + 10);
+                    this.data.memory.push(Math.random() * 30 + 40);
+                    this.data.network.push(Math.random() * 50 + 10);
+                }
+                
+                this.generateTopProcesses();
+            }
+            
+            generateTopProcesses() {
+                this.data.processes = [
+                    { name: 'AI Kernel Core', icon: '🧠', usage: 15.2 },
+                    { name: 'Desktop Interface', icon: '🖥️', usage: 8.5 },
+                    { name: 'Process Manager', icon: '⚙️', usage: 6.8 },
+                    { name: 'File Manager', icon: '📁', usage: 4.2 },
+                    { name: 'System Monitor', icon: '📊', usage: 3.7 },
+                    { name: 'Network Monitor', icon: '🌐', usage: 2.9 },
+                    { name: 'Database Engine', icon: '🗄️', usage: 2.3 },
+                    { name: 'UI Framework', icon: '🎨', usage: 1.8 }
+                ].sort((a, b) => b.usage - a.usage);
+            }
+            
+            startMonitoring() {
+                this.updateInterval = setInterval(() => {
+                    if (this.isMonitoring) {
+                        this.updateData();
+                        this.updateDisplay();
+                    }
+                }, 1000);
+            }
+            
+            stopMonitoring() {
+                if (this.updateInterval) {
+                    clearInterval(this.updateInterval);
+                    this.updateInterval = null;
+                }
+            }
+            
+            updateData() {
+                // Generate new data points
+                const newCpuUsage = Math.random() * 40 + 10;
+                const newMemoryUsage = Math.random() * 30 + 40;
+                const newNetworkActivity = Math.random() * 50 + 10;
+                
+                // Update data arrays (keep last 20 points)
+                this.data.cpu.push(newCpuUsage);
+                this.data.memory.push(newMemoryUsage);
+                this.data.network.push(newNetworkActivity);
+                
+                if (this.data.cpu.length > 20) this.data.cpu.shift();
+                if (this.data.memory.length > 20) this.data.memory.shift();
+                if (this.data.network.length > 20) this.data.network.shift();
+                
+                // Update process usage slightly
+                this.data.processes.forEach(process => {
+                    process.usage += (Math.random() - 0.5) * 2;
+                    process.usage = Math.max(0, process.usage);
+                });
+                
+                this.data.processes.sort((a, b) => b.usage - a.usage);
+            }
+            
+            updateDisplay() {
+                this.updateCPUDisplay();
+                this.updateMemoryDisplay();
+                this.updateNetworkDisplay();
+                this.updateTemperatureDisplay();
+                this.updateAIDisplay();
+                this.updateProcessesDisplay();
+                this.updateCharts();
+            }
+            
+            updateCPUDisplay() {
+                const currentCpu = this.data.cpu[this.data.cpu.length - 1] || 23;
+                const currentTemp = Math.random() * 10 + 40;
+                const currentFreq = (Math.random() * 1 + 2).toFixed(1) + 'GHz';
+                const activeCores = Math.floor(Math.random() * 3 + 3) + '/8';
+                
+                document.getElementById('cpuUsage').textContent = Math.round(currentCpu) + '%';
+                document.getElementById('cpuTemp').textContent = Math.round(currentTemp) + '°C';
+                document.getElementById('cpuFreq').textContent = currentFreq;
+                document.getElementById('cpuCores').textContent = activeCores;
+            }
+            
+            updateMemoryDisplay() {
+                const currentMemory = this.data.memory[this.data.memory.length - 1] || 60;
+                const usedGB = (currentMemory / 100 * 8).toFixed(1);
+                const availableGB = (8 - usedGB).toFixed(1);
+                
+                document.getElementById('memoryPercentage').textContent = Math.round(currentMemory) + '%';
+                document.getElementById('memoryUsed').textContent = `${usedGB}GB / 8GB`;
+                document.getElementById('memoryAvailable').textContent = `${availableGB}GB Available`;
+                
+                // Update visual elements
+                const memoryCircle = document.getElementById('memoryCircle');
+                const memoryBarFill = document.getElementById('memoryBarFill');
+                const memoryDeg = (currentMemory / 100) * 360;
+                
+                if (memoryCircle) {
+                    memoryCircle.style.setProperty('--memory-deg', memoryDeg + 'deg');
+                }
+                if (memoryBarFill) {
+                    memoryBarFill.style.width = currentMemory + '%';
+                }
+            }
+            
+            updateNetworkDisplay() {
+                const uploadSpeed = (Math.random() * 2 + 0.5).toFixed(1) + ' MB/s';
+                const downloadSpeed = (Math.random() * 1.5 + 0.3).toFixed(1) + ' MB/s';
+                
+                document.getElementById('uploadSpeed').textContent = uploadSpeed;
+                document.getElementById('downloadSpeed').textContent = downloadSpeed;
+            }
+            
+            updateTemperatureDisplay() {
+                document.getElementById('cpuTempValue').textContent = Math.round(Math.random() * 10 + 40) + '°C';
+                document.getElementById('gpuTempValue').textContent = Math.round(Math.random() * 8 + 35) + '°C';
+                document.getElementById('systemTempValue').textContent = Math.round(Math.random() * 8 + 32) + '°C';
+                document.getElementById('batteryTempValue').textContent = Math.round(Math.random() * 6 + 28) + '°C';
+            }
+            
+            updateAIDisplay() {
+                const efficiency = Math.round(Math.random() * 10 + 85);
+                const responseTime = Math.round(Math.random() * 8 + 10);
+                const accuracy = Math.round(Math.random() * 6 + 92);
+                
+                document.getElementById('aiEfficiency').textContent = efficiency + '%';
+                document.getElementById('aiResponseTime').textContent = responseTime + 'ms';
+                document.getElementById('aiAccuracy').textContent = accuracy + '%';
+                
+                // Update recommendation
+                const recommendations = [
+                    'AI detected that process scheduling can be optimized for 15% better performance.',
+                    'Memory usage patterns suggest enabling AI predictive caching.',
+                    'Network optimization available for 8% throughput improvement.',
+                    'AI recommends enabling power saving mode during idle periods.',
+                    'System efficiency can be improved by reorganizing AI workload distribution.'
+                ];
+                
+                const recommendation = recommendations[Math.floor(Math.random() * recommendations.length)];
+                const recommendationDiv = document.getElementById('aiRecommendation');
+                if (recommendationDiv) {
+                    recommendationDiv.querySelector('.ai-recommendation-text').textContent = recommendation;
+                }
+            }
+            
+            updateProcessesDisplay() {
+                const container = document.getElementById('topProcesses');
+                if (container) {
+                    container.innerHTML = this.data.processes.slice(0, 6).map(process => `
+                        <div class="process-item">
+                            <div class="process-icon">${process.icon}</div>
+                            <div class="process-name">${process.name}</div>
+                            <div class="process-usage">${process.usage.toFixed(1)}%</div>
+                        </div>
+                    `).join('');
+                }
+            }
+            
+            updateCharts() {
+                this.drawCPUChart();
+                this.drawNetworkChart();
+            }
+            
+            drawCPUChart() {
+                const ctx = this.charts.cpu;
+                if (!ctx) return;
+                
+                const canvas = ctx.canvas;
+                const width = canvas.width;
+                const height = canvas.height;
+                
+                ctx.clearRect(0, 0, width, height);
+                
+                // Draw grid
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.lineWidth = 1;
+                for (let i = 0; i <= 5; i++) {
+                    const y = (height / 5) * i;
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(width, y);
+                    ctx.stroke();
+                }
+                
+                // Draw CPU line
+                if (this.data.cpu.length > 1) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#00d4ff';
+                    ctx.lineWidth = 2;
+                    
+                    this.data.cpu.forEach((value, index) => {
+                        const x = (index / (this.data.cpu.length - 1)) * width;
+                        const y = height - (value / 100) * height;
+                        
+                        if (index === 0) {
+                            ctx.moveTo(x, y);
+                        } else {
+                            ctx.lineTo(x, y);
+                        }
+                    });
+                    
+                    ctx.stroke();
+                    
+                    // Fill area under curve
+                    ctx.lineTo(width, height);
+                    ctx.lineTo(0, height);
+                    ctx.closePath();
+                    ctx.fillStyle = 'rgba(0, 212, 255, 0.1)';
+                    ctx.fill();
+                }
+            }
+            
+            drawNetworkChart() {
+                const ctx = this.charts.network;
+                if (!ctx) return;
+                
+                const canvas = ctx.canvas;
+                const width = canvas.width;
+                const height = canvas.height;
+                
+                ctx.clearRect(0, 0, width, height);
+                
+                // Draw network activity bars
+                const barWidth = width / this.data.network.length;
+                
+                this.data.network.forEach((value, index) => {
+                    const x = index * barWidth;
+                    const barHeight = (value / 100) * height;
+                    const y = height - barHeight;
+                    
+                    ctx.fillStyle = 'rgba(0, 212, 255, 0.6)';
+                    ctx.fillRect(x, y, barWidth - 1, barHeight);
+                });
+            }
+        }
+        
+        // Global variables
+        let systemMonitor;
+        let dashboardMode = false;
+        
+        // Dashboard control functions
+        function toggleDashboardMode() {
+            const monitorMain = document.querySelector('.monitor-main');
+            const widgets = document.querySelectorAll('.monitor-widget');
+            
+            dashboardMode = !dashboardMode;
+            
+            if (dashboardMode) {
+                // Switch to dashboard view - hide headers and controls
+                widgets.forEach(widget => {
+                    const header = widget.querySelector('.widget-header');
+                    const content = widget.querySelector('.widget-content');
+                    if (header) header.style.display = 'none';
+                    if (content) {
+                        content.style.padding = '10px';
+                    }
+                });
+                monitorMain.style.gridTemplateColumns = 'repeat(auto-fit, minmax(200px, 1fr))';
+                monitorMain.style.gridTemplateRows = 'repeat(auto-fit, minmax(150px, 1fr))';
+            } else {
+                // Switch back to detailed view
+                widgets.forEach(widget => {
+                    const header = widget.querySelector('.widget-header');
+                    const content = widget.querySelector('.widget-content');
+                    if (header) header.style.display = 'flex';
+                    if (content) {
+                        content.style.padding = '';
+                    }
+                });
+                monitorMain.style.gridTemplateColumns = 'repeat(auto-fit, minmax(300px, 1fr))';
+                monitorMain.style.gridTemplateRows = 'repeat(auto-fit, minmax(250px, 1fr))';
+            }
+        }
+        
+        // Widget control functions
+        function minimizeWidget(widgetId) {
+            const widget = document.querySelector(`[id*="${widgetId}"]`).closest('.monitor-widget');
+            if (widget) {
+                const content = widget.querySelector('.widget-content');
+                if (content) {
+                    content.style.display = content.style.display === 'none' ? 'flex' : 'none';
+                }
+            }
+        }
+        
+        function closeWidget(widgetId) {
+            const widget = document.querySelector(`[id*="${widgetId}"]`).closest('.monitor-widget');
+            if (widget) {
+                widget.remove();
+            }
+        }
+        
+        function toggleAutoRefresh() {
+            systemMonitor.isMonitoring = !systemMonitor.isMonitoring;
+            const btn = event.target;
+            btn.textContent = systemMonitor.isMonitoring ? '⏸️ Pause' : '▶️ Resume';
+            btn.classList.toggle('primary');
+        }
+        
+        function exportData() {
+            systemMonitor.showNotification('Export', 'System data exported successfully');
+        }
+        
+        function resetAlerts() {
+            systemMonitor.showNotification('Reset', 'All alerts have been reset');
+        }
+        
+        function applyAIRecommendation() {
+            systemMonitor.showNotification('AI Optimization', 'Applying AI recommendation...');
+            setTimeout(() => {
+                systemMonitor.showNotification('AI Optimization', 'Optimization applied successfully');
+            }, 2000);
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            systemMonitor = new AISystemMonitor();
+        });
+    </script>
+</body>
+</html>

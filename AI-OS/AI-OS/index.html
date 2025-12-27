@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🤖 AI-OS Mobile Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #007AFF;
+            --primary-dark: #0056CC;
+            --secondary: #FF3B30;
+            --accent: #34C759;
+            --background: #000000;
+            --surface: #1C1C1E;
+            --surface-light: #2C2C2E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #8E8E93;
+            --border: rgba(255, 255, 255, 0.1);
+            --glass: rgba(255, 255, 255, 0.05);
+            --gradient: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* iPhone 11 Pro Safe Area */
+        .safe-area {
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }
+
+        .mobile-container {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: linear-gradient(180deg, #000000 0%, #1a1a1a 100%);
+            position: relative;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .status-left {
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .status-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 17px;
+        }
+
+        .battery-icon {
+            width: 24px;
+            height: 12px;
+            border: 1px solid var(--text-primary);
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .battery-icon::after {
+            content: '';
+            position: absolute;
+            right: -3px;
+            top: 3px;
+            width: 2px;
+            height: 6px;
+            background: var(--text-primary);
+            border-radius: 1px;
+        }
+
+        /* AI Header */
+        .ai-header {
+            padding: 20px 24px 40px;
+            background: var(--gradient);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>') repeat;
+            opacity: 0.3;
+        }
+
+        .ai-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ai-logo-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .ai-logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(45deg, #fff, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .ai-status {
+            background: rgba(52, 199, 89, 0.2);
+            border: 1px solid rgba(52, 199, 89, 0.5);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ai-status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        .ai-description {
+            font-size: 16px;
+            line-height: 1.5;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* AI Assistant Bar */
+        .ai-assistant-bar {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            margin: -20px 24px 24px;
+            backdrop-filter: blur(20px);
+            position: relative;
+            top: -20px;
+        }
+
+        .ai-assistant-input {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .ai-input-field {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 16px;
+            outline: none;
+        }
+
+        .ai-input-field::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .ai-mic-btn {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .ai-mic-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            padding: 0 24px 24px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .action-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(20px);
+        }
+
+        .action-card:active {
+            transform: scale(0.95);
+        }
+
+        .action-card:hover {
+            border-color: var(--primary);
+            background: rgba(0, 122, 255, 0.1);
+        }
+
+        .action-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 24px;
+        }
+
+        .action-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .action-subtitle {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* App Grid */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            padding: 0 24px;
+        }
+
+        .app-icon {
+            aspect-ratio: 1;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-icon:active {
+            transform: scale(0.9);
+        }
+
+        .app-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .app-icon:hover::before {
+            opacity: 0.1;
+        }
+
+        .app-icon-emoji {
+            font-size: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .app-icon-name {
+            font-size: 10px;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.2;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Dock */
+        .dock {
+            position: fixed;
+            bottom: 34px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 8px;
+            display: flex;
+            gap: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .dock-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--gradient);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dock-icon:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Floating AI Button */
+        .floating-ai {
+            position: fixed;
+            bottom: 120px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(0, 122, 255, 0.4);
+            transition: all 0.3s ease;
+            z-index: 50;
+        }
+
+        .floating-ai:hover {
+            transform: scale(1.1);
+        }
+
+        /* Status Indicator */
+        .system-status {
+            position: fixed;
+            top: 60px;
+            right: 24px;
+            background: rgba(52, 199, 89, 0.2);
+            border: 1px solid rgba(52, 199, 89, 0.5);
+            border-radius: 12px;
+            padding: 8px 12px;
+            font-size: 12px;
+            backdrop-filter: blur(20px);
+            z-index: 100;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 430px) {
+            .mobile-container {
+                max-width: 100%;
+            }
+            
+            .status-bar {
+                padding: 0 16px;
+            }
+            
+            .ai-header, .quick-actions {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+            
+            .ai-assistant-bar {
+                margin-left: 16px;
+                margin-right: 16px;
+            }
+            
+            .app-grid {
+                padding: 0 16px;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px;
+            }
+        }
+
+        /* Dark mode enhancements */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background: #000000;
+                --surface: #1C1C1E;
+                --surface-light: #2C2C2E;
+            }
+        }
+    </style>
+</head>
+<body class="safe-area">
+    <div class="mobile-container">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-left">
+                <span id="current-time">9:41</span>
+            </div>
+            <div class="status-right">
+                <span>📶</span>
+                <span>🔋</span>
+                <div class="battery-icon"></div>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="system-status">
+            <span style="color: var(--accent);">●</span> AI Online
+        </div>
+
+        <!-- AI Header -->
+        <div class="ai-header">
+            <div class="ai-logo">
+                <div class="ai-logo-icon">🤖</div>
+                <div class="ai-logo-text">AI-OS</div>
+            </div>
+            
+            <div class="ai-status">
+                <div class="ai-status-dot"></div>
+                <span>Pokročilý AI operačný systém pripravený</span>
+            </div>
+            
+            <div class="ai-description">
+                Váš personalizovaný AI asistent s autonómnymi funkciami, optimalizovaný pre iPhone 11 Pro
+            </div>
+        </div>
+
+        <!-- AI Assistant Bar -->
+        <div class="ai-assistant-bar">
+            <div class="ai-assistant-input">
+                <input type="text" class="ai-input-field" placeholder="Opýte sa AI asistenta..." id="aiPrompt">
+                <button class="ai-mic-btn" onclick="startVoiceInput()">🎤</button>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <h2 class="section-title">Rýchle akcie</h2>
+            <div class="actions-grid">
+                <div class="action-card" onclick="openApp('ADVANCED-AI-OS.html')">
+                    <div class="action-icon">🚀</div>
+                    <div class="action-title">AI-OS Pro</div>
+                    <div class="action-subtitle">Hlavné rozhranie</div>
+                </div>
+                
+                <div class="action-card" onclick="openApp('iOS-Environment.html')">
+                    <div class="action-icon">🍎</div>
+                    <div class="action-title">iOS Env</div>
+                    <div class="action-subtitle">Native iOS style</div>
+                </div>
+                
+                <div class="action-card" onclick="openApp('Apps/ai-terminal-shell-universal.html')">
+                    <div class="action-icon">💻</div>
+                    <div class="action-title">Terminal</div>
+                    <div class="action-subtitle">NetHunter Pro</div>
+                </div>
+                
+                <div class="action-card" onclick="openApp('launcher.html')">
+                    <div class="action-icon">📋</div>
+                    <div class="action-title">Launcher</div>
+                    <div class="action-subtitle">Všetky aplikácie</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- App Grid -->
+        <div class="app-grid">
+            <div class="app-icon" onclick="openApp('MOBILE/voice-interface.html')">
+                <div class="app-icon-emoji">🎤</div>
+                <div class="app-icon-name">Voice AI</div>
+            </div>
+            
+            <div class="app-icon" onclick="openApp('Apps/ai-android-emulator-universal.html')">
+                <div class="app-icon-emoji">🤖</div>
+                <div class="app-icon-name">Android</div>
+            </div>
+            
+            <div class="app-icon" onclick="openApp('Apps/ai-network-monitor.html')">
+                <div class="app-icon-emoji">📡</div>
+                <div class="app-icon-name">Network</div>
+            </div>
+            
+            <div class="app-icon" onclick="openApp('Apps/ai-system-monitor.html')">
+                <div class="app-icon-emoji">📊</div>
+                <div class="app-icon-name">Monitor</div>
+            </div>
+            
+            <div class="app-icon" onclick="openApp('Apps/ai-app-store-universal.html')">
+                <div class="app-icon-emoji">🛒</div>
+                <div class="app-icon-name">App Store</div>
+            </div>
+            
+            <div class="app-icon" onclick="openApp('MOBILE/ai-plugin-marketplace.html')">
+                <div class="app-icon-emoji">🔌</div>
+                <div class="app-icon-name">Plugins</div>
+            </div>
+            
+            <div class="app-icon" onclick="openApp('Apps/ai-file-manager.html')">
+                <div class="app-icon-emoji">📁</div>
+                <div class="app-icon-name">Files</div>
+            </div>
+            
+            <div class="app-icon" onclick="openApp('Apps/ai-system-settings.html')">
+                <div class="app-icon-emoji">⚙️</div>
+                <div class="app-icon-name">Settings</div>
+            </div>
+            
+            <div class="app-icon" onclick="openApp('MOBILE/ai-learning-center.html')">
+                <div class="app-icon-emoji">📚</div>
+                <div class="app-icon-name">Learning</div>
+            </div>
+            
+            <div class="app-icon" onclick="openApp('Apps/ai-task-manager.html')">
+                <div class="app-icon-emoji">⚡</div>
+                <div class="app-icon-name">Tasks</div>
+            </div>
+            
+            <div class="app-icon" onclick="openApp('MOBILE/ai-performance-optimizer.html')">
+                <div class="app-icon-emoji">🚀</div>
+                <div class="app-icon-name">Optimizer</div>
+            </div>
+            
+            <div class="app-icon" onclick="openApp('Apps/ai-desktop-manager.html')">
+                <div class="app-icon-emoji">🖥️</div>
+                <div class="app-icon-name">Desktop</div>
+            </div>
+        </div>
+
+        <!-- Dock -->
+        <div class="dock">
+            <div class="dock-icon" onclick="openApp('ADVANCED-AI-OS.html')">🤖</div>
+            <div class="dock-icon" onclick="openApp('iOS-Environment.html')">🍎</div>
+            <div class="dock-icon" onclick="openApp('Apps/ai-terminal-shell-universal.html')">💻</div>
+            <div class="dock-icon" onclick="openApp('MOBILE/voice-interface.html')">🎤</div>
+        </div>
+
+        <!-- Floating AI Button -->
+        <div class="floating-ai" onclick="toggleAIMenu()">🤖</div>
+    </div>
+
+    <script>
+        // Update time every minute
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('sk-SK', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false 
+            });
+            document.getElementById('current-time').textContent = timeString;
+        }
+
+        // Open app function
+        function openApp(url) {
+            // Add haptic feedback simulation
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+            
+            // Create ripple effect
+            const ripple = document.createElement('div');
+            ripple.style.position = 'absolute';
+            ripple.style.borderRadius = '50%';
+            ripple.style.background = 'rgba(0, 122, 255, 0.3)';
+            ripple.style.transform = 'scale(0)';
+            ripple.style.animation = 'ripple 0.6s linear';
+            ripple.style.left = '50%';
+            ripple.style.top = '50%';
+            ripple.style.width = '20px';
+            ripple.style.height = '20px';
+            ripple.style.marginLeft = '-10px';
+            ripple.style.marginTop = '-10px';
+            
+            const target = event.currentTarget;
+            target.style.position = 'relative';
+            target.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+                window.location.href = url;
+            }, 300);
+        }
+
+        // Voice input function
+        function startVoiceInput() {
+            if ('webkitSpeechRecognition' in window) {
+                const recognition = new webkitSpeechRecognition();
+                recognition.lang = 'sk-SK';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+
+                recognition.onstart = function() {
+                    console.log('Voice recognition started');
+                    showAIFeedback('🎤 Počúvam...');
+                };
+
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    document.getElementById('aiPrompt').value = transcript;
+                    processAIPrompt(transcript);
+                };
+
+                recognition.onerror = function(event) {
+                    console.error('Speech recognition error:', event.error);
+                    showAIFeedback('❌ Chyba rozpoznávania reči');
+                };
+
+                recognition.start();
+            } else {
+                showAIFeedback('❌ Rozpoznávanie reči nie je podporované');
+            }
+        }
+
+        // Process AI prompt
+        function processAIPrompt(prompt) {
+            if (!prompt.trim()) return;
+            
+            showAIFeedback('🤖 Spracovávam...');
+            
+            // Simulate AI processing
+            setTimeout(() => {
+                const lowerPrompt = prompt.toLowerCase();
+                let response = '';
+                
+                if (lowerPrompt.includes('terminál') || lowerPrompt.includes('terminal')) {
+                    openApp('Apps/ai-terminal-shell-universal.html');
+                    response = '🚀 Otváram Terminal Pro';
+                } else if (lowerPrompt.includes('ios') || lowerPrompt.includes('apple')) {
+                    openApp('iOS-Environment.html');
+                    response = '🍎 Otváram iOS Environment';
+                } else if (lowerPrompt.includes('android')) {
+                    openApp('Apps/ai-android-emulator-universal.html');
+                    response = '🤖 Otváram Android Emulator';
+                } else if (lowerPrompt.includes('voice') || lowerPrompt.includes('hlas')) {
+                    openApp('MOBILE/voice-interface.html');
+                    response = '🎤 Otváram Voice Interface';
+                } else if (lowerPrompt.includes('launcher') || lowerPrompt.includes('všetko')) {
+                    openApp('launcher.html');
+                    response = '📋 Otváram kompletný Launcher';
+                } else {
+                    response = '🤖 Nerozumiem, skúste: "otvor terminál", "ios environment", alebo "android emulator"';
+                }
+                
+                showAIFeedback(response);
+            }, 1000);
+        }
+
+        // Show AI feedback
+        function showAIFeedback(message) {
+            const feedback = document.createElement('div');
+            feedback.style.cssText = `
+                position: fixed;
+                bottom: 200px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--gradient);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 12px;
+                font-size: 14px;
+                font-weight: 500;
+                z-index: 1000;
+                box-shadow: 0 4px 20px rgba(0, 122, 255, 0.3);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            `;
+            feedback.textContent = message;
+            document.body.appendChild(feedback);
+            
+            setTimeout(() => {
+                feedback.style.opacity = '0';
+                feedback.style.transform = 'translateX(-50%) translateY(20px)';
+                setTimeout(() => feedback.remove(), 300);
+            }, 2000);
+        }
+
+        // Toggle AI menu
+        function toggleAIMenu() {
+            showAIFeedback('🤖 AI Asistent pripravený!');
+        }
+
+        // Handle Enter key in AI input
+        document.getElementById('aiPrompt').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                processAIPrompt(this.value);
+                this.value = '';
+            }
+        });
+
+        // Keyboard shortcuts for desktop users
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT') return;
+            
+            switch(e.key) {
+                case '1':
+                    openApp('ADVANCED-AI-OS.html');
+                    break;
+                case '2':
+                    openApp('iOS-Environment.html');
+                    break;
+                case 't':
+                case 'T':
+                    openApp('Apps/ai-terminal-shell-universal.html');
+                    break;
+                case 'a':
+                case 'A':
+                    openApp('Apps/ai-android-emulator-universal.html');
+                    break;
+                case 'v':
+                case 'V':
+                    openApp('MOBILE/voice-interface.html');
+                    break;
+                case 'l':
+                case 'L':
+                    openApp('launcher.html');
+                    break;
+            }
+        });
+
+        // Add haptic feedback to touch events
+        document.addEventListener('touchstart', function(e) {
+            if (navigator.vibrate) {
+                navigator.vibrate(10);
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTime();
+            setInterval(updateTime, 60000);
+            
+            // Animate elements on load
+            const elements = document.querySelectorAll('.action-card, .app-icon, .dock-icon');
+            elements.forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    el.style.transition = 'all 0.3s ease';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, index * 50);
+            });
+            
+            // Show welcome message
+            setTimeout(() => {
+                showAIFeedback('👋 Vitajte v AI-OS Mobile Pro!');
+            }, 1000);
+        });
+
+        // Add CSS for ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
