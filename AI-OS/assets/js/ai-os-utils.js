@@ -174,9 +174,14 @@ class AIOSUtils {
             <div class="ai-modal-header">
                 <h2 id="modal-title-${modalId}" class="ai-heading-md">${title}</h2>
                 <button onclick="AIOS.utils.closeModal('${modalId}')" 
-                        style="background: none; border: none; color: var(--ai-primary); cursor: pointer; font-size: 20px;"
-                        aria-label="Zatvoriť">
-                    ✕
+                        style="background: none; border: none; color: var(--ai-primary); cursor: pointer; font-size: 20px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 6px; transition: all 0.2s ease;"
+                        aria-label="Zatvoriť"
+                        onmouseover="this.style.background='rgba(0, 212, 255, 0.1)'"
+                        onmouseout="this.style.background='none'">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
             <div class="ai-modal-body">

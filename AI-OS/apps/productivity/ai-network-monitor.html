@@ -70,17 +70,59 @@
     <style>
         /* === AI-OS NETWORK MONITOR OVERRIDES === */
         :root {
-            /* Network monitor specific colors */
-            --network-primary: var(--info);
-            --network-secondary: var(--primary-500);
+            /* Network monitor specific colors - with fallbacks */
+            --network-primary: #00d4ff;
+            --network-secondary: #0099ff;
             --network-background: #000000;
             --network-surface: #0a0a0a;
-            --network-border: var(--info);
-            --network-text: var(--info);
+            --network-border: #00d4ff;
+            --network-text: #00d4ff;
             --network-text-secondary: #0099ff;
-            --network-error: var(--error);
-            --network-success: var(--success);
-            --network-warning: var(--warning);
+            --network-error: #ff4444;
+            --network-success: #00ff00;
+            --network-warning: #ffaa00;
+            
+            /* CSS Variable fallbacks */
+            --background: #000000;
+            --font-mono: 'Courier New', Monaco, Menlo, monospace;
+            --text-lg: 18px;
+            --text-base: 14px;
+            --text-xs: 12px;
+            --text-sm: 12px;
+            --space-lg: 20px;
+            --space-md: 16px;
+            --space-sm: 10px;
+            --space-xs: 5px;
+            --space-xl: 30px;
+            --font-weight-bold: 700;
+            --font-weight-normal: 400;
+            --touch-target-min: 44px;
+            --touch-target-large: 60px;
+            --radius-sm: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --shadow-sm: 0 2px 4px rgba(0, 212, 255, 0.2);
+            --shadow-md: 0 4px 8px rgba(0, 212, 255, 0.3);
+            --shadow-lg: 0 8px 16px rgba(0, 212, 255, 0.4);
+            --transition-fast: 0.15s ease;
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.5s ease;
+            --z-fixed: 1000;
+            --z-modal: 2000;
+        }
+
+        /* Icon sizes */
+        .ai-os-icon-sm {
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+        
+        .ai-os-icon {
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
         }
 
         body {
@@ -101,6 +143,7 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
+            width: 100%;
         }
         
         /* === HEADER === */
@@ -144,6 +187,50 @@
             display: flex;
             gap: var(--space-sm);
         }
+        
+        .nm-btn {
+            padding: 8px 16px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid var(--network-border);
+            border-radius: var(--radius-sm);
+            color: var(--network-text);
+            font-family: var(--font-mono);
+            font-size: var(--text-sm);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            min-height: var(--touch-target-min);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        
+        .nm-btn:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: var(--network-text);
+            transform: translateY(-1px);
+        }
+        
+        .nm-btn:focus {
+            outline: 2px solid var(--network-text);
+            outline-offset: 2px;
+        }
+        
+        .nm-btn.primary {
+            background: rgba(0, 212, 255, 0.3);
+            border-color: var(--network-text);
+            font-weight: var(--font-weight-bold);
+        }
+        
+        .nm-btn.danger {
+            background: rgba(255, 68, 68, 0.2);
+            border-color: var(--network-error);
+            color: var(--network-error);
+        }
+        
+        .nm-btn.danger:hover {
+            background: rgba(255, 68, 68, 0.3);
+        }
+        
         /* === MAIN LAYOUT === */
         .nm-main {
             flex: 1;
@@ -811,7 +898,7 @@
                     startScan();
                     break;
                 case 'toggleMonitor':
-                    toggleMonitor();
+                    toggleMonitor(e);
                     break;
                 case 'refreshConnections':
                     refreshConnections();
@@ -850,7 +937,7 @@
                     startScan();
                     break;
                 case 'toggleMonitor':
-                    toggleMonitor();
+                    toggleMonitor(e);
                     break;
                 case 'refreshConnections':
                     refreshConnections();
@@ -905,14 +992,15 @@
             addSecurityAlert('info', 'Starting network port scan...');
         }
 
-        function toggleMonitor() {
-            const btn = event.target;
+        function toggleMonitor(e) {
+            const btn = e.target;
             
             if (!isMonitoring) {
                 isMonitoring = true;
                 btn.innerHTML = '<svg class="ai-os-icon-sm"><use href="#icon-pause"></use></svg> Stop';
                 btn.setAttribute('aria-pressed', 'true');
                 btn.classList.remove('primary');
+                btn.classList.add('danger');
                 
                 announceToScreenReader('Network monitoring started');
                 
@@ -923,8 +1011,8 @@
                     const uploadElement = document.getElementById('uploadSpeed');
                     const downloadElement = document.getElementById('downloadSpeed');
                     
-                    uploadElement.textContent = '↑ ' + upload + ' KB/s';
-                    downloadElement.textContent = '↓ ' + download + ' KB/s';
+                    if (uploadElement) uploadElement.textContent = '↑ ' + upload + ' KB/s';
+                    if (downloadElement) downloadElement.textContent = '↓ ' + download + ' KB/s';
                     
                     // Random security events
                     if (Math.random() < 0.1) {
@@ -937,6 +1025,7 @@
                 isMonitoring = false;
                 btn.innerHTML = '<svg class="ai-os-icon-sm"><use href="#icon-play"></use></svg> Monitor';
                 btn.setAttribute('aria-pressed', 'false');
+                btn.classList.remove('danger');
                 btn.classList.add('primary');
                 clearInterval(monitorInterval);
                 addSecurityAlert('warning', 'Network monitoring stopped');
