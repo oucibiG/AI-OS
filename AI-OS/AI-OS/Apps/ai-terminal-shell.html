@@ -3,13 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💻 AI Terminal Shell - Enhanced NetHunter Pro</title>
+    <title>AI Terminal Shell | AI-OS</title>
     
     <!-- AI-OS Core Integration -->
     <link rel="stylesheet" href="../css/ai-os-design-system.css">
     <script src="../js/ai-os-core.js"></script>
     <script src="../js/ai-os-utils.js"></script>
     <script src="../js/ai-os-app-integration.js"></script>
+    
+    <!-- AI-OS SVG Icons -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="icon-terminal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 17 10 11 4 5"></polyline>
+            <line x1="12" y1="19" x2="20" y2="19"></line>
+        </symbol>
+        <symbol id="icon-tools" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+        </symbol>
+        <symbol id="icon-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <circle cx="12" cy="12" r="6"></circle>
+            <circle cx="12" cy="12" r="2"></circle>
+        </symbol>
+        <symbol id="icon-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+            <rect x="9" y="9" width="6" height="6"></rect>
+            <line x1="9" y1="1" x2="9" y2="4"></line>
+            <line x1="15" y1="1" x2="15" y2="4"></line>
+            <line x1="9" y1="20" x2="9" y2="23"></line>
+            <line x1="15" y1="20" x2="15" y2="23"></line>
+            <line x1="20" y1="9" x2="23" y2="9"></line>
+            <line x1="20" y1="14" x2="23" y2="14"></line>
+            <line x1="1" y1="9" x2="4" y2="9"></line>
+            <line x1="1" y1="14" x2="4" y2="14"></line>
+        </symbol>
+        <symbol id="icon-network" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </symbol>
+        <symbol id="icon-clipboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+        </symbol>
+        <symbol id="icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </symbol>
+        <symbol id="icon-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+        </symbol>
+        <symbol id="icon-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </symbol>
+        <symbol id="icon-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </symbol>
+        <symbol id="icon-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+        </symbol>
+        <symbol id="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </symbol>
+    </svg>
     <style>
         /* === AI-OS TERMINAL SHELL OVERRIDES === */
         /* Override design system for terminal-specific styling */
@@ -744,6 +805,28 @@
             }
         }
 
+        /* === ICONS === */
+        .ai-os-icon {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            vertical-align: middle;
+        }
+        
+        .ai-os-icon-sm {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .ai-os-icon-lg {
+            width: 24px;
+            height: 24px;
+        }
+        
         /* === ACCESSIBILITY === */
         .sr-only {
             position: absolute;
@@ -788,48 +871,64 @@
         <div class="terminal-container" role="main" aria-label="AI Terminal Shell">
             <header class="terminal-header" role="heading" aria-level="1">
                 <div class="terminal-title">
-                    <span aria-hidden="true">💻</span>
+                    <svg class="ai-os-icon" aria-hidden="true"><use href="#icon-terminal"></use></svg>
                     <span>AI Terminal Shell - Enhanced NetHunter</span>
                 </div>
                 <nav class="terminal-controls" role="toolbar" aria-label="Terminal Controls">
-                    <button class="terminal-btn" onclick="goHome()" title="Domov" aria-label="Return to home">🏠</button>
-                    <button class="terminal-btn" onclick="clearTerminal()" aria-label="Clear terminal">Clear</button>
-                    <button class="terminal-btn" onclick="toggleAIAssistant()" aria-label="Toggle AI assistant">🤖 AI</button>
-                    <button class="terminal-btn" onclick="toggleNetworkMonitor()" aria-label="Toggle network monitor">📡 Net</button>
-                    <button class="terminal-btn" onclick="toggleThemes()" aria-label="Toggle themes">🎨 Theme</button>
-                    <button class="terminal-btn" onclick="installDependencies()" aria-label="Install dependencies">📦 Install</button>
-                    <button class="terminal-btn" onclick="openSettings()" aria-label="Open settings">⚙️</button>
+                    <button class="terminal-btn" data-action="goHome" title="Domov" aria-label="Return to home">
+                        <svg class="ai-os-icon"><use href="#icon-home"></use></svg>
+                    </button>
+                    <button class="terminal-btn" data-action="clearTerminal" aria-label="Clear terminal">Clear</button>
+                    <button class="terminal-btn" data-action="toggleAIAssistant" aria-label="Toggle AI assistant">
+                        <svg class="ai-os-icon"><use href="#icon-cpu"></use></svg>
+                        AI
+                    </button>
+                    <button class="terminal-btn" data-action="toggleNetworkMonitor" aria-label="Toggle network monitor">
+                        <svg class="ai-os-icon"><use href="#icon-network"></use></svg>
+                        Net
+                    </button>
+                    <button class="terminal-btn" data-action="toggleThemes" aria-label="Toggle themes">
+                        <svg class="ai-os-icon"><use href="#icon-settings"></use></svg>
+                        Theme
+                    </button>
+                    <button class="terminal-btn" data-action="installDependencies" aria-label="Install dependencies">
+                        <svg class="ai-os-icon"><use href="#icon-download"></use></svg>
+                        Install
+                    </button>
+                    <button class="terminal-btn" data-action="openSettings" aria-label="Open settings">
+                        <svg class="ai-os-icon"><use href="#icon-settings"></use></svg>
+                    </button>
                 </nav>
             </header>
 
             <!-- Terminal Tabs Navigation -->
             <nav class="terminal-tabs" role="tablist" aria-label="Terminal Tabs">
-                <button class="terminal-tab active" onclick="switchTab('main')" role="tab" aria-selected="true" aria-controls="terminal-output">
-                    <span aria-hidden="true">📟</span>
+                <button class="terminal-tab active" data-action="switchTab" data-tab="main" role="tab" aria-selected="true" aria-controls="terminal-output">
+                    <svg class="ai-os-icon" aria-hidden="true"><use href="#icon-terminal"></use></svg>
                     <span>Terminal 1</span>
                 </button>
-                <button class="terminal-tab" onclick="switchTab('tools')" role="tab" aria-selected="false" aria-controls="tools-sidebar">
-                    <span aria-hidden="true">🛠️</span>
+                <button class="terminal-tab" data-action="switchTab" data-tab="tools" role="tab" aria-selected="false" aria-controls="tools-sidebar">
+                    <svg class="ai-os-icon" aria-hidden="true"><use href="#icon-tools"></use></svg>
                     <span>Kali Tools</span>
                 </button>
-                <button class="terminal-tab" onclick="switchTab('pentest')" role="tab" aria-selected="false">
-                    <span aria-hidden="true">🎯</span>
+                <button class="terminal-tab" data-action="switchTab" data-tab="pentest" role="tab" aria-selected="false">
+                    <svg class="ai-os-icon" aria-hidden="true"><use href="#icon-target"></use></svg>
                     <span>Pentest</span>
                 </button>
-                <button class="terminal-tab" onclick="switchTab('ai')" role="tab" aria-selected="false">
-                    <span aria-hidden="true">🤖</span>
+                <button class="terminal-tab" data-action="switchTab" data-tab="ai" role="tab" aria-selected="false">
+                    <svg class="ai-os-icon" aria-hidden="true"><use href="#icon-cpu"></use></svg>
                     <span>AI Chat</span>
                 </button>
-                <button class="terminal-tab" onclick="switchTab('network')" role="tab" aria-selected="false">
-                    <span aria-hidden="true">🌐</span>
+                <button class="terminal-tab" data-action="switchTab" data-tab="network" role="tab" aria-selected="false">
+                    <svg class="ai-os-icon" aria-hidden="true"><use href="#icon-network"></use></svg>
                     <span>Network</span>
                 </button>
-                <button class="terminal-tab" onclick="switchTab('logs')" role="tab" aria-selected="false">
-                    <span aria-hidden="true">📋</span>
+                <button class="terminal-tab" data-action="switchTab" data-tab="logs" role="tab" aria-selected="false">
+                    <svg class="ai-os-icon" aria-hidden="true"><use href="#icon-clipboard"></use></svg>
                     <span>Logs</span>
                 </button>
-                <button class="terminal-tab" onclick="addNewTab()" role="tab" aria-selected="false">
-                    <span aria-hidden="true">➕</span>
+                <button class="terminal-tab" data-action="addNewTab" role="tab" aria-selected="false">
+                    <svg class="ai-os-icon" aria-hidden="true"><use href="#icon-plus"></use></svg>
                     <span>New</span>
                 </button>
             </nav>
@@ -867,7 +966,7 @@ ai@nethunter-pro:~$ <span class="cursor" aria-hidden="true"></span>
                                    placeholder="Type command or 'help' for assistance..." 
                                    autocomplete="off" autofocus aria-describedby="input-help">
                         </label>
-                        <button class="terminal-btn" onclick="executeCommand()" aria-label="Execute command">Enter</button>
+                        <button class="terminal-btn" data-action="executeCommand" aria-label="Execute command">Enter</button>
                     </div>
                     <div id="input-help" class="sr-only">
                         Type commands and press Enter to execute. Use Tab for autocomplete, Arrow keys for history.
@@ -892,12 +991,16 @@ ai@nethunter-pro:~$ <span class="cursor" aria-hidden="true"></span>
     <!-- AI Assistant Panel -->
     <section class="ai-assistant-panel" id="aiAssistantPanel" role="dialog" aria-labelledby="aiHeader" aria-hidden="true">
         <header class="ai-header" id="aiHeader">
-            <span>🤖 AI Security Assistant</span>
-            <button class="terminal-btn" onclick="toggleAIAssistant()" aria-label="Close AI assistant" style="padding: var(--space-xs) var(--space-sm);">×</button>
+            <svg class="ai-os-icon" aria-hidden="true"><use href="#icon-cpu"></use></svg>
+            <span>AI Security Assistant</span>
+            <button class="terminal-btn" data-action="toggleAIAssistant" aria-label="Close AI assistant" style="padding: var(--space-xs) var(--space-sm);">
+                <svg class="ai-os-icon" style="width: 16px; height: 16px;"><use href="#icon-close"></use></svg>
+            </button>
         </header>
         <div class="ai-chat-area" id="aiChatArea" role="log" aria-live="polite" aria-label="AI Chat Messages">
             <div class="ai-message ai">
-                🤖 AI Security Assistant activated! I can help you with:
+                <svg class="ai-os-icon" style="width: 16px; height: 16px; vertical-align: middle; margin-right: var(--space-xs);"><use href="#icon-cpu"></use></svg>
+                AI Security Assistant activated! I can help you with:
                 <br>• Penetration testing strategies
                 <br>• Tool usage and syntax
                 <br>• Vulnerability analysis
@@ -905,7 +1008,7 @@ ai@nethunter-pro:~$ <span class="cursor" aria-hidden="true"></span>
                 <br><br>Ask me anything about security testing!
             </div>
         </div>
-        <form class="ai-input-area" onsubmit="event.preventDefault(); sendAIMessage();" aria-label="AI Chat Input">
+        <form class="ai-input-area" data-action="sendAIMessage" aria-label="AI Chat Input">
             <label for="aiInput" class="sr-only">Ask AI assistant a question</label>
             <input type="text" class="ai-input" id="aiInput" placeholder="Ask about security testing..." aria-describedby="ai-help">
             <button type="submit" class="terminal-btn" aria-label="Send message">Send</button>
@@ -2025,9 +2128,79 @@ if __name__ == "__main__":
         document.addEventListener('DOMContentLoaded', () => {
             console.log('💻 Initializing Enhanced AI Terminal Shell with AI-OS Standards...');
             
+            // Setup event delegation for data-action attributes
+            const setupEventDelegation = () => {
+                document.body.addEventListener('click', (e) => {
+                    const button = e.target.closest('[data-action]');
+                    if (!button) return;
+                    
+                    const action = button.getAttribute('data-action');
+                    const tab = button.getAttribute('data-tab');
+                    
+                    switch (action) {
+                        case 'goHome':
+                            goHome();
+                            break;
+                        case 'clearTerminal':
+                            clearTerminal();
+                            break;
+                        case 'executeCommand':
+                            executeCommand();
+                            break;
+                        case 'toggleAIAssistant':
+                            toggleAIAssistant();
+                            break;
+                        case 'toggleNetworkMonitor':
+                            toggleNetworkMonitor();
+                            break;
+                        case 'toggleThemes':
+                            toggleThemes();
+                            break;
+                        case 'installDependencies':
+                            installDependencies();
+                            break;
+                        case 'openSettings':
+                            openSettings();
+                            break;
+                        case 'switchTab':
+                            if (tab) switchTab(tab);
+                            break;
+                        case 'addNewTab':
+                            addNewTab();
+                            break;
+                    }
+                });
+                
+                // Handle form submissions with data-action
+                document.body.addEventListener('submit', (e) => {
+                    const form = e.target.closest('[data-action]');
+                    if (!form) return;
+                    
+                    e.preventDefault();
+                    const action = form.getAttribute('data-action');
+                    
+                    if (action === 'sendAIMessage') {
+                        sendAIMessage();
+                    }
+                });
+                
+                // Handle AI input enter key
+                const aiInput = document.getElementById('aiInput');
+                if (aiInput) {
+                    aiInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            sendAIMessage();
+                        }
+                    });
+                }
+            };
+            
             // Wait for AI-OS Core to be available
             const initTerminal = () => {
                 terminal = new EnhancedTerminal();
+                
+                // Setup event delegation
+                setupEventDelegation();
                 
                 // Setup AI-OS Core integration
                 if (window.aiOSCore && window.AIOSAppIntegration) {
@@ -2067,10 +2240,10 @@ if __name__ == "__main__":
                         const aiPanel = document.getElementById('aiAssistantPanel');
                         const networkMonitor = document.getElementById('networkMonitor');
                         
-                        if (aiPanel.classList.contains('active')) {
+                        if (aiPanel && aiPanel.classList.contains('active')) {
                             toggleAIAssistant();
                         }
-                        if (networkMonitor.classList.contains('active')) {
+                        if (networkMonitor && networkMonitor.classList.contains('active')) {
                             toggleNetworkMonitor();
                         }
                     }

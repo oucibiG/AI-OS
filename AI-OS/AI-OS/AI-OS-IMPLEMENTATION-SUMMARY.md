@@ -47,6 +47,15 @@
   - Alert system
   - Performance tracking
 
+- [x] **Apps/ai-terminal-shell.html** (2,257 riadkov) - Terminál shell
+  - AI-OS design system komponenty
+  - SVG ikony namiesto emoji (Heroicons štandard)
+  - Event delegation cez data-action atribúty
+  - CSS custom properties pre terminálové farby
+  - Accessibility support (ARIA, keyboard navigation)
+  - AI-OS Core integrácia
+  - Responzívny dizajn
+
 ---
 
 ## 🎯 Technické implementácie
@@ -268,8 +277,7 @@ window.aiOSCore.emit('interAppMessage', {
 
 ### **Vysoká priorita** (Plánované na implementáciu)
 - [ ] **MOBILE/ai-plugin-marketplace.html** - Plugin marketplace
-- [ ] **Apps/ai-universal-interface.html** - Univerzálne rozhranie  
-- [ ] **Apps/ai-terminal-shell.html** - Terminál shell
+- [ ] **Apps/ai-universal-interface.html** - Univerzálne rozhranie
 - [ ] **Apps/ai-android-emulator.html** - Android emulátor
 
 ### **Stredná priorita**
@@ -406,4 +414,4 @@ Implementácia AI-OS štandardov bola úspešne dokončená pre **kľúčové ap
 **Verzia:** 1.0.0  
 **Autor:** MiniMax Agent  
 **Status:** Kľúčové aplikácie implementované ✅  
-**Pokrok:** 5/21 aplikácií aktualizovaných (24%)
+**Pokrok:** 6/21 aplikácií aktualizovaných (29%)
