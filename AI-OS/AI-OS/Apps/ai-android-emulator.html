@@ -3,11 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🤖 Android App Launcher</title>
+    <title>AI Android Emulator | AI-OS</title>
+    
+    <!-- AI-OS Design System -->
+    <link rel="stylesheet" href="../css/ai-os-design-system.css">
     
     <!-- AI-OS Core Integration -->
     <script src="../js/ai-os-core.js"></script>
     <script src="../js/ai-os-app-integration.js"></script>
+    <script src="../js/ai-os-utils.js"></script>
+    
+    <!-- AI-OS SVG Icons -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="icon-smartphone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="5" y="2" width="14" height="20" rx="2"></rect>
+            <line x1="12" y1="18" x2="12" y2="18"></line>
+        </symbol>
+        <symbol id="icon-robot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+            <circle cx="9" cy="10" r="1.5"></circle>
+            <circle cx="15" cy="10" r="1.5"></circle>
+            <line x1="8" y1="20" x2="16" y2="20"></line>
+            <line x1="8" y1="14" x2="8" y2="16"></line>
+            <line x1="16" y1="14" x2="16" y2="16"></line>
+        </symbol>
+        <symbol id="icon-package" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12.89 1.45l8 4A2 2 0 0 1 22 7.24v9.53a2 2 0 0 1-1.11 1.79l-8 4a2 2 0 0 1-1.79 0l-8-4a2 2 0 0 1-1.1-1.8V7.24a2 2 0 0 1 1.11-1.79l8-4a2 2 0 0 1 1.78 0z"></path>
+            <polyline points="2.32 6.16 12 11 21.68 6.16"></polyline>
+            <line x1="12" y1="22.76" x2="12" y2="11"></line>
+        </symbol>
+        <symbol id="icon-arrow-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </symbol>
+        <symbol id="icon-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </symbol>
+        <symbol id="icon-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </symbol>
+        <symbol id="icon-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </symbol>
+        <symbol id="icon-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+        </symbol>
+        <symbol id="icon-plug" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v6"></path>
+            <path d="M12 22v-6"></path>
+            <path d="M4.93 4.93l4.24 4.24"></path>
+            <path d="M14.83 14.83l4.24 4.24"></path>
+            <path d="M2 12h6"></path>
+            <path d="M22 12h-6"></path>
+            <path d="M4.93 19.07l4.24-4.24"></path>
+            <path d="M14.83 9.17l4.24-4.24"></path>
+            <circle cx="12" cy="12" r="4"></circle>
+        </symbol>
+        <symbol id="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </symbol>
+        <symbol id="icon-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+        </symbol>
+        <symbol id="icon-clean" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 20H7L3 16c-.8-.8-.8-2 0-2.8L13.4 2.8c.8-.8 2-.8 2.8 0L21 7.7c.8.8.8 2 0 2.8L11 20"></path>
+            <path d="M6 11l4 4"></path>
+        </symbol>
+        <symbol id="icon-status-online" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="6"></circle>
+            <circle cx="12" cy="12" r="2" fill="currentColor"></circle>
+        </symbol>
+        <symbol id="icon-status-offline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="6"></circle>
+            <circle cx="12" cy="12" r="2" fill="currentColor"></circle>
+            <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+        </symbol>
+        <symbol id="icon-status-connecting" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="6"></circle>
+            <path d="M12 6v6l4 2" fill="none" stroke-dasharray="2 2"></path>
+        </symbol>
+        <symbol id="icon-android" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17.6 3.6a2.4 2.4 0 0 0-1.8-1.1c-1.3 0-2.4.9-2.8 2.1A6.4 6.4 0 0 0 6 10c0 .4.1.8.2 1.1H5a2.4 2.4 0 0 0-2.4 2.4v5.6A2.4 2.4 0 0 0 5 22h14a2.4 2.4 0 0 0 2.4-2.4V13.6a2.4 2.4 0 0 0-2.4-2.4h-.8c.1-.3.2-.7.2-1.1a6.4 6.4 0 0 0-3.4-5.4z"></path>
+            <circle cx="6.5" cy="14.5" r="1.5"></circle>
+            <circle cx="17.5" cy="14.5" r="1.5"></circle>
+        </symbol>
+        <symbol id="icon-tools" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+        </symbol>
+        <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </symbol>
+    </svg>
     
     <style>
         * {
@@ -17,9 +112,9 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: var(--font-primary);
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
-            color: white;
+            color: var(--text-primary);
             height: 100vh;
             overflow: hidden;
             display: flex;
@@ -46,12 +141,12 @@
         }
 
         .ae-title {
-            font-size: 18px;
+            font-size: var(--text-lg);
             font-weight: 700;
-            color: #4CAF50;
+            color: var(--ai-secondary);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: var(--space-sm);
         }
 
         .ae-controls {
@@ -61,51 +156,51 @@
         }
 
         .ae-control-btn {
-            padding: 8px 16px;
-            background: rgba(76, 175, 80, 0.1);
-            border: 1px solid rgba(76, 175, 80, 0.3);
-            border-radius: 6px;
-            color: #4CAF50;
+            padding: var(--space-xs) var(--space-md);
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: var(--radius-md);
+            color: var(--ai-secondary);
             cursor: pointer;
-            font-size: 12px;
-            transition: all 0.2s ease;
+            font-size: var(--text-xs);
+            transition: all var(--transition-fast);
         }
 
         .ae-control-btn:hover {
-            background: rgba(76, 175, 80, 0.2);
+            background: rgba(0, 212, 255, 0.2);
         }
 
         .ae-control-btn.primary {
-            background: rgba(76, 175, 80, 0.2);
-            border-color: #4CAF50;
+            background: rgba(0, 212, 255, 0.2);
+            border-color: var(--ai-secondary);
         }
 
         .ae-control-btn.primary:hover {
-            background: rgba(76, 175, 80, 0.3);
+            background: rgba(0, 212, 255, 0.3);
         }
 
         .ae-sdk-status {
-            padding: 8px 12px;
-            background: rgba(244, 67, 54, 0.2);
-            border: 1px solid rgba(244, 67, 54, 0.5);
-            border-radius: 6px;
-            color: #f44336;
-            font-size: 12px;
+            padding: var(--space-xs) var(--space-sm);
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            border-radius: var(--radius-md);
+            color: var(--error);
+            font-size: var(--text-xs);
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: var(--space-xs);
         }
 
         .ae-sdk-status.connected {
-            background: rgba(76, 175, 80, 0.2);
-            border-color: rgba(76, 175, 80, 0.5);
-            color: #4CAF50;
+            background: rgba(0, 212, 255, 0.2);
+            border-color: rgba(0, 212, 255, 0.5);
+            color: var(--ai-secondary);
         }
 
         .ae-sdk-status.connecting {
-            background: rgba(255, 193, 7, 0.2);
-            border-color: rgba(255, 193, 7, 0.5);
-            color: #FFC107;
+            background: rgba(245, 158, 11, 0.2);
+            border-color: rgba(245, 158, 11, 0.5);
+            color: var(--warning);
             animation: pulse 1.5s infinite;
         }
 
@@ -117,13 +212,13 @@
         .ae-sdk-panel {
             position: fixed;
             top: 80px;
-            right: 20px;
+            right: var(--space-md);
             width: 350px;
             max-height: 500px;
             background: rgba(0, 0, 0, 0.95);
-            border: 1px solid rgba(76, 175, 80, 0.3);
-            border-radius: 12px;
-            padding: 20px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
             backdrop-filter: blur(20px);
             z-index: 1500;
             display: none;
@@ -137,71 +232,71 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 15px;
+            margin-bottom: var(--space-md);
         }
 
         .ae-sdk-panel-title {
-            font-size: 16px;
+            font-size: var(--text-base);
             font-weight: 600;
-            color: #4CAF50;
+            color: var(--ai-secondary);
         }
 
         .ae-sdk-panel-close {
             background: none;
             border: none;
-            color: #4CAF50;
-            font-size: 18px;
+            color: var(--ai-secondary);
+            font-size: var(--text-lg);
             cursor: pointer;
-            padding: 5px;
+            padding: var(--space-xs);
         }
 
         .ae-sdk-device-list {
             max-height: 200px;
             overflow-y: auto;
-            margin-bottom: 15px;
+            margin-bottom: var(--space-md);
         }
 
         .ae-sdk-device {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 8px;
+            border-radius: var(--radius-md);
+            padding: var(--space-sm);
+            margin-bottom: var(--space-xs);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal);
         }
 
         .ae-sdk-device:hover {
             background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(76, 175, 80, 0.6);
+            border-color: rgba(0, 212, 255, 0.6);
         }
 
         .ae-sdk-device.active {
-            background: rgba(76, 175, 80, 0.2);
-            border-color: #4CAF50;
+            background: rgba(0, 212, 255, 0.2);
+            border-color: var(--ai-secondary);
         }
 
         .ae-sdk-device-name {
             font-weight: 600;
-            color: white;
-            margin-bottom: 4px;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
         }
 
         .ae-sdk-device-info {
-            font-size: 12px;
+            font-size: var(--text-xs);
             color: rgba(255, 255, 255, 0.7);
         }
 
         .ae-sdk-logs {
             background: rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            padding: 10px;
+            border-radius: var(--radius-md);
+            padding: var(--space-sm);
             height: 150px;
             overflow-y: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 11px;
-            color: #4CAF50;
+            font-family: var(--font-mono);
+            font-size: var(--text-xs);
+            color: var(--ai-secondary);
         }
 
         .ae-sdk-log-entry {
@@ -210,11 +305,11 @@
         }
 
         .ae-sdk-log-entry.error {
-            color: #f44336;
+            color: var(--error);
         }
 
         .ae-sdk-log-entry.warning {
-            color: #FFC107;
+            color: var(--warning);
         }
 
         .ae-search-bar {
@@ -225,9 +320,9 @@
             width: 400px;
             max-width: calc(100% - 40px);
             background: rgba(0, 0, 0, 0.9);
-            border: 1px solid rgba(76, 175, 80, 0.5);
+            border: 1px solid rgba(0, 212, 255, 0.5);
             border-radius: 25px;
-            padding: 12px 20px;
+            padding: var(--space-sm) var(--space-md);
             backdrop-filter: blur(20px);
             z-index: 1000;
         }
@@ -236,8 +331,8 @@
             width: 100%;
             background: transparent;
             border: none;
-            color: white;
-            font-size: 14px;
+            color: var(--text-primary);
+            font-size: var(--text-sm);
             outline: none;
         }
 
@@ -256,8 +351,8 @@
             flex: 1;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 20px;
-            padding: 30px;
+            gap: var(--space-lg);
+            padding: var(--space-lg);
             align-content: start;
             overflow-y: auto;
         }
@@ -265,11 +360,11 @@
         .ae-app-card {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            padding: 20px;
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal);
             backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
@@ -277,15 +372,15 @@
 
         .ae-app-card:hover {
             background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(76, 175, 80, 0.6);
+            border-color: rgba(0, 212, 255, 0.6);
             transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--shadow-lg);
         }
 
         .ae-app-card.launching {
             animation: appLaunch 0.6s ease-out;
-            background: rgba(76, 175, 80, 0.3);
-            border-color: #4CAF50;
+            background: rgba(0, 212, 255, 0.3);
+            border-color: var(--ai-secondary);
         }
 
         @keyframes appLaunch {
@@ -296,36 +391,36 @@
 
         .ae-app-icon-large {
             font-size: 48px;
-            margin-bottom: 15px;
+            margin-bottom: var(--space-md);
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
         }
 
         .ae-app-name {
-            font-size: 14px;
+            font-size: var(--text-sm);
             font-weight: 600;
-            color: white;
-            margin-bottom: 5px;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .ae-app-status {
-            font-size: 11px;
+            font-size: var(--text-xs);
             color: rgba(255, 255, 255, 0.7);
         }
 
         .ae-app-status.running {
-            color: #4CAF50;
+            color: var(--ai-secondary);
             font-weight: bold;
         }
 
         .ae-app-actions {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: var(--space-sm);
+            right: var(--space-sm);
             display: flex;
-            gap: 5px;
+            gap: var(--space-xs);
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity var(--transition-normal);
         }
 
         .ae-app-card:hover .ae-app-actions {
@@ -338,31 +433,31 @@
             background: rgba(0, 0, 0, 0.7);
             border: none;
             border-radius: 50%;
-            color: white;
-            font-size: 12px;
+            color: var(--text-primary);
+            font-size: var(--text-xs);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
+            transition: all var(--transition-fast);
         }
 
         .ae-action-btn:hover {
-            background: rgba(76, 175, 80, 0.8);
+            background: rgba(0, 212, 255, 0.8);
             transform: scale(1.1);
         }
 
         .ae-quick-launch-bar {
             position: fixed;
-            bottom: 20px;
+            bottom: var(--space-md);
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.9);
-            border: 1px solid rgba(76, 175, 80, 0.5);
+            border: 1px solid rgba(0, 212, 255, 0.5);
             border-radius: 25px;
-            padding: 10px 20px;
+            padding: var(--space-sm) var(--space-md);
             display: flex;
-            gap: 15px;
+            gap: var(--space-md);
             backdrop-filter: blur(20px);
             z-index: 1000;
         }
@@ -370,35 +465,35 @@
         .ae-quick-btn {
             width: 40px;
             height: 40px;
-            background: rgba(76, 175, 80, 0.2);
-            border: 1px solid rgba(76, 175, 80, 0.4);
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.4);
             border-radius: 50%;
-            color: #4CAF50;
-            font-size: 16px;
+            color: var(--ai-secondary);
+            font-size: var(--text-base);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal);
         }
 
         .ae-quick-btn:hover {
-            background: rgba(76, 175, 80, 0.4);
-            border-color: #4CAF50;
+            background: rgba(0, 212, 255, 0.4);
+            border-color: var(--ai-secondary);
             transform: scale(1.1);
         }
 
         .ae-apk-manager {
             position: fixed;
             bottom: 80px;
-            right: 20px;
+            right: var(--space-md);
             width: 300px;
             max-height: 400px;
             overflow-y: auto;
             background: rgba(0, 0, 0, 0.9);
-            border: 1px solid rgba(76, 175, 80, 0.3);
-            border-radius: 12px;
-            padding: 20px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
             backdrop-filter: blur(20px);
             z-index: 1000;
         }
@@ -407,29 +502,29 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 15px;
+            margin-bottom: var(--space-md);
         }
 
         .ae-manager-title {
-            font-size: 14px;
+            font-size: var(--text-sm);
             font-weight: 600;
-            color: #4CAF50;
+            color: var(--ai-secondary);
         }
 
         .ae-upload-zone {
-            background: rgba(76, 175, 80, 0.1);
-            border: 2px dashed rgba(76, 175, 80, 0.5);
-            border-radius: 10px;
-            padding: 20px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px dashed rgba(0, 212, 255, 0.5);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 15px;
+            transition: all var(--transition-normal);
+            margin-bottom: var(--space-md);
         }
 
         .ae-upload-zone:hover {
-            background: rgba(76, 175, 80, 0.2);
-            border-color: #4CAF50;
+            background: rgba(0, 212, 255, 0.2);
+            border-color: var(--ai-secondary);
         }
 
         .ae-app-overlay {
@@ -451,11 +546,11 @@
         .ae-app-header {
             height: 60px;
             background: rgba(0, 0, 0, 0.9);
-            border-bottom: 1px solid rgba(76, 175, 80, 0.3);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.3);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 20px;
+            padding: 0 var(--space-md);
         }
 
         .ae-app-content {
@@ -473,28 +568,56 @@
         }
 
         .ae-back-btn {
-            background: rgba(76, 175, 80, 0.2);
-            border: 1px solid rgba(76, 175, 80, 0.5);
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.5);
             border-radius: 50%;
             width: 40px;
             height: 40px;
-            color: #4CAF50;
-            font-size: 18px;
+            color: var(--ai-secondary);
+            font-size: var(--text-lg);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
+            transition: all var(--transition-normal);
         }
 
         .ae-back-btn:hover {
-            background: rgba(76, 175, 80, 0.4);
+            background: rgba(0, 212, 255, 0.4);
             transform: scale(1.1);
         }
 
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* AI-OS Icon Styles */
+        .ai-os-icon {
+            width: 1em;
+            height: 1em;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+        }
+        
+        .ai-os-icon-sm {
+            width: 0.875em;
+            height: 0.875em;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+        }
+        
+        .ai-os-icon-lg {
+            width: 1.25em;
+            height: 1.25em;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
         }
     </style>
 </head>
@@ -503,21 +626,33 @@
         <!-- Header -->
         <div class="ae-header">
             <div class="ae-title">
-                <span>🤖</span>
+                <svg class="ai-os-icon"><use href="#icon-robot"></use></svg>
                 <span>Android App Launcher</span>
             </div>
             
             <div class="ae-controls">
-                <div class="ae-control-btn" onclick="connectSDK()" id="sdkConnectBtn">🔗 Connect SDK</div>
-                <div class="ae-control-btn" onclick="installAPK()">📦 Install APK</div>
-                <div class="ae-control-btn primary" onclick="refreshApps()">🔄 Refresh</div>
-                <div class="ae-sdk-status" id="sdkStatus">🔴 SDK Disconnected</div>
+                <div class="ae-control-btn" data-action="connectSDK" id="sdkConnectBtn">
+                    <svg class="ai-os-icon-sm"><use href="#icon-link"></use></svg>
+                    Connect SDK
+                </div>
+                <div class="ae-control-btn" data-action="installAPK">
+                    <svg class="ai-os-icon-sm"><use href="#icon-package"></use></svg>
+                    Install APK
+                </div>
+                <div class="ae-control-btn primary" data-action="refreshApps">
+                    <svg class="ai-os-icon-sm"><use href="#icon-refresh"></use></svg>
+                    Refresh
+                </div>
+                <div class="ae-sdk-status" id="sdkStatus">
+                    <svg class="ai-os-icon-sm"><use href="#icon-status-offline"></use></svg>
+                    SDK Disconnected
+                </div>
             </div>
         </div>
 
         <!-- Search Bar -->
         <div class="ae-search-bar">
-            <input type="text" class="ae-search-input" placeholder="🔍 Hľadať aplikácie..." oninput="searchApps(this.value)">
+            <input type="text" class="ae-search-input" placeholder="Hľadať aplikácie..." data-action="searchApps">
         </div>
 
         <!-- App Launcher -->
@@ -531,10 +666,12 @@
         <div class="ae-app-overlay" id="appOverlay">
             <div class="ae-app-header">
                 <div class="ae-title">
-                    <span id="runningAppIcon">📱</span>
+                    <svg class="ai-os-icon" id="runningAppIcon"><use href="#icon-smartphone"></use></svg>
                     <span id="runningAppName">Aplikácia</span>
                 </div>
-                <button class="ae-back-btn" onclick="closeApp()">←</button>
+                <button class="ae-back-btn" data-action="closeApp">
+                    <svg class="ai-os-icon"><use href="#icon-arrow-left"></use></svg>
+                </button>
             </div>
             <div class="ae-app-content">
                 <iframe class="ae-app-window" id="appWindow" src=""></iframe>
@@ -544,8 +681,13 @@
         <!-- SDK Panel -->
         <div class="ae-sdk-panel" id="sdkPanel">
             <div class="ae-sdk-panel-header">
-                <div class="ae-sdk-panel-title">🔧 Android SDK Integration</div>
-                <button class="ae-sdk-panel-close" onclick="toggleSDKPanel()">✕</button>
+                <div class="ae-sdk-panel-title">
+                    <svg class="ai-os-icon-sm"><use href="#icon-tools"></use></svg>
+                    Android SDK Integration
+                </div>
+                <button class="ae-sdk-panel-close" data-action="toggleSDKPanel">
+                    <svg class="ai-os-icon"><use href="#icon-close"></use></svg>
+                </button>
             </div>
             
             <div class="ae-sdk-device-list" id="sdkDeviceList">
@@ -560,17 +702,23 @@
         <!-- APK Manager -->
         <div class="ae-apk-manager">
             <div class="ae-manager-header">
-                <div class="ae-manager-title">📱 Installed APKs</div>
+                <div class="ae-manager-title">
+                    <svg class="ai-os-icon-sm"><use href="#icon-smartphone"></use></svg>
+                    Installed APKs
+                </div>
                 <div>
-                    <input type="file" id="apkFileInput" accept=".apk" style="display: none;" onchange="handleAPKUpload(event)">
-                    <button class="ae-control-btn" onclick="document.getElementById('apkFileInput').click()">📤 Add</button>
+                    <input type="file" id="apkFileInput" accept=".apk" style="display: none;" data-action="handleAPKUpload">
+                    <button class="ae-control-btn" data-action="uploadAPK">
+                        <svg class="ai-os-icon-sm"><use href="#icon-upload"></use></svg>
+                        Add
+                    </button>
                 </div>
             </div>
             
-            <div class="ae-upload-zone" onclick="document.getElementById('apkFileInput').click()" ondrop="handleAPKDrop(event)" ondragover="handleDragOver(event)">
-                <div style="font-size: 24px; margin-bottom: 10px;">📦</div>
+            <div class="ae-upload-zone" data-action="triggerAPKUpload" ondrop="handleAPKDrop(event)" ondragover="handleDragOver(event)">
+                <svg class="ai-os-icon-lg" style="margin-bottom: var(--space-sm);"><use href="#icon-package"></use></svg>
                 <div>Drop APK files here</div>
-                <div style="font-size: 12px; opacity: 0.7; margin-top: 5px;">Supports .apk files</div>
+                <div style="font-size: var(--text-xs); opacity: 0.7; margin-top: var(--space-xs);">Supports .apk files</div>
             </div>
             
             <div class="ae-apk-list" id="apkList">
@@ -580,14 +728,22 @@
 
         <!-- Enhanced Navigation Bar -->
         <div class="ae-quick-launch-bar">
-            <button class="ae-quick-btn" onclick="navigateBack()" title="Späť" style="background: rgba(255, 149, 0, 0.2); border-color: #FF9500; color: #FF9500;">
-                ⬅️ Späť
+            <button class="ae-quick-btn" data-action="navigateBack" title="Späť" style="background: rgba(255, 149, 0, 0.2); border-color: #FF9500; color: #FF9500;">
+                <svg class="ai-os-icon"><use href="#icon-arrow-left"></use></svg>
+                Späť
             </button>
-            <div class="ae-quick-btn" onclick="showInstalledApps()" title="Nainštalované aplikácie">📱</div>
-            <div class="ae-quick-btn" onclick="clearCache()" title="Vyčistiť cache">🧹</div>
-            <div class="ae-quick-btn" onclick="showSettings()" title="Nastavenia">⚙️</div>
-            <button class="ae-quick-btn" onclick="goHome()" title="Domov" style="background: rgba(52, 199, 89, 0.2); border-color: #34C759; color: #34C759;">
-                🏠 Domov
+            <div class="ae-quick-btn" data-action="showInstalledApps" title="Nainštalované aplikácie">
+                <svg class="ai-os-icon"><use href="#icon-smartphone"></use></svg>
+            </div>
+            <div class="ae-quick-btn" data-action="clearCache" title="Vyčistiť cache">
+                <svg class="ai-os-icon"><use href="#icon-clean"></use></svg>
+            </div>
+            <div class="ae-quick-btn" data-action="showSettings" title="Nastavenia">
+                <svg class="ai-os-icon"><use href="#icon-settings"></use></svg>
+            </div>
+            <button class="ae-quick-btn" data-action="goHome" title="Domov" style="background: rgba(52, 199, 89, 0.2); border-color: #34C759; color: #34C759;">
+                <svg class="ai-os-icon"><use href="#icon-home"></use></svg>
+                Domov
             </button>
         </div>
     </div>
@@ -844,6 +1000,62 @@
                     });
                 }
 
+                // AI-OS Event Delegation for data-action attributes
+                document.addEventListener('click', (e) => {
+                    const actionElement = e.target.closest('[data-action]');
+                    if (!actionElement) return;
+
+                    const action = actionElement.dataset.action;
+                    const value = actionElement.dataset.value;
+
+                    switch (action) {
+                        case 'connectSDK':
+                            this.connectSDK();
+                            break;
+                        case 'installAPK':
+                            this.installAPK();
+                            break;
+                        case 'refreshApps':
+                            this.refreshApps();
+                            break;
+                        case 'closeApp':
+                            this.closeApp();
+                            break;
+                        case 'toggleSDKPanel':
+                            this.toggleSDKPanel();
+                            break;
+                        case 'uploadAPK':
+                            document.getElementById('apkFileInput')?.click();
+                            break;
+                        case 'triggerAPKUpload':
+                            document.getElementById('apkFileInput')?.click();
+                            break;
+                        case 'navigateBack':
+                            this.navigateBack();
+                            break;
+                        case 'showInstalledApps':
+                            this.showInstalledApps();
+                            break;
+                        case 'clearCache':
+                            this.clearCache();
+                            break;
+                        case 'showSettings':
+                            this.showSettings();
+                            break;
+                        case 'goHome':
+                            this.goHome();
+                            break;
+                    }
+                });
+
+                // Handle search input with data-action
+                const searchInput = document.querySelector('[data-action="searchApps"]');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        this.searchApps(e.target.value);
+                    });
+                }
+
                 // Keyboard shortcuts
                 document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape') {
@@ -867,10 +1079,11 @@
                 }
 
                 try {
-                    sdkBtn.textContent = '🔄 Connecting...';
+                    // Update button to loading state
+                    sdkBtn.innerHTML = '<svg class="ai-os-icon-sm"><use href="#icon-refresh"></use></svg> Connecting...';
                     sdkBtn.disabled = true;
                     sdkStatus.className = 'ae-sdk-status connecting';
-                    sdkStatus.textContent = '🟡 Connecting to SDK...';
+                    sdkStatus.innerHTML = '<svg class="ai-os-icon-sm"><use href="#icon-status-connecting"></use></svg> Connecting to SDK...';
                     
                     this.addSDKLog('Initializing Android SDK...', 'info');
                     this.addSDKLog('Scanning for connected devices...', 'info');
@@ -891,10 +1104,10 @@
                     this.addSDKLog('SDK connection failed: ' + error.message, 'error');
                     this.showNotification('SDK Error', 'Nepodarilo sa pripojiť Android SDK');
                     
-                    sdkBtn.textContent = '🔗 Connect SDK';
+                    sdkBtn.innerHTML = '<svg class="ai-os-icon-sm"><use href="#icon-link"></use></svg> Connect SDK';
                     sdkBtn.disabled = false;
                     sdkStatus.className = 'ae-sdk-status';
-                    sdkStatus.textContent = '🔴 SDK Disconnected';
+                    sdkStatus.innerHTML = '<svg class="ai-os-icon-sm"><use href="#icon-status-offline"></use></svg> SDK Disconnected';
                 }
             }
 
@@ -971,12 +1184,12 @@
                 
                 if (this.sdkConnected) {
                     sdkStatus.className = 'ae-sdk-status connected';
-                    sdkStatus.textContent = '🟢 SDK Connected';
-                    sdkBtn.textContent = '🔌 Disconnect SDK';
+                    sdkStatus.innerHTML = '<svg class="ai-os-icon-sm"><use href="#icon-status-online"></use></svg> SDK Connected';
+                    sdkBtn.innerHTML = '<svg class="ai-os-icon-sm"><use href="#icon-plug"></use></svg> Disconnect SDK';
                 } else {
                     sdkStatus.className = 'ae-sdk-status';
-                    sdkStatus.textContent = '🔴 SDK Disconnected';
-                    sdkBtn.textContent = '🔗 Connect SDK';
+                    sdkStatus.innerHTML = '<svg class="ai-os-icon-sm"><use href="#icon-status-offline"></use></svg> SDK Disconnected';
+                    sdkBtn.innerHTML = '<svg class="ai-os-icon-sm"><use href="#icon-link"></use></svg> Connect SDK';
                 }
                 
                 sdkBtn.disabled = false;
