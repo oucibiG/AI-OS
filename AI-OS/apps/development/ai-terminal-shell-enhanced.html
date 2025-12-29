@@ -502,8 +502,10 @@
             border: 1px solid var(--info-color);
             border-radius: 8px;
             padding: 12px;
+            padding-right: 36px;
             display: none;
             z-index: 1001;
+            box-shadow: 0 4px 20px rgba(68, 170, 255, 0.2);
         }
 
         .network-monitor.active {
@@ -515,6 +517,38 @@
             font-weight: bold;
             margin-bottom: 8px;
             font-size: 12px;
+        }
+
+        .network-monitor-close {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 22px;
+            height: 22px;
+            background: none;
+            border: none;
+            color: var(--info-color);
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            line-height: 1;
+        }
+
+        .network-monitor-close:hover {
+            background: rgba(68, 170, 255, 0.2);
+            color: #fff;
+        }
+
+        .network-monitor-close svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
         }
 
         .network-item {
@@ -665,6 +699,12 @@ ai@nethunter-pro:~$ <span class="cursor"></span>
 
     <!-- Network Monitor -->
     <div class="network-monitor" id="networkMonitor">
+        <button class="network-monitor-close" onclick="toggleNetworkMonitor()" aria-label="Zatvoriť sieťový monitor">
+            <svg viewBox="0 0 24 24">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
         <div class="monitor-title">📡 Real-time Network Monitor</div>
         <div id="networkItems">
             <div class="network-item">🔍 Scanning for devices...</div>

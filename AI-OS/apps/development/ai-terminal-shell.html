@@ -605,12 +605,14 @@
             top: 20px;
             left: 20px;
             width: 300px;
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(0, 0, 0,  ̃0.95);
             border: 1px solid var(--info-color);
             border-radius: 8px;
             padding: 12px;
+            padding-right: 36px;
             display: none;
             z-index: 1001;
+            box-shadow: 0 4px 20px rgba(68, 170, 255, 0.2);
         }
 
         .network-monitor.active {
@@ -622,6 +624,38 @@
             font-weight: bold;
             margin-bottom: 8px;
             font-size: 12px;
+        }
+
+        .network-monitor-close {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 22px;
+            height: 22px;
+            background: none;
+            border: none;
+            color: var(--info-color);
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            line-height: 1;
+        }
+
+        .network-monitor-close:hover {
+            background: rgba(68, 170, 255, 0.2);
+            color: #fff;
+        }
+
+        .network-monitor-close svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
         }
 
         .network-item {
@@ -1020,6 +1054,12 @@ ai@nethunter-pro:~$ <span class="cursor" aria-hidden="true"></span>
 
     <!-- Network Monitor -->
     <aside class="network-monitor" id="networkMonitor" role="complementary" aria-labelledby="networkTitle" aria-hidden="true">
+        <button class="network-monitor-close" onclick="toggleNetworkMonitor()" aria-label="Zatvoriť sieťový monitor">
+            <svg viewBox="0 0 24 24">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
         <h3 class="monitor-title" id="networkTitle">📡 Real-time Network Monitor</h3>
         <div id="networkItems" role="list" aria-label="Network Devices">
             <div class="network-item" role="listitem">🔍 Scanning for devices...</div>
