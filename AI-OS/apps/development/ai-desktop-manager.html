@@ -129,12 +129,14 @@
         
         .dm-sidebar {
             width: 280px;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(15px);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-right: 1px solid rgba(0, 212, 255, 0.2);
             padding: 20px;
             overflow-y: auto;
             transition: all 0.3s ease;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
         }
         
         .dm-sidebar.hidden {
@@ -191,12 +193,88 @@
             overflow-y: auto;
             transition: all 0.3s ease;
         }
-        
+
         .dm-content.expanded {
             margin-left: 0;
             width: 100%;
         }
-        
+
+        /* Enhanced Notification System */
+        .dm-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            padding: 15px 20px;
+            padding-right: 45px;
+            min-width: 280px;
+            max-width: 400px;
+            color: white;
+            z-index: 10000;
+            animation: dmSlideIn 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .dm-notification.success {
+            border-color: rgba(46, 204, 113, 0.4);
+        }
+
+        .dm-notification.error {
+            border-color: rgba(231, 76, 60, 0.4);
+        }
+
+        .dm-notification.warning {
+            border-color: rgba(241, 196, 15, 0.4);
+        }
+
+        @keyframes dmSlideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .dm-notification-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 24px;
+            height: 24px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .dm-notification-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .dm-notification-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .dm-notification-title {
+            font-weight: 600;
+            color: #00d4ff;
+            font-size: 14px;
+        }
+
+        .dm-notification-message {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.4;
+        }
+
         .dm-stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -924,20 +1002,31 @@
                 });
             }
             
-            showNotification(title, message) {
-                // Simple notification system
+            showNotification(title, message, type = 'info') {
+                // Enhanced notification system with close button
                 const notification = document.createElement('div');
-                notification.style.cssText = `
-                    position: fixed; top: 20px; right: 20px; background: rgba(0, 212, 255, 0.1);
-                    border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; padding: 15px;
-                    color: white; z-index: 10000; min-width: 250px;
+                notification.className = `dm-notification ${type}`;
+                notification.innerHTML = `
+                    <button class="dm-notification-close" onclick="this.closest('.dm-notification').remove()" aria-label="Zatvoriť">
+                        <svg viewBox="0 0 24 24" width="14" height="14">
+                            <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" fill="none"/>
+                            <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" fill="none"/>
+                        </svg>
+                    </button>
+                    <div class="dm-notification-content">
+                        <div class="dm-notification-title">${title}</div>
+                        <div class="dm-notification-message">${message}</div>
+                    </div>
                 `;
-                notification.innerHTML = `<div style="font-weight: 600; color: #00d4ff;">${title}</div><div>${message}</div>`;
                 document.body.appendChild(notification);
                 
                 setTimeout(() => {
-                    notification.remove();
-                }, 3000);
+                    if (notification.parentElement) {
+                        notification.style.opacity = '0';
+                        notification.style.transform = 'translateX(100%)';
+                        setTimeout(() => notification.remove(), 300);
+                    }
+                }, 4000);
             }
         }
         
