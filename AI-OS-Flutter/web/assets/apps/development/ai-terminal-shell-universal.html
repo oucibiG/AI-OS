@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>💻 AI Terminal Shell - NetHunter Pro Universal</title>
+    
+    <!-- AI-OS Core Integration -->
+    <script src="../js/ai-os-core.js"></script>
+    <script src="../js/ai-os-app-integration.js"></script>
+    
+    <!-- Universal AI-OS Styles -->
+    <link rel="stylesheet" href="../universal-app-styles.css">
+    
+    <!-- Terminal-specific styles -->
+    <style>
+        /* Terminal App Theme */
+        .terminal-app {
+            --primary: #00ff00;
+            --primary-dark: #00cc00;
+            --secondary: #00ffff;
+            --accent: #44ff44;
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-tertiary: #111;
+            --text-primary: #00ff00;
+            --text-secondary: #00cc00;
+            --border-primary: rgba(0, 255, 0, 0.3);
+        }
+        
+        .terminal-app .ai-app-header {
+            background: linear-gradient(90deg, #000, #111, #000);
+            border-bottom: 2px solid var(--primary);
+            box-shadow: 0 2px 10px rgba(0, 255, 0, 0.2);
+        }
+        
+        .terminal-app .ai-app-icon {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: rgba(0, 255, 0, 0.5);
+        }
+        
+        .terminal-app .ai-btn:hover {
+            background: rgba(0, 255, 0, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+        
+        .terminal-app .ai-btn-primary {
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+        }
+        
+        .terminal-app .ai-card {
+            background: rgba(0, 0, 0, 0.8);
+            border-color: var(--border-primary);
+        }
+        
+        /* Terminal specific components */
+        .terminal-output {
+            background: #000;
+            border: 1px solid var(--primary);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            font-family: var(--font-mono);
+            font-size: 14px;
+            line-height: 1.4;
+            height: 400px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) #000;
+        }
+        
+        .terminal-output::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .terminal-output::-webkit-scrollbar-track {
+            background: #000;
+        }
+        
+        .terminal-output::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 3px;
+        }
+        
+        .terminal-input {
+            background: var(--bg-secondary);
+            border: 1px solid var(--primary);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            font-size: 14px;
+            outline: none;
+            margin-top: var(--space-md);
+        }
+        
+        .terminal-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0, 255, 0, 0.1);
+        }
+        
+        .terminal-prompt {
+            color: var(--accent);
+            font-weight: bold;
+        }
+        
+        .terminal-text-success {
+            color: var(--accent);
+        }
+        
+        .terminal-text-info {
+            color: var(--secondary);
+        }
+        
+        .terminal-text-warning {
+            color: #ffff00;
+        }
+        
+        .terminal-text-error {
+            color: #ff4444;
+        }
+        
+        .terminal-tools-sidebar {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .tool-category {
+            margin-bottom: var(--space-lg);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+        }
+        
+        .category-header {
+            background: var(--bg-tertiary);
+            padding: var(--space-md);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all var(--transition-fast);
+        }
+        
+        .category-header:hover {
+            background: var(--primary);
+            color: #000;
+        }
+        
+        .category-title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .category-toggle {
+            font-size: 12px;
+            transition: transform var(--transition-fast);
+        }
+        
+        .category-content {
+            padding: var(--space-md);
+            display: none;
+        }
+        
+        .category-content.expanded {
+            display: block;
+        }
+        
+        .tool-item {
+            padding: var(--space-sm) var(--space-md);
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--space-xs);
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .tool-item:hover {
+            background: rgba(0, 255, 0, 0.1);
+            color: var(--primary);
+        }
+        
+        .tool-icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .ai-chat {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .ai-message {
+            margin-bottom: var(--space-md);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            max-width: 80%;
+        }
+        
+        .ai-message.user {
+            background: var(--primary);
+            color: #000;
+            margin-left: auto;
+            text-align: right;
+        }
+        
+        .ai-message.ai {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-primary);
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .terminal-output {
+                height: 300px;
+                font-size: 12px;
+            }
+            
+            .terminal-tools-sidebar {
+                max-height: 250px;
+            }
+            
+            .ai-chat {
+                max-height: 200px;
+            }
+        }
+    </style>
+</head>
+<body class="safe-area terminal-app">
+    <!-- Universal App Container -->
+    <div class="ai-app-container">
+        <!-- Universal App Header -->
+        <header class="ai-app-header">
+            <div class="ai-app-title">
+                <div class="ai-app-icon">💻</div>
+                <span>AI Terminal Shell - NetHunter Pro</span>
+            </div>
+            <div class="ai-app-controls">
+                <!-- Universal controls will be added automatically -->
+            </div>
+        </header>
+
+        <!-- Universal App Layout -->
+        <div class="ai-app-layout">
+            <!-- Universal Sidebar -->
+            <aside class="ai-sidebar">
+                <button class="ai-btn ai-btn-icon ai-sidebar-toggle" onclick="aiApp.toggleSidebar()">
+                    ☰
+                </button>
+                <div class="ai-sidebar-content">
+                    <nav class="ai-sidebar-nav">
+                        <div class="ai-sidebar-item active" data-section="terminal">
+                            <div class="ai-sidebar-icon">💻</div>
+                            <span class="sidebar-item-text">Terminal</span>
+                        </div>
+                        <div class="ai-sidebar-item" data-section="tools">
+                            <div class="ai-sidebar-icon">🔧</div>
+                            <span class="sidebar-item-text">Tools</span>
+                        </div>
+                        <div class="ai-sidebar-item" data-section="ai">
+                            <div class="ai-sidebar-icon">🤖</div>
+                            <span class="sidebar-item-text">AI Assistant</span>
+                        </div>
+                        <div class="ai-sidebar-item" data-section="settings">
+                            <div class="ai-sidebar-icon">⚙️</div>
+                            <span class="sidebar-item-text">Settings</span>
+                        </div>
+                    </nav>
+                </div>
+            </aside>
+
+            <!-- Universal Main Content -->
+            <main class="ai-main-content">
+                <div class="ai-content-area">
+                    <!-- Terminal Section -->
+                    <div id="terminal-section" class="section-content">
+                        <div class="ai-card ai-fade-in">
+                            <div class="ai-card-header">
+                                <div class="ai-app-icon">💻</div>
+                                <div>
+                                    <h3 class="ai-card-title">NetHunter Pro Terminal</h3>
+                                    <p class="ai-card-subtitle">Enhanced security testing terminal with 70+ tools</p>
+                                </div>
+                            </div>
+                            
+                            <div class="terminal-output" id="terminalOutput">
+                                <div class="terminal-prompt">AI-OS NetHunter Pro v2.0.1</div>
+                                <div class="terminal-text-info">Welcome to Enhanced Terminal Shell</div>
+                                <div class="terminal-text-info">Type 'help' for available commands</div>
+                                <div class="terminal-prompt">root@nethunter:~# </div>
+                            </div>
+                            
+                            <input type="text" class="terminal-input" id="terminalInput" 
+                                   placeholder="Enter command..." 
+                                   onkeypress="handleTerminalInput(event)">
+                        </div>
+                    </div>
+
+                    <!-- Tools Section -->
+                    <div id="tools-section" class="section-content" style="display: none;">
+                        <div class="ai-card ai-fade-in">
+                            <div class="ai-card-header">
+                                <div class="ai-app-icon">🔧</div>
+                                <div>
+                                    <h3 class="ai-card-title">Security Tools</h3>
+                                    <p class="ai-card-subtitle">70+ penetration testing tools</p>
+                                </div>
+                            </div>
+                            
+                            <div class="terminal-tools-sidebar">
+                                <!-- Network Tools -->
+                                <div class="tool-category">
+                                    <div class="category-header" onclick="toggleCategory(this)">
+                                        <span class="category-title">🌐 Network Tools</span>
+                                        <span class="category-toggle">▼</span>
+                                    </div>
+                                    <div class="category-content expanded">
+                                        <div class="tool-item" onclick="executeTool('nmap')">
+                                            <span class="tool-icon">🔍</span>
+                                            <span>Nmap - Network Scanner</span>
+                                        </div>
+                                        <div class="tool-item" onclick="executeTool('masscan')">
+                                            <span class="tool-icon">⚡</span>
+                                            <span>Masscan - Fast Port Scanner</span>
+                                        </div>
+                                        <div class="tool-item" onclick="executeTool('zmap')">
+                                            <span class="tool-icon">🎯</span>
+                                            <span>Zmap - Internet-wide Scanner</span>
+                                        </div>
+                                        <div class="tool-item" onclick="executeTool('netcat')">
+                                            <span class="tool-icon">🔌</span>
+                                            <span>Netcat - Network Swiss Army Knife</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Web Tools -->
+                                <div class="tool-category">
+                                    <div class="category-header" onclick="toggleCategory(this)">
+                                        <span class="category-title">🌍 Web Tools</span>
+                                        <span class="category-toggle">▼</span>
+                                    </div>
+                                    <div class="category-content">
+                                        <div class="tool-item" onclick="executeTool('sqlmap')">
+                                            <span class="tool-icon">💉</span>
+                                            <span>SQLMap - SQL Injection Tool</span>
+                                        </div>
+                                        <div class="tool-item" onclick="executeTool('dirb')">
+                                            <span class="tool-icon">📁</span>
+                                            <span>DIRB - Web Content Scanner</span>
+                                        </div>
+                                        <div class="tool-item" onclick="executeTool('nikto')">
+                                            <span class="tool-icon">🕵️</span>
+                                            <span>Nikto - Web Vulnerability Scanner</span>
+                                        </div>
+                                        <div class="tool-item" onclick="executeTool('wpscan')">
+                                            <span class="tool-icon">🔓</span>
+                                            <span>WPScan - WordPress Scanner</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Wireless Tools -->
+                                <div class="tool-category">
+                                    <div class="category-header" onclick="toggleCategory(this)">
+                                        <span class="category-title">📡 Wireless Tools</span>
+                                        <span class="category-toggle">▼</span>
+                                    </div>
+                                    <div class="category-content">
+                                        <div class="tool-item" onclick="executeTool('aircrack-ng')">
+                                            <span class="tool-icon">🔑</span>
+                                            <span>Aircrack-ng - WiFi Security</span>
+                                        </div>
+                                        <div class="tool-item" onclick="executeTool('reaver')">
+                                            <span class="tool-icon">🔓</span>
+                                            <span>Reaver - WPS Attack Tool</span>
+                                        </div>
+                                        <div class="tool-item" onclick="executeTool('kismet')">
+                                            <span class="tool-icon">📡</span>
+                                            <span>Kismet - Wireless Detector</span>
+                                        </div>
+                                        <div class="tool-item" onclick="executeTool('hostapd')">
+                                            <span class="tool-icon">📶</span>
+                                            <span>Hostapd - Access Point Daemon</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Exploitation Tools -->
+                                <div class="tool-category">
+                                    <div class="category-header" onclick="toggleCategory(this)">
+                                        <span class="category-title">⚔️ Exploitation</span>
+                                        <span class="category-toggle">▼</span>
+                                    </div>
+                                    <div class="category-content">
+                                        <div class="tool-item" onclick="executeTool('metasploit')">
+                                            <span class="tool-icon">🎯</span>
+                                            <span>Metasploit - Exploitation Framework</span>
+                                        </div>
+                                        <div class="tool-item" onclick="executeTool('burpsuite')">
+                                            <span class="tool-icon">🦀</span>
+                                            <span>Burp Suite - Web App Testing</span>
+                                        </div>
+                                        <div class="tool-item" onclick="executeTool('beef')">
+                                            <span class="tool-icon">🐄</span>
+                                            <span>BeEF - Browser Exploitation</span>
+                                        </div>
+                                        <div class="tool-item" onclick="executeTool('、社会工程')">
+                                            <span class="tool-icon">🎭</span>
+                                            <span>Social Engineering Toolkit</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Analysis Tools -->
+                                <div class="tool-category">
+                                    <div class="category-header" onclick="toggleCategory(this)">
+                                        <span class="category-title">📊 Analysis Tools</span>
+                                        <span class="category-toggle">▼</span>
+                                    </div>
+                                    <div class="category-content">
+                                        <div class="tool-item" onclick="executeTool('wireshark')">
+                                            <span class="tool-icon">📋</span>
+                                            <span>Wireshark - Network Analyzer</span>
+                                        </div>
+                                        <div class="tool-item" onclick="executeTool('tcpdump')">
+                                            <span class="tool-icon">📦</span>
+                                            <span>Tcpdump - Packet Capture</span>
+                                        </div>
+                                        <div class="tool-item" onclick="executeTool('volatility')">
+                                            <span class="tool-icon">🔍</span>
+                                            <span>Volatility - Memory Analysis</span>
+                                        </div>
+                                        <div class="tool-item" onclick="executeTool('foremost')">
+                                            <span class="tool-icon">🗂️</span>
+                                            <span>Foremost - File Carving</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Assistant Section -->
+                    <div id="ai-section" class="section-content" style="display: none;">
+                        <div class="ai-card ai-fade-in">
+                            <div class="ai-card-header">
+                                <div class="ai-app-icon">🤖</div>
+                                <div>
+                                    <h3 class="ai-card-title">AI Security Assistant</h3>
+                                    <p class="ai-card-subtitle">Intelligent penetration testing guidance</p>
+                                </div>
+                            </div>
+                            
+                            <div class="ai-chat" id="aiChat">
+                                <div class="ai-message ai">
+                                    <strong>AI Assistant:</strong><br>
+                                    Vitajte v AI Security Assistant! Môžem vám pomôcť s:
+                                    <br>• Analýzou zraniteľností
+                                    <br>• Výberom nástrojov
+                                    <br>• Technikami testovania
+                                    <br>• Interpretáciou výsledkov
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; gap: var(--space-md); margin-top: var(--space-md);">
+                                <input type="text" class="ai-input" id="aiInput" 
+                                       placeholder="Opýte sa AI asistenta..." 
+                                       onkeypress="handleAIInput(event)">
+                                <button class="ai-btn ai-btn-primary" onclick="sendAIMessage()">
+                                    Odoslať
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Section -->
+                    <div id="settings-section" class="section-content" style="display: none;">
+                        <div class="ai-card ai-fade-in">
+                            <div class="ai-card-header">
+                                <div class="ai-app-icon">⚙️</div>
+                                <div>
+                                    <h3 class="ai-card-title">Terminal Settings</h3>
+                                    <p class="ai-card-subtitle">Configure your NetHunter environment</p>
+                                </div>
+                            </div>
+                            
+                            <div class="ai-grid ai-grid-cols-2 ai-mt-lg">
+                                <div class="ai-card">
+                                    <h4>🎨 Theme Settings</h4>
+                                    <div class="ai-mt-md">
+                                        <label class="ai-btn ai-btn-secondary" onclick="changeTheme('matrix')">Matrix Green</label>
+                                        <label class="ai-btn ai-btn-secondary" onclick="changeTheme('cyberpunk')">Cyberpunk</label>
+                                        <label class="ai-btn ai-btn-secondary" onclick="changeTheme('hacker')">Hacker Dark</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="ai-card">
+                                    <h4>⚡ Performance</h4>
+                                    <div class="ai-mt-md">
+                                        <label class="ai-btn ai-btn-secondary" onclick="toggleAutoScroll()">Auto-scroll: ON</label>
+                                        <label class="ai-btn ai-btn-secondary" onclick="toggleSound()">Sound: ON</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Universal Navigation Bar -->
+                <nav class="ai-nav-bar">
+                    <div class="ai-nav-left">
+                        <button class="ai-nav-back" onclick="aiApp.navigateBack()">
+                            ← Späť
+                        </button>
+                    </div>
+                    <div class="ai-nav-right">
+                        <button class="ai-nav-home" onclick="aiApp.goHome()">
+                            🏠 Hlavná
+                        </button>
+                    </div>
+                </nav>
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div class="ai-sidebar-overlay" onclick="aiApp.closeSidebar()"></div>
+
+    <!-- Universal AI-OS JavaScript -->
+    <script src="../universal-app.js"></script>
+    
+    <!-- Terminal-specific JavaScript -->
+    <script>
+        let currentTheme = 'matrix';
+        let autoScroll = true;
+        let soundEnabled = true;
+        
+        // Terminal functionality
+        function handleTerminalInput(event) {
+            if (event.key === 'Enter') {
+                const input = document.getElementById('terminalInput');
+                const command = input.value.trim();
+                
+                if (command) {
+                    addToTerminal(`root@nethunter:~# ${command}`, 'prompt');
+                    executeCommand(command);
+                    input.value = '';
+                }
+            }
+        }
+        
+        function executeCommand(command) {
+            const output = document.getElementById('terminalOutput');
+            
+            // Command processing
+            switch(command.toLowerCase()) {
+                case 'help':
+                    addToTerminal('Available commands:', 'info');
+                    addToTerminal('  help     - Show this help', 'info');
+                    addToTerminal('  clear    - Clear terminal', 'info');
+                    addToTerminal('  nmap     - Network scanner', 'info');
+                    addToTerminal('  sqlmap   - SQL injection tool', 'info');
+                    addToTerminal('  whoami   - Show current user', 'info');
+                    addToTerminal('  pwd      - Print working directory', 'info');
+                    addToTerminal('  ls       - List directory contents', 'info');
+                    addToTerminal('  date     - Show current date and time', 'info');
+                    break;
+                    
+                case 'clear':
+                    output.innerHTML = '';
+                    break;
+                    
+                case 'whoami':
+                    addToTerminal('root', 'success');
+                    break;
+                    
+                case 'pwd':
+                    addToTerminal('/root', 'success');
+                    break;
+                    
+                case 'ls':
+                    addToTerminal('Desktop  Documents  Downloads  Tools  Scripts', 'success');
+                    break;
+                    
+                case 'date':
+                    addToTerminal(new Date().toString(), 'success');
+                    break;
+                    
+                case 'nmap':
+                    addToTerminal('Starting Nmap scan...', 'info');
+                    addToTerminal('Host is up (0.0010s latency).', 'success');
+                    addToTerminal('PORT     STATE SERVICE VERSION', 'info');
+                    addToTerminal('22/tcp   open  ssh     OpenSSH 8.0', 'success');
+                    addToTerminal('80/tcp   open  http    Apache 2.4.41', 'success');
+                    addToTerminal('443/tcp  open  https   Apache 2.4.41', 'success');
+                    break;
+                    
+                case 'sqlmap':
+                    addToTerminal('[*] starting at ' + new Date().toLocaleTimeString(), 'info');
+                    addToTerminal('[INFO] testing connection to the target URL', 'info');
+                    addToTerminal('[INFO] testing if the target is protected by WAF/IPS', 'info');
+                    addToTerminal('[INFO] testing if the target URL content is stable', 'info');
+                    break;
+                    
+                default:
+                    addToTerminal(`bash: ${command}: command not found`, 'error');
+            }
+            
+            if (autoScroll) {
+                output.scrollTop = output.scrollHeight;
+            }
+        }
+        
+        function addToTerminal(text, type = 'normal') {
+            const output = document.getElementById('terminalOutput');
+            const div = document.createElement('div');
+            
+            switch(type) {
+                case 'prompt':
+                    div.className = 'terminal-prompt';
+                    break;
+                case 'success':
+                    div.className = 'terminal-text-success';
+                    break;
+                case 'info':
+                    div.className = 'terminal-text-info';
+                    break;
+                case 'warning':
+                    div.className = 'terminal-text-warning';
+                    break;
+                case 'error':
+                    div.className = 'terminal-text-error';
+                    break;
+            }
+            
+            div.innerHTML = text;
+            output.appendChild(div);
+        }
+        
+        // Tools functionality
+        function toggleCategory(header) {
+            const content = header.nextElementSibling;
+            const toggle = header.querySelector('.category-toggle');
+            
+            content.classList.toggle('expanded');
+            toggle.textContent = content.classList.contains('expanded') ? '▲' : '▼';
+        }
+        
+        function executeTool(toolName) {
+            addToTerminal(`Executing ${toolName}...`, 'info');
+            
+            // Simulate tool execution
+            setTimeout(() => {
+                addToTerminal(`${toolName} executed successfully`, 'success');
+                addToTerminal(`Tool output would appear here in a real implementation`, 'info');
+            }, 1000);
+        }
+        
+        // AI Assistant functionality
+        function handleAIInput(event) {
+            if (event.key === 'Enter') {
+                sendAIMessage();
+            }
+        }
+        
+        function sendAIMessage() {
+            const input = document.getElementById('aiInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            const chat = document.getElementById('aiChat');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'ai-message user';
+            userMsg.textContent = message;
+            chat.appendChild(userMsg);
+            
+            // Clear input
+            input.value = '';
+            
+            // Generate AI response
+            setTimeout(() => {
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'ai-message ai';
+                aiMsg.innerHTML = generateAIResponse(message);
+                chat.appendChild(aiMsg);
+                
+                chat.scrollTop = chat.scrollHeight;
+            }, 1000);
+            
+            chat.scrollTop = chat.scrollHeight;
+        }
+        
+        function generateAIResponse(message) {
+            const responses = {
+                'nmap': 'Nmap je výkonný sieťový skener. Pre efektívne skenovanie: <br>• Použite -sS pre tiché SYN skeny<br>• Pridajte -sV pre detekciu verzií<br>• Zahrňte --script vuln pre skripty zraniteľností<br>• Použite -p- pre celý rozsah portov',
+                'sqlmap': 'SQLMap automatizuje detekciu a zneužitie SQL injection. Kľúčové funkcie:<br>• Automatická detekcia SQL injection chýb<br>• Fingerprinting databázy<br>• Extrakcia dát<br>• Prístup k operačnému systému',
+                'wireless': 'Bezdrôtové testovanie bezpečnosti zahŕňa:<br>• Monitor mode s aircrack-ng<br>• Deautentifikačné útoky<br>• Zachytávanie handshake<br>• Lámanie hesiel s hashcat',
+                'exploitation': 'Stratégie zneužitia:<br>• Najprv identifikujte zraniteľnosti<br>• Vyberte vhodné exploity<br>• Použite Metasploit framework<br>• Zvážte post-exploitačné techniky',
+                'help': 'Môžem pomôcť s rôznymi témami testovania bezpečnosti. Opýtajte sa ma na konkrétne nástroje, techniky alebo metodológie!',
+            };
+            
+            const lowerMessage = message.toLowerCase();
+            for (const [key, response] of Object.entries(responses)) {
+                if (lowerMessage.includes(key)) {
+                    return `<strong>AI Assistant:</strong><br>${response}`;
+                }
+            }
+            
+            return `<strong>AI Assistant:</strong><br>Rozumiem, že sa pýtate o "${message}". Pri penetračnom testovaní je dôležité dodržiavať etické smernice a testovať iba systémy, ktoré vlastníte alebo máte výslovné povolenie testovať. Na aký konkrétny aspekt by ste sa chceli dozvedieť viac?`;
+        }
+        
+        // Settings functionality
+        function changeTheme(theme) {
+            currentTheme = theme;
+            addToTerminal(`Theme changed to: ${theme}`, 'success');
+        }
+        
+        function toggleAutoScroll() {
+            autoScroll = !autoScroll;
+            addToTerminal(`Auto-scroll: ${autoScroll ? 'ON' : 'OFF'}`, 'info');
+        }
+        
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            addToTerminal(`Sound: ${soundEnabled ? 'ON' : 'OFF'}`, 'info');
+        }
+        
+        // Sidebar navigation
+        function handleSectionChange(section) {
+            // Hide all sections
+            document.querySelectorAll('.section-content').forEach(s => {
+                s.style.display = 'none';
+            });
+            
+            // Show selected section
+            const targetSection = document.getElementById(section + '-section');
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+        }
+        
+        // AI-OS Core Integration
+        let aiOSIntegration = null;
+        
+        function handleAIOSCommand(command) {
+            switch (command.action) {
+                case 'executeCommand':
+                    addToTerminal(`$ ${command.text}`, 'input');
+                    executeCommand(command.text);
+                    break;
+                case 'clearTerminal':
+                    clearTerminal();
+                    break;
+                case 'changeTheme':
+                    changeTheme(command.theme);
+                    break;
+                case 'toggleAutoScroll':
+                    toggleAutoScroll();
+                    break;
+                case 'toggleSound':
+                    toggleSound();
+                    break;
+                case 'showHistory':
+                    addToTerminal('Command history feature coming soon...', 'info');
+                    break;
+                default:
+                    console.log('Unknown AI-OS command:', command);
+            }
+        }
+        
+        function updateTerminalStatus(systemState) {
+            // Update terminal with system information
+            if (systemState) {
+                // Update system information in terminal
+                if (systemState.system !== undefined) {
+                    addToTerminal(`System: ${systemState.system}`, 'info');
+                }
+                
+                if (systemState.cpu !== undefined) {
+                    addToTerminal(`CPU Usage: ${systemState.cpu}%`, 'info');
+                }
+            }
+        }
+        
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('💻 Initializing Universal NetHunter Terminal...');
+            
+            // Wait for AI-OS Core to be available
+            const initTerminal = () => {
+                // Setup sidebar navigation
+                const sidebarItems = document.querySelectorAll('.ai-sidebar-item');
+                sidebarItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        sidebarItems.forEach(i => i.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        const section = this.getAttribute('data-section');
+                        handleSectionChange(section);
+                    });
+                });
+                
+                // Focus terminal input
+                document.getElementById('terminalInput').focus();
+                
+                // Setup AI-OS Core integration
+                if (window.aiOSCore && window.AIOSAppIntegration) {
+                    aiOSIntegration = new AIOSAppIntegration('terminal-shell-universal', 'AI Terminal Shell Universal', [
+                        'command_execution', 'universal_interface', 'multi_platform', 'mobile_optimized'
+                    ]);
+                    
+                    // Listen for AI-OS events
+                    aiOSIntegration.on('appMessage', (data) => {
+                        if (data.from === 'aiOS-core') {
+                            handleAIOSCommand(data.data);
+                        }
+                    });
+                    
+                    aiOSIntegration.on('systemStateUpdate', (data) => {
+                        updateTerminalStatus(data);
+                    });
+                    
+                    console.log('✅ Universal Terminal Shell integrated with AI-OS Core');
+                }
+            };
+            
+            if (window.aiOSCore) {
+                initTerminal();
+            } else {
+                setTimeout(initTerminal, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

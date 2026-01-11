@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📱 Android App Store - APK Manager</title>
+    
+    <!-- AI-OS Core Integration -->
+    <script src="../js/ai-os-core.js"></script>
+    <script src="../js/ai-os-app-integration.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+            background: #000;
+            color: #00ff00;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                linear-gradient(90deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(rgba(0, 255, 0, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        .android-store {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .as-header {
+            height: 60px;
+            background: #000;
+            border-bottom: 2px solid #00ff00;
+            border-top: 1px solid #00ff00;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1000;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+        
+        .as-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #00ff00;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        
+        .as-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .as-search {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 0 15px;
+            width: 300px;
+        }
+        
+        .as-search-input {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 10px 0;
+            width: 100%;
+            font-size: 14px;
+        }
+        
+        .as-search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .as-search-icon {
+            color: rgba(255, 255, 255, 0.5);
+            margin-right: 10px;
+        }
+        
+        .as-main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .as-sidebar {
+            width: 280px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid rgba(76, 175, 80, 0.2);
+            padding: 20px;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+        
+        .as-sidebar.hidden {
+            transform: translateX(-100%);
+            width: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .as-sidebar-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4CAF50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .as-category {
+            margin-bottom: 25px;
+        }
+        
+        .as-category-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        
+        .as-filter-item {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 2px;
+            font-size: 13px;
+        }
+        
+        .as-filter-item:hover {
+            background: rgba(76, 175, 80, 0.1);
+        }
+        
+        .as-filter-item.active {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+        }
+        
+        .as-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+        
+        .as-content.expanded {
+            margin-left: 0;
+            width: 100%;
+        }
+        
+        .as-section {
+            margin-bottom: 30px;
+        }
+        
+        .as-section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #4CAF50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .as-apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .as-app-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .as-app-card:hover {
+            border-color: rgba(76, 175, 80, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .as-app-card.installed {
+            border-color: rgba(76, 175, 80, 0.5);
+            background: rgba(76, 175, 80, 0.05);
+        }
+        
+        .as-app-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .as-app-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid rgba(76, 175, 80, 0.3);
+        }
+        
+        .as-app-info {
+            flex: 1;
+        }
+        
+        .as-app-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .as-app-developer {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+        
+        .as-app-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+        }
+        
+        .as-rating-stars {
+            color: #FFC107;
+        }
+        
+        .as-app-description {
+            font-size: 13px;
+            opacity: 0.8;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+        
+        .as-app-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .as-stat {
+            text-align: center;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            font-size: 11px;
+        }
+        
+        .as-stat-value {
+            font-weight: 600;
+            color: #4CAF50;
+            margin-bottom: 2px;
+        }
+        
+        .as-app-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .as-action-btn {
+            flex: 1;
+            padding: 8px 12px;
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 6px;
+            color: #4CAF50;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        
+        .as-action-btn:hover {
+            background: rgba(76, 175, 80, 0.2);
+        }
+        
+        .as-action-btn.installed {
+            background: rgba(255, 193, 7, 0.1);
+            border-color: rgba(255, 193, 7, 0.3);
+            color: #FFC107;
+        }
+        
+        .as-action-btn.danger {
+            background: rgba(244, 67, 54, 0.1);
+            border-color: rgba(244, 67, 54, 0.3);
+            color: #f44336;
+        }
+        
+        .as-upload-zone {
+            border: 2px dashed rgba(76, 175, 80, 0.3);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .as-upload-zone:hover {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.05);
+        }
+        
+        .as-upload-zone.dragover {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+        
+        .as-upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.7;
+        }
+        
+        .as-upload-text {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .as-upload-subtext {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .as-installed-section {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .as-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .as-stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .as-stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #4CAF50;
+            margin-bottom: 5px;
+        }
+        
+        .as-stat-label {
+            font-size: 12px;
+            opacity: 0.7;
+            text-transform: uppercase;
+        }
+        
+        .as-toggle-sidebar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 18px;
+        }
+        
+        .as-toggle-sidebar:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .as-control-btn {
+            padding: 8px 16px;
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 6px;
+            color: #4CAF50;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+        
+        .as-control-btn:hover {
+            background: rgba(76, 175, 80, 0.2);
+        }
+        
+        .as-control-btn.primary {
+            background: rgba(76, 175, 80, 0.2);
+            border-color: #4CAF50;
+        }
+        
+        .as-app-size {
+            font-size: 11px;
+            opacity: 0.6;
+            margin-top: 5px;
+        }
+        
+        .as-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 4px;
+            font-size: 10px;
+            color: #FFC107;
+            margin-left: 5px;
+        }
+        
+        .as-badge.premium {
+            background: rgba(156, 39, 176, 0.2);
+            border-color: rgba(156, 39, 176, 0.3);
+            color: #9c27b0;
+        }
+        
+        .as-badge.free {
+            background: rgba(76, 175, 80, 0.2);
+            border-color: rgba(76, 175, 80, 0.3);
+            color: #4CAF50;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .as-sidebar {
+                width: 250px;
+            }
+            
+            .as-content {
+                padding: 15px;
+            }
+            
+            .as-apps-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .as-search {
+                width: 200px;
+            }
+        }
+    
+        /* Floating Home Button */
+        .floating-home-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 255, 0, 0.3);
+            border: 2px solid #00ff88;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            animation: homePulse 2s infinite;
+        }
+
+        .floating-home-btn:hover {
+            background: rgba(0, 255, 0, 0.5);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.7);
+            animation: none;
+        }
+
+        @keyframes homePulse {
+            0%, 100% { box-shadow: 0 0 5px rgba(0, 255, 0, 0.3); }
+            50% { box-shadow: 0 0 15px rgba(0, 255, 0, 0.6); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Home Button -->
+    <div class="floating-home-btn" onclick="goHome()" title="Domov">🏠</div>
+    <div class="android-store">
+        <!-- Header -->
+        <div class="as-header">
+            <div class="as-title">
+                <span>📱</span>
+                <span>Android App Store - APK Manager</span>
+            </div>
+            
+            <div class="as-controls">
+                <div class="as-toggle-sidebar" onclick="toggleStoreSidebar()" title="Toggle Sidebar">
+                    <span>«</span>
+                </div>
+                <div class="as-search">
+                    <span class="as-search-icon">🔍</span>
+                    <input type="text" class="as-search-input" placeholder="Search apps..." id="appSearchInput">
+                </div>
+                <button class="as-control-btn" onclick="showCategories()">📂 Categories</button>
+                <button class="as-control-btn primary" onclick="showInstalled()">📱 Installed</button>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="as-main">
+            <!-- Sidebar -->
+            <div class="as-sidebar">
+                <div class="as-sidebar-title">
+                    <span>🔍</span>
+                    <span>Filters & Categories</span>
+                </div>
+                
+                <div class="as-category">
+                    <div class="as-category-title">Categories</div>
+                    <div class="as-filter-item active" onclick="filterByCategory('all')">All Apps</div>
+                    <div class="as-filter-item" onclick="filterByCategory('productivity')">💼 Productivity</div>
+                    <div class="as-filter-item" onclick="filterByCategory('games')">🎮 Games</div>
+                    <div class="as-filter-item" onclick="filterByCategory('social')">💬 Social</div>
+                    <div class="as-filter-item" onclick="filterByCategory('utilities')">🛠️ Utilities</div>
+                    <div class="as-filter-item" onclick="filterByCategory('education')">📚 Education</div>
+                    <div class="as-filter-item" onclick="filterByCategory('entertainment')">🎬 Entertainment</div>
+                    <div class="as-filter-item" onclick="filterByCategory('tools')">🔧 Developer Tools</div>
+                </div>
+                
+                <div class="as-category">
+                    <div class="as-category-title">Price</div>
+                    <div class="as-filter-item active" onclick="filterByPrice('all')">All Apps</div>
+                    <div class="as-filter-item" onclick="filterByPrice('free')">Free Only</div>
+                    <div class="as-filter-item" onclick="filterByPrice('paid')">Paid Only</div>
+                </div>
+                
+                <div class="as-category">
+                    <div class="as-category-title">Sort By</div>
+                    <div class="as-filter-item active" onclick="sortApps('popular')">Most Popular</div>
+                    <div class="as-filter-item" onclick="sortApps('rating')">Highest Rated</div>
+                    <div class="as-filter-item" onclick="sortApps('newest')">Newest First</div>
+                    <div class="as-filter-item" onclick="sortApps('alphabetical')">A-Z</div>
+                </div>
+                
+                <div class="as-category">
+                    <div class="as-category-title">Quick Actions</div>
+                    <div class="as-filter-item" onclick="uploadAPK()">📤 Upload APK</div>
+                    <div class="as-filter-item" onclick="batchInstall()">📦 Batch Install</div>
+                    <div class="as-filter-item" onclick="backupApps()">💾 Backup Apps</div>
+                    <div class="as-filter-item" onclick="updateAll()">🔄 Update All</div>
+                </div>
+            </div>
+            
+            <!-- Content -->
+            <div class="as-content">
+                <!-- Upload Zone -->
+                <div class="as-upload-zone" onclick="uploadAPK()" ondrop="handleAPKDrop(event)" ondragover="handleDragOver(event)">
+                    <div class="as-upload-icon">📦</div>
+                    <div class="as-upload-text">Upload APK Files</div>
+                    <div class="as-upload-subtext">Drag & drop APK files here or click to browse</div>
+                </div>
+                
+                <!-- Installed Apps Section -->
+                <div class="as-installed-section">
+                    <div class="as-section-title">
+                        <span>📱</span>
+                        <span>Installed Applications</span>
+                    </div>
+                    
+                    <div class="as-stats-grid">
+                        <div class="as-stat-card">
+                            <div class="as-stat-value" id="totalApps">0</div>
+                            <div class="as-stat-label">Total Apps</div>
+                        </div>
+                        <div class="as-stat-card">
+                            <div class="as-stat-value" id="totalSize">0 MB</div>
+                            <div class="as-stat-label">Total Size</div>
+                        </div>
+                        <div class="as-stat-card">
+                            <div class="as-stat-value" id="updatesAvailable">0</div>
+                            <div class="as-stat-label">Updates Available</div>
+                        </div>
+                        <div class="as-stat-card">
+                            <div class="as-stat-value" id="storageUsed">0%</div>
+                            <div class="as-stat-label">Storage Used</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Featured Apps -->
+                <div class="as-section">
+                    <div class="as-section-title">
+                        <span>⭐</span>
+                        <span>Featured Applications</span>
+                    </div>
+                    
+                    <div class="as-apps-grid" id="featuredApps">
+                        <!-- Featured apps will be populated here -->
+                    </div>
+                </div>
+                
+                <!-- Popular Apps -->
+                <div class="as-section">
+                    <div class="as-section-title">
+                        <span>🔥</span>
+                        <span>Popular Downloads</span>
+                    </div>
+                    
+                    <div class="as-apps-grid" id="popularApps">
+                        <!-- Popular apps will be populated here -->
+                    </div>
+                </div>
+                
+                <!-- All Apps -->
+                <div class="as-section">
+                    <div class="as-section-title">
+                        <span>📋</span>
+                        <span>All Applications</span>
+                    </div>
+                    
+                    <div class="as-apps-grid" id="allApps">
+                        <!-- All apps will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <input type="file" id="apkFileInput" accept=".apk" multiple style="display: none;" onchange="handleAPKUpload(event)">
+    
+    <script>
+        class AndroidAppStore {
+            constructor() {
+                this.apps = [];
+                this.installedApps = [];
+                this.currentCategory = 'all';
+                this.currentPriceFilter = 'all';
+                this.currentSort = 'popular';
+                this.searchQuery = '';
+                
+                this.init();
+            }
+            
+            init() {
+                console.log("📱 Initializing Android App Store...");
+                
+                // Load sample apps
+                this.loadSampleApps();
+                
+                // Setup event listeners
+                this.setupEventListeners();
+                
+                // Render initial content
+                this.renderApps();
+                this.updateStats();
+                
+                console.log("✅ Android App Store initialized");
+            }
+            
+            loadSampleApps() {
+                this.apps = [
+                    {
+                        id: 'calculator',
+                        name: 'Calculator',
+                        developer: 'Google LLC',
+                        icon: '🧮',
+                        description: 'Basic calculator with scientific functions',
+                        category: 'utilities',
+                        price: 'free',
+                        rating: 4.5,
+                        downloads: '500M+',
+                        size: '2.1 MB',
+                        version: '8.4',
+                        lastUpdate: '2023-10-15',
+                        installed: true,
+                        updateAvailable: false
+                    },
+                    {
+                        id: 'chrome',
+                        name: 'Google Chrome',
+                        developer: 'Google LLC',
+                        icon: '🌐',
+                        description: 'Fast and secure web browser',
+                        category: 'utilities',
+                        price: 'free',
+                        rating: 4.2,
+                        downloads: '5B+',
+                        size: '125.3 MB',
+                        version: '118.0.5993.70',
+                        lastUpdate: '2023-11-01',
+                        installed: true,
+                        updateAvailable: true
+                    },
+                    {
+                        id: 'whatsapp',
+                        name: 'WhatsApp Messenger',
+                        developer: 'Meta Platforms, Inc.',
+                        icon: '💬',
+                        description: 'Simple. Reliable. Private.',
+                        category: 'social',
+                        price: 'free',
+                        rating: 4.1,
+                        downloads: '5B+',
+                        size: '95.7 MB',
+                        version: '2.23.24.81',
+                        lastUpdate: '2023-11-05',
+                        installed: true,
+                        updateAvailable: false
+                    },
+                    {
+                        id: 'spotify',
+                        name: 'Spotify Music & Podcasts',
+                        developer: 'Spotify AB',
+                        icon: '🎵',
+                        description: 'Play millions of songs and podcasts',
+                        category: 'entertainment',
+                        price: 'free',
+                        rating: 4.3,
+                        downloads: '1B+',
+                        size: '78.2 MB',
+                        version: '8.8.20.527',
+                        lastUpdate: '2023-11-08',
+                        installed: false,
+                        updateAvailable: false
+                    },
+                    {
+                        id: 'vscode',
+                        name: 'Visual Studio Code',
+                        developer: 'Microsoft Corporation',
+                        icon: '💻',
+                        description: 'Code editor and development environment',
+                        category: 'tools',
+                        price: 'free',
+                        rating: 4.7,
+                        downloads: '10M+',
+                        size: '145.8 MB',
+                        version: '1.84.2',
+                        lastUpdate: '2023-11-10',
+                        installed: false,
+                        updateAvailable: false
+                    },
+                    {
+                        id: 'telegram',
+                        name: 'Telegram Messenger',
+                        developer: 'Telegram FZ-LLC',
+                        icon: '📨',
+                        description: 'Fast and secure messaging app',
+                        category: 'social',
+                        price: 'free',
+                        rating: 4.4,
+                        downloads: '1B+',
+                        size: '88.1 MB',
+                        version: '10.1.5',
+                        lastUpdate: '2023-11-12',
+                        installed: false,
+                        updateAvailable: false
+                    },
+                    {
+                        id: 'office',
+                        name: 'Microsoft Office',
+                        developer: 'Microsoft Corporation',
+                        icon: '📄',
+                        description: 'Word, Excel, PowerPoint and more',
+                        category: 'productivity',
+                        price: 'paid',
+                        rating: 4.0,
+                        downloads: '100M+',
+                        size: '267.4 MB',
+                        version: '16.0.16929',
+                        lastUpdate: '2023-11-07',
+                        installed: false,
+                        updateAvailable: false
+                    },
+                    {
+                        id: 'instagram',
+                        name: 'Instagram',
+                        developer: 'Meta Platforms, Inc.',
+                        icon: '📷',
+                        description: 'Share photos and videos with friends',
+                        category: 'social',
+                        price: 'free',
+                        rating: 3.9,
+                        downloads: '5B+',
+                        size: '156.8 MB',
+                        version: '284.0.0.18.75',
+                        lastUpdate: '2023-11-09',
+                        installed: false,
+                        updateAvailable: false
+                    },
+                    {
+                        id: 'duolingo',
+                        name: 'Duolingo: Language Lessons',
+                        developer: 'Duolingo',
+                        icon: '🦉',
+                        description: 'Learn languages for free',
+                        category: 'education',
+                        price: 'freemium',
+                        rating: 4.6,
+                        downloads: '500M+',
+                        size: '112.3 MB',
+                        version: '5.119.2',
+                        lastUpdate: '2023-11-06',
+                        installed: false,
+                        updateAvailable: false
+                    },
+                    {
+                        id: 'candy_crush',
+                        name: 'Candy Crush Saga',
+                        developer: 'King Digital Entertainment',
+                        icon: '🍭',
+                        description: 'Sweet match-3 puzzle game',
+                        category: 'games',
+                        price: 'freemium',
+                        rating: 4.1,
+                        downloads: '1B+',
+                        size: '94.7 MB',
+                        version: '1.284.1',
+                        lastUpdate: '2023-11-04',
+                        installed: false,
+                        updateAvailable: false
+                    }
+                ];
+                
+                this.updateInstalledApps();
+            }
+            
+            updateInstalledApps() {
+                this.installedApps = this.apps.filter(app => app.installed);
+            }
+            
+            setupEventListeners() {
+                // Search functionality
+                document.getElementById('appSearchInput').addEventListener('input', (e) => {
+                    this.searchQuery = e.target.value.toLowerCase();
+                    this.renderApps();
+                });
+            }
+            
+            renderApps() {
+                this.updateInstalledApps();
+                this.renderFeaturedApps();
+                this.renderPopularApps();
+                this.renderAllApps();
+            }
+            
+            renderFeaturedApps() {
+                const featuredContainer = document.getElementById('featuredApps');
+                const featuredApps = this.getFilteredApps().slice(0, 6);
+                
+                featuredContainer.innerHTML = featuredApps.map(app => this.createAppCard(app)).join('');
+            }
+            
+            renderPopularApps() {
+                const popularContainer = document.getElementById('popularApps');
+                const popularApps = this.getFilteredApps().sort((a, b) => 
+                    this.parseDownloads(b.downloads) - this.parseDownloads(a.downloads)
+                ).slice(0, 6);
+                
+                popularContainer.innerHTML = popularApps.map(app => this.createAppCard(app)).join('');
+            }
+            
+            renderAllApps() {
+                const allContainer = document.getElementById('allApps');
+                const allApps = this.getFilteredApps();
+                
+                allContainer.innerHTML = allApps.map(app => this.createAppCard(app)).join('');
+            }
+            
+            createAppCard(app) {
+                return `
+                    <div class="as-app-card ${app.installed ? 'installed' : ''}" onclick="androidStore.viewAppDetails('${app.id}')">
+                        <div class="as-app-header">
+                            <div class="as-app-icon">${app.icon}</div>
+                            <div class="as-app-info">
+                                <div class="as-app-name">
+                                    ${app.name}
+                                    <span class="as-badge ${app.price}">${app.price.toUpperCase()}</span>
+                                </div>
+                                <div class="as-app-developer">${app.developer}</div>
+                                <div class="as-app-rating">
+                                    <span class="as-rating-stars">${this.renderStars(app.rating)}</span>
+                                    <span>${app.rating} • ${app.downloads}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="as-app-description">${app.description}</div>
+                        
+                        <div class="as-app-stats">
+                            <div class="as-stat">
+                                <div class="as-stat-value">${app.size}</div>
+                                <div class="as-stat-label">Size</div>
+                            </div>
+                            <div class="as-stat">
+                                <div class="as-stat-value">v${app.version}</div>
+                                <div class="as-stat-label">Version</div>
+                            </div>
+                        </div>
+                        
+                        <div class="as-app-actions">
+                            ${app.installed ? 
+                                (app.updateAvailable ? 
+                                    `<button class="as-action-btn" onclick="event.stopPropagation(); androidStore.updateApp('${app.id}')">🔄 Update</button>` :
+                                    `<button class="as-action-btn" onclick="event.stopPropagation(); androidStore.openApp('${app.id}')">▶️ Open</button>`
+                                ) :
+                                `<button class="as-action-btn" onclick="event.stopPropagation(); androidStore.installApp('${app.id}')">📥 Install</button>`
+                            }
+                            <button class="as-action-btn" onclick="event.stopPropagation(); androidStore.viewAppDetails('${app.id}')">ℹ️ Info</button>
+                            ${app.installed ? 
+                                `<button class="as-action-btn danger" onclick="event.stopPropagation(); androidStore.uninstallApp('${app.id}')">🗑️ Uninstall</button>` : 
+                                ''
+                            }
+                        </div>
+                        
+                        <div class="as-app-size">Last updated: ${app.lastUpdate}</div>
+                    </div>
+                `;
+            }
+            
+            renderStars(rating) {
+                const fullStars = Math.floor(rating);
+                const hasHalfStar = rating % 1 >= 0.5;
+                let stars = '★'.repeat(fullStars);
+                if (hasHalfStar) stars += '☆';
+                return stars + '☆'.repeat(5 - Math.ceil(rating));
+            }
+            
+            getFilteredApps() {
+                let filtered = [...this.apps];
+                
+                // Apply search filter
+                if (this.searchQuery) {
+                    filtered = filtered.filter(app => 
+                        app.name.toLowerCase().includes(this.searchQuery) ||
+                        app.developer.toLowerCase().includes(this.searchQuery) ||
+                        app.description.toLowerCase().includes(this.searchQuery)
+                    );
+                }
+                
+                // Apply category filter
+                if (this.currentCategory !== 'all') {
+                    filtered = filtered.filter(app => app.category === this.currentCategory);
+                }
+                
+                // Apply price filter
+                if (this.currentPriceFilter !== 'all') {
+                    filtered = filtered.filter(app => app.price === this.currentPriceFilter);
+                }
+                
+                // Apply sorting
+                filtered = this.sortAppsList(filtered);
+                
+                return filtered;
+            }
+            
+            sortAppsList(apps) {
+                switch (this.currentSort) {
+                    case 'rating':
+                        return apps.sort((a, b) => b.rating - a.rating);
+                    case 'newest':
+                        return apps.sort((a, b) => new Date(b.lastUpdate) - new Date(a.lastUpdate));
+                    case 'alphabetical':
+                        return apps.sort((a, b) => a.name.localeCompare(b.name));
+                    case 'popular':
+                    default:
+                        return apps.sort((a, b) => this.parseDownloads(b.downloads) - this.parseDownloads(a.downloads));
+                }
+            }
+            
+            parseDownloads(downloads) {
+                const match = downloads.match(/(\d+(?:\.\d+)?)([MB]?)\+/);
+                if (!match) return 0;
+                
+                const num = parseFloat(match[1]);
+                const unit = match[2];
+                
+                switch (unit) {
+                    case 'M': return num * 1000000;
+                    case 'B': return num * 1000000000;
+                    default: return num;
+                }
+            }
+            
+            updateStats() {
+                const totalApps = this.installedApps.length;
+                const totalSize = this.installedApps.reduce((sum, app) => {
+                    const size = parseFloat(app.size);
+                    return sum + (app.size.includes('MB') ? size : size * 1024);
+                }, 0);
+                const updatesAvailable = this.installedApps.filter(app => app.updateAvailable).length;
+                const storageUsed = Math.round((totalSize / (8 * 1024)) * 100); // Assuming 8GB total storage
+                
+                document.getElementById('totalApps').textContent = totalApps;
+                document.getElementById('totalSize').textContent = Math.round(totalSize) + ' MB';
+                document.getElementById('updatesAvailable').textContent = updatesAvailable;
+                document.getElementById('storageUsed').textContent = storageUsed + '%';
+            }
+            
+            // App management methods
+            installApp(appId) {
+                const app = this.apps.find(a => a.id === appId);
+                if (!app) return;
+                
+                app.installed = true;
+                this.updateInstalledApps();
+                this.renderApps();
+                this.updateStats();
+                
+                this.log(`INFO`, `Installed ${app.name}`);
+                this.showNotification('Installation', `${app.name} installed successfully`);
+            }
+            
+            uninstallApp(appId) {
+                const app = this.apps.find(a => a.id === appId);
+                if (!app) return;
+                
+                if (confirm(`Uninstall ${app.name}?`)) {
+                    app.installed = false;
+                    app.updateAvailable = false;
+                    this.updateInstalledApps();
+                    this.renderApps();
+                    this.updateStats();
+                    
+                    this.log('INFO', `Uninstalled ${app.name}`);
+                    this.showNotification('Uninstallation', `${app.name} uninstalled`);
+                }
+            }
+            
+            updateApp(appId) {
+                const app = this.apps.find(a => a.id === appId);
+                if (!app) return;
+                
+                app.updateAvailable = false;
+                this.renderApps();
+                
+                this.log('INFO', `Updated ${app.name} to version ${app.version}`);
+                this.showNotification('Update', `${app.name} updated successfully`);
+            }
+            
+            openApp(appId) {
+                const app = this.apps.find(a => a.id === appId);
+                if (!app) return;
+                
+                this.log('INFO', `Launched ${app.name}`);
+                this.showNotification('App Launch', `Opening ${app.name}...`);
+            }
+            
+            viewAppDetails(appId) {
+                const app = this.apps.find(a => a.id === appId);
+                if (!app) return;
+                
+                this.showNotification('App Details', `Viewing details for ${app.name}`);
+                // Could open a detailed modal here
+            }
+            
+            // File upload methods
+            uploadAPK() {
+                document.getElementById('apkFileInput').click();
+            }
+            
+            handleAPKUpload(event) {
+                const files = Array.from(event.target.files);
+                files.forEach(file => {
+                    if (file.name.endsWith('.apk')) {
+                        this.installCustomAPK(file);
+                    }
+                });
+            }
+            
+            handleAPKDrop(event) {
+                event.preventDefault();
+                event.currentTarget.classList.remove('dragover');
+                
+                const files = Array.from(event.dataTransfer.files);
+                files.forEach(file => {
+                    if (file.name.endsWith('.apk')) {
+                        this.installCustomAPK(file);
+                    }
+                });
+            }
+            
+            handleDragOver(event) {
+                event.preventDefault();
+                event.currentTarget.classList.add('dragover');
+            }
+            
+            installCustomAPK(file) {
+                const customApp = {
+                    id: 'custom_' + Date.now(),
+                    name: file.name.replace('.apk', ''),
+                    developer: 'Unknown',
+                    icon: '📱',
+                    description: 'Custom APK file',
+                    category: 'utilities',
+                    price: 'free',
+                    rating: 0,
+                    downloads: '0',
+                    size: this.formatFileSize(file.size),
+                    version: '1.0',
+                    lastUpdate: new Date().toISOString().split('T')[0],
+                    installed: true,
+                    updateAvailable: false
+                };
+                
+                this.apps.push(customApp);
+                this.updateInstalledApps();
+                this.renderApps();
+                this.updateStats();
+                
+                this.log('INFO', `Installed custom APK: ${file.name}`);
+                this.showNotification('Custom APK', `${file.name} installed successfully`);
+            }
+            
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            // Filter and sort methods
+            filterByCategory(category) {
+                this.currentCategory = category;
+                this.updateFilterUI();
+                this.renderApps();
+            }
+            
+            filterByPrice(price) {
+                this.currentPriceFilter = price;
+                this.updateFilterUI();
+                this.renderApps();
+            }
+            
+            sortApps(sortType) {
+                this.currentSort = sortType;
+                this.updateFilterUI();
+                this.renderApps();
+            }
+            
+            updateFilterUI() {
+                // Update category filters
+                document.querySelectorAll('.as-category').forEach(category => {
+                    category.querySelectorAll('.as-filter-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                });
+                
+                // Set active states
+                const categoryItem = document.querySelector(`[onclick="filterByCategory('${this.currentCategory}')"]`);
+                if (categoryItem) categoryItem.classList.add('active');
+                
+                const priceItem = document.querySelector(`[onclick="filterByPrice('${this.currentPriceFilter}')"]`);
+                if (priceItem) priceItem.classList.add('active');
+                
+                const sortItem = document.querySelector(`[onclick="sortApps('${this.currentSort}')"]`);
+                if (sortItem) sortItem.classList.add('active');
+            }
+            
+            // Quick actions
+            batchInstall() {
+                this.showNotification('Batch Install', 'Select apps to install...');
+            }
+            
+            backupApps() {
+                this.showNotification('Backup', 'Creating backup of installed apps...');
+            }
+            
+            updateAll() {
+                const updatableApps = this.installedApps.filter(app => app.updateAvailable);
+                updatableApps.forEach(app => {
+                    this.updateApp(app.id);
+                });
+                this.showNotification('Update All', `Updated ${updatableApps.length} apps`);
+            }
+            
+            showCategories() {
+                this.showNotification('Categories', 'Showing app categories');
+            }
+            
+            showInstalled() {
+                this.searchQuery = '';
+                document.getElementById('appSearchInput').value = '';
+                this.currentCategory = 'all';
+                this.updateFilterUI();
+                this.renderApps();
+                this.showNotification('Installed Apps', 'Showing only installed applications');
+            }
+            
+            log(level, message) {
+                console.log(`[${level}] ${message}`);
+            }
+            
+            showNotification(title, message) {
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed; top: 80px; right: 20px; background: rgba(76, 175, 80, 0.1);
+                    border: 1px solid rgba(76, 175, 80, 0.3); border-radius: 8px; padding: 15px;
+                    color: white; z-index: 10000; min-width: 250px;
+                `;
+                notification.innerHTML = `<div style="font-weight: 600; color: #4CAF50;">${title}</div><div>${message}</div>`;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+        }
+        
+        // Global functions
+        let androidStore;
+        let sidebarVisible = true;
+        
+        function toggleStoreSidebar() {
+            const sidebar = document.querySelector('.as-sidebar');
+            const content = document.querySelector('.as-content');
+            const toggleBtn = document.querySelector('.as-toggle-sidebar');
+            
+            sidebarVisible = !sidebarVisible;
+            
+            if (sidebarVisible) {
+                sidebar.classList.remove('hidden');
+                content.classList.remove('expanded');
+            } else {
+                sidebar.classList.add('hidden');
+                content.classList.add('expanded');
+            }
+        }
+        
+        function filterByCategory(category) {
+            androidStore.filterByCategory(category);
+        }
+        
+        function filterByPrice(price) {
+            androidStore.filterByPrice(price);
+        }
+        
+        function sortApps(sortType) {
+            androidStore.sortApps(sortType);
+        }
+        
+        function uploadAPK() {
+            androidStore.uploadAPK();
+        }
+        
+        function batchInstall() {
+            androidStore.batchInstall();
+        }
+        
+        function backupApps() {
+            androidStore.backupApps();
+        }
+        
+        function updateAll() {
+            androidStore.updateAll();
+        }
+        
+        function showCategories() {
+            androidStore.showCategories();
+        }
+        
+        function showInstalled() {
+            androidStore.showInstalled();
+        }
+        
+        function handleAPKUpload(event) {
+            androidStore.handleAPKUpload(event);
+        }
+        
+        function handleAPKDrop(event) {
+            androidStore.handleAPKDrop(event);
+        }
+        
+        function handleDragOver(event) {
+            androidStore.handleDragOver(event);
+        }
+        
+        // AI-OS Core Integration
+        let aiOSIntegration = null;
+        
+        function handleAIOSCommand(command) {
+            if (androidStore) {
+                switch (command.action) {
+                    case 'searchApps':
+                        androidStore.searchApps(command.query);
+                        break;
+                    case 'installApp':
+                        androidStore.installApp(command.appId);
+                        break;
+                    case 'uninstallApp':
+                        androidStore.uninstallApp(command.packageName);
+                        break;
+                    case 'updateAll':
+                        androidStore.updateAll();
+                        break;
+                    case 'showCategories':
+                        androidStore.showCategories();
+                        break;
+                    case 'showInstalled':
+                        androidStore.showInstalled();
+                        break;
+                    case 'backupApps':
+                        androidStore.backupApps();
+                        break;
+                    default:
+                        console.log('Unknown AI-OS command:', command);
+                }
+            }
+        }
+        
+        function updateStoreStatus(systemState) {
+            // Update Android app store with system information
+            if (androidStore && systemState) {
+                // Update storage-related information
+                if (systemState.storage !== undefined) {
+                    console.log('📱 Android store storage status:', systemState.storage + '%');
+                }
+            }
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📱 Initializing Android App Store...');
+            
+            // Wait for AI-OS Core to be available
+            const initStore = () => {
+                androidStore = new AndroidAppStore();
+                
+                // Setup AI-OS Core integration
+                if (window.aiOSCore && window.AIOSAppIntegration) {
+                    aiOSIntegration = new AIOSAppIntegration('android-app-store', 'Android App Store', [
+                        'app_management', 'apk_installation', 'app_updates', 'backup_restore'
+                    ]);
+                    
+                    // Listen for AI-OS events
+                    aiOSIntegration.on('appMessage', (data) => {
+                        if (data.from === 'aiOS-core') {
+                            handleAIOSCommand(data.data);
+                        }
+                    });
+                    
+                    aiOSIntegration.on('systemStateUpdate', (data) => {
+                        updateStoreStatus(data);
+                    });
+                    
+                    console.log('✅ Android App Store integrated with AI-OS Core');
+                }
+            };
+            
+            if (window.aiOSCore) {
+                initStore();
+            } else {
+                setTimeout(initStore, 1000);
+            }
+        });
+    
+        function goHome() {
+            // Create smooth transition effect
+            const container = document.querySelector('.app-container, .main-container, body > div, body');
+            if (container) {
+                container.style.opacity = '0';
+                container.style.transform = 'scale(0.9)';
+            }
+            
+            setTimeout(() => {
+                // Navigate back to main AI-OS
+                if (window.opener) {
+                    window.close();
+                } else {
+                    const basePath = window.location.pathname.includes('/Apps/') ? '../' : '../../';
+                    window.location.href = basePath + 'ADVANCED-AI-OS.html';
+                }
+            }, 300);
+        }
+    </script>
+</body>
+</html>

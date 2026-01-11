@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💻 AI Terminal Shell - Enhanced NetHunter Pro</title>
+    
+    <!-- AI-OS Core Integration -->
+    <script src="../js/ai-os-core.js"></script>
+    <script src="../js/ai-os-app-integration.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #00ff00;
+            --secondary-color: #00ffff;
+            --warning-color: #ffff00;
+            --error-color: #ff4444;
+            --success-color: #44ff44;
+            --info-color: #44aaff;
+            --ai-color: #ff44ff;
+            --bg-dark: #0a0a0a;
+            --bg-medium: #111;
+            --bg-light: #222;
+        }
+
+        body {
+            font-family: 'Fira Code', 'Courier New', 'Monaco', 'Menlo', monospace;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1a2e 50%, #16213e 100%);
+            color: var(--primary-color);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terminal-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: #000;
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            margin: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        .terminal-header {
+            background: linear-gradient(90deg, #000, #111, #000);
+            border-bottom: 2px solid var(--primary-color);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--primary-color);
+            box-shadow: 0 2px 10px rgba(0, 255, 0, 0.2);
+        }
+
+        .terminal-title {
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .terminal-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .terminal-btn {
+            background: var(--bg-medium);
+            border: 1px solid var(--bg-light);
+            color: var(--primary-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .terminal-btn:hover {
+            background: var(--bg-light);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .terminal-btn.active {
+            background: var(--primary-color);
+            color: #000;
+            border-color: var(--primary-color);
+        }
+
+        .terminal-btn.danger {
+            border-color: var(--error-color);
+            color: var(--error-color);
+        }
+
+        .terminal-btn.danger:hover {
+            background: var(--error-color);
+            color: #000;
+        }
+
+        .terminal-tabs {
+            background: var(--bg-dark);
+            border-bottom: 1px solid var(--primary-color);
+            display: flex;
+            overflow-x: auto;
+            padding: 0 16px;
+        }
+
+        .terminal-tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .terminal-tab:hover {
+            background: var(--bg-medium);
+            color: var(--secondary-color);
+        }
+
+        .terminal-tab.active {
+            border-bottom-color: var(--primary-color);
+            color: var(--primary-color);
+            background: var(--bg-medium);
+        }
+
+        .terminal-main {
+            flex: 1;
+            display: flex;
+            background: #000;
+        }
+
+        .terminal-sidebar {
+            width: 300px;
+            background: var(--bg-dark);
+            border-right: 2px solid var(--primary-color);
+            padding: 16px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) var(--bg-dark);
+        }
+
+        .terminal-sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .terminal-sidebar::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        .terminal-sidebar::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 24px;
+        }
+
+        .sidebar-title {
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-bottom: 12px;
+            font-size: 12px;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--bg-light);
+            padding-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        .tool-category {
+            margin-bottom: 16px;
+            border: 1px solid var(--bg-light);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .category-title {
+            background: var(--bg-medium);
+            color: var(--warning-color);
+            font-size: 11px;
+            font-weight: bold;
+            padding: 10px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .category-title:hover {
+            background: var(--bg-light);
+            color: var(--secondary-color);
+        }
+
+        .tools-list {
+            margin-left: 0;
+            display: none;
+            background: var(--bg-dark);
+        }
+
+        .tools-list.active {
+            display: block;
+        }
+
+        .tool-item {
+            padding: 8px 12px;
+            font-size: 10px;
+            color: #ccc;
+            cursor: pointer;
+            border-bottom: 1px solid var(--bg-dark);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .tool-item:hover {
+            background: var(--bg-light);
+            color: var(--primary-color);
+            padding-left: 16px;
+        }
+
+        .tool-item:last-child {
+            border-bottom: none;
+        }
+
+        .tool-icon {
+            font-size: 10px;
+            margin-right: 6px;
+        }
+
+        .terminal-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terminal-output {
+            flex: 1;
+            background: #000;
+            padding: 16px;
+            overflow-y: auto;
+            font-size: 13px;
+            line-height: 1.5;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) #000;
+        }
+
+        .terminal-output::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .terminal-output::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        .terminal-output::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        .terminal-input-area {
+            background: var(--bg-dark);
+            border-top: 2px solid var(--primary-color);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .terminal-prompt {
+            color: var(--primary-color);
+            font-weight: bold;
+            flex-shrink: 0;
+            font-size: 13px;
+        }
+
+        .terminal-input {
+            background: transparent;
+            border: none;
+            color: var(--primary-color);
+            font-family: inherit;
+            font-size: 13px;
+            flex: 1;
+            outline: none;
+            padding: 6px 0;
+        }
+
+        .terminal-input::placeholder {
+            color: #666;
+        }
+
+        .output-line {
+            margin-bottom: 4px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .output-line.command {
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .output-line.error {
+            color: var(--error-color);
+            font-weight: 500;
+        }
+
+        .output-line.success {
+            color: var(--success-color);
+            font-weight: 500;
+        }
+
+        .output-line.warning {
+            color: var(--warning-color);
+            font-weight: 500;
+        }
+
+        .output-line.info {
+            color: var(--info-color);
+            font-weight: 500;
+        }
+
+        .output-line.ai {
+            color: var(--ai-color);
+            border-left: 3px solid var(--ai-color);
+            padding-left: 12px;
+            margin-left: 4px;
+        }
+
+        .output-line.network {
+            color: #ff8800;
+            border-left: 3px solid #ff8800;
+            padding-left: 12px;
+            margin-left: 4px;
+        }
+
+        .output-line.pentest {
+            color: #ff0080;
+            border-left: 3px solid #ff0080;
+            padding-left: 12px;
+            margin-left: 4px;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: var(--primary-color);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .status-bar {
+            background: var(--bg-medium);
+            border-top: 1px solid var(--bg-light);
+            padding: 6px 16px;
+            font-size: 11px;
+            color: #999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-left, .status-right {
+            display: flex;
+            gap: 16px;
+        }
+
+        .ai-assistant-panel {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            width: 350px;
+            height: 500px;
+            background: rgba(0, 0, 0, 0.98);
+            border: 2px solid var(--ai-color);
+            border-radius: 10px;
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+            box-shadow: 0 0 30px rgba(255, 68, 255, 0.3);
+        }
+
+        .ai-assistant-panel.active {
+            display: flex;
+        }
+
+        .ai-header {
+            background: var(--bg-dark);
+            border-bottom: 2px solid var(--ai-color);
+            padding: 12px;
+            color: var(--ai-color);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ai-chat-area {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            background: #000;
+        }
+
+        .ai-message {
+            margin-bottom: 16px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            line-height: 1.5;
+            border: 1px solid var(--bg-dark);
+        }
+
+        .ai-message.user {
+            background: rgba(0, 255, 0, 0.1);
+            border-left: 4px solid var(--primary-color);
+            margin-left: 20px;
+        }
+
+        .ai-message.ai {
+            background: rgba(255, 68, 255, 0.1);
+            border-left: 4px solid var(--ai-color);
+        }
+
+        .ai-input-area {
+            padding: 12px;
+            border-top: 1px solid var(--bg-light);
+            display: flex;
+            gap: 8px;
+        }
+
+        .ai-input {
+            flex: 1;
+            background: var(--bg-dark);
+            border: 1px solid var(--bg-light);
+            color: var(--ai-color);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 12px;
+        }
+
+        .ai-input:focus {
+            border-color: var(--ai-color);
+            outline: none;
+        }
+
+        .newhunter-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .network-monitor {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 300px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 1px solid var(--info-color);
+            border-radius: 8px;
+            padding: 12px;
+            padding-right: 36px;
+            display: none;
+            z-index: 1001;
+            box-shadow: 0 4px 20px rgba(68, 170, 255, 0.2);
+        }
+
+        .network-monitor.active {
+            display: block;
+        }
+
+        .monitor-title {
+            color: var(--info-color);
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .network-monitor-close {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 22px;
+            height: 22px;
+            background: none;
+            border: none;
+            color: var(--info-color);
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            line-height: 1;
+        }
+
+        .network-monitor-close:hover {
+            background: rgba(68, 170, 255, 0.2);
+            color: #fff;
+        }
+
+        .network-monitor-close svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .network-item {
+            font-size: 10px;
+            margin-bottom: 4px;
+            padding: 4px;
+            background: rgba(68, 170, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .terminal-sidebar {
+                width: 200px;
+            }
+            
+            .ai-assistant-panel {
+                width: 280px;
+                height: 400px;
+            }
+            
+            .network-monitor {
+                width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="newhunter-badge">NETHunter Pro</div>
+    
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div class="terminal-title">
+                <span>💻</span>
+                <span>AI Terminal Shell - Enhanced NetHunter</span>
+            </div>
+            <div class="terminal-controls">
+                <button class="terminal-btn" onclick="goHome()" title="Domov">🏠</button>
+                <button class="terminal-btn" onclick="clearTerminal()">Clear</button>
+                <button class="terminal-btn" onclick="toggleAIAssistant()">🤖 AI</button>
+                <button class="terminal-btn" onclick="toggleNetworkMonitor()">📡 Net</button>
+                <button class="terminal-btn" onclick="toggleThemes()">🎨 Theme</button>
+                <button class="terminal-btn" onclick="installDependencies()">📦 Install</button>
+                <button class="terminal-btn" onclick="openSettings()">⚙️</button>
+            </div>
+        </div>
+
+        <div class="terminal-tabs" id="terminalTabs">
+            <div class="terminal-tab active" onclick="switchTab('main')">
+                <span>📟</span>
+                <span>Terminal 1</span>
+            </div>
+            <div class="terminal-tab" onclick="switchTab('tools')">
+                <span>🛠️</span>
+                <span>Kali Tools</span>
+            </div>
+            <div class="terminal-tab" onclick="switchTab('pentest')">
+                <span>🎯</span>
+                <span>Pentest</span>
+            </div>
+            <div class="terminal-tab" onclick="switchTab('ai')">
+                <span>🤖</span>
+                <span>AI Chat</span>
+            </div>
+            <div class="terminal-tab" onclick="switchTab('network')">
+                <span>🌐</span>
+                <span>Network</span>
+            </div>
+            <div class="terminal-tab" onclick="switchTab('logs')">
+                <span>📋</span>
+                <span>Logs</span>
+            </div>
+            <div class="terminal-tab" onclick="addNewTab()">
+                <span>➕</span>
+                <span>New</span>
+            </div>
+        </div>
+
+        <div class="terminal-main">
+            <div class="terminal-sidebar" id="toolsSidebar">
+                <!-- Tools will be populated here -->
+            </div>
+
+            <div class="terminal-content">
+                <div class="terminal-output" id="terminalOutput">
+                    <div class="output-line success">
+╔══════════════════════════════════════════════════════════════╗
+║  🐧 AI Terminal Shell - Enhanced NetHunter Pro v2.0          ║
+║  📱 Mobile Penetration Testing Platform                      ║
+║  🔧 Advanced Security Tools & Utilities                      ║
+╚══════════════════════════════════════════════════════════════╝
+                    </div>
+                    <div class="output-line info">
+✅ System initialized successfully
+✅ NetHunter integration loaded
+✅ Advanced security tools available
+✅ AI assistant ready
+✅ Type 'help' for available commands
+                    </div>
+                    <div class="output-line command">
+ai@nethunter-pro:~$ <span class="cursor"></span>
+                    </div>
+                </div>
+
+                <div class="terminal-input-area">
+                    <div class="terminal-prompt" id="terminalPrompt">ai@nethunter-pro:~$</div>
+                    <input type="text" class="terminal-input" id="terminalInput" 
+                           placeholder="Type command or 'help' for assistance..." 
+                           autocomplete="off" autofocus>
+                    <button class="terminal-btn" onclick="executeCommand()">Enter</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-left">
+                <span id="currentPath">/home/ai</span>
+                <span id="connectionStatus">Online</span>
+                <span id="netHunterMode">NetHunter Pro</span>
+            </div>
+            <div class="status-right">
+                <span id="systemTime">--:--:--</span>
+                <span id="toolsCount">0 tools</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Assistant Panel -->
+    <div class="ai-assistant-panel" id="aiAssistantPanel">
+        <div class="ai-header">
+            <span>🤖 AI Security Assistant</span>
+            <button class="terminal-btn" onclick="toggleAIAssistant()" style="padding: 4px 8px;">×</button>
+        </div>
+        <div class="ai-chat-area" id="aiChatArea">
+            <div class="ai-message ai">
+                🤖 AI Security Assistant activated! I can help you with:
+                <br>• Penetration testing strategies
+                <br>• Tool usage and syntax
+                <br>• Vulnerability analysis
+                <br>• Security best practices
+                <br><br>Ask me anything about security testing!
+            </div>
+        </div>
+        <div class="ai-input-area">
+            <input type="text" class="ai-input" id="aiInput" placeholder="Ask about security testing..." onkeypress="handleAIInput(event)">
+            <button class="terminal-btn" onclick="sendAIMessage()">Send</button>
+        </div>
+    </div>
+
+    <!-- Network Monitor -->
+    <div class="network-monitor" id="networkMonitor">
+        <button class="network-monitor-close" onclick="toggleNetworkMonitor()" aria-label="Zatvoriť sieťový monitor">
+            <svg viewBox="0 0 24 24">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+        <div class="monitor-title">📡 Real-time Network Monitor</div>
+        <div id="networkItems">
+            <div class="network-item">🔍 Scanning for devices...</div>
+        </div>
+    </div>
+
+    <script>
+        class EnhancedTerminal {
+            constructor() {
+                this.currentPath = '/home/ai';
+                this.commandHistory = [];
+                this.historyIndex = -1;
+                this.tabs = new Map();
+                this.activeTab = 'main';
+                this.aiAssistantActive = false;
+                this.networkMonitorActive = false;
+                this.currentTheme = 'nethunter';
+                this.tools = this.initializeTools();
+                this.networkDevices = [];
+                this.loadTools();
+                this.updateStatus();
+                this.startNetworkMonitoring();
+                this.initializeFileSystem();
+                this.setupEventListeners();
+                this.startClock();
+            }
+
+            initializeTools() {
+                return {
+                    reconnaissance: [
+                        { name: 'nmap', desc: 'Network scanner', icon: '🔍' },
+                        { name: 'masscan', desc: 'High-speed port scanner', icon: '⚡' },
+                        { name: 'zmap', desc: 'Fast network scanner', icon: '🚀' },
+                        { name: 'netdiscover', desc: 'Network discovery', icon: '📡' },
+                        { name: 'arp-scan', desc: 'ARP scanning', icon: '🔗' },
+                        { name: 'hping3', desc: 'Packet crafting', icon: '📦' }
+                    ],
+                    vulnerability: [
+                        { name: 'nikto', desc: 'Web scanner', icon: '🕷️' },
+                        { name: 'nuclei', desc: 'Fast vulnerability scanner', icon: '⚡' },
+                        { name: 'wpscan', desc: 'WordPress scanner', icon: '📝' },
+                        { name: 'openvas', desc: 'Vulnerability scanner', icon: '🛡️' },
+                        { name: 'nessus', desc: 'Commercial scanner', icon: '🔒' },
+                        { name: 'rapid7', desc: 'Nexpose scanner', icon: '💎' }
+                    ],
+                    web: [
+                        { name: 'burpsuite', desc: 'Web app testing', icon: '🦋' },
+                        { name: 'owasp-zap', desc: 'Web app scanner', icon: '🐝' },
+                        { name: 'sqlmap', desc: 'SQL injection tool', icon: '💉' },
+                        { name: 'xsser', desc: 'XSS scanner', icon: '❌' },
+                        { name: 'dirb', desc: 'Web directory scanner', icon: '📁' },
+                        { name: 'gobuster', desc: 'Directory/file scanner', icon: '🗂️' },
+                        { name: 'ffuf', desc: 'Fast web fuzzer', icon: '⚡' }
+                    ],
+                    wireless: [
+                        { name: 'aircrack-ng', desc: 'WiFi security testing', icon: '📶' },
+                        { name: 'reaver', desc: 'WPS attack tool', icon: '🔓' },
+                        { name: 'kismet', desc: 'Wireless detector', icon: '📡' },
+                        { name: 'hostapd', desc: 'Access point daemon', icon: '📶' },
+                        { name: 'mdk3', desc: 'Wireless attack tool', icon: '💥' }
+                    ],
+                    exploitation: [
+                        { name: 'metasploit', desc: 'Exploitation framework', icon: '🎯' },
+                        { name: 'msfconsole', desc: 'Metasploit console', icon: '💻' },
+                        { name: 'msfvenom', desc: 'Payload generator', icon: '🚀' },
+                        { name: 'beef', desc: 'Browser exploitation', icon: '🐄' },
+                        { name: 'social-engineer', desc: 'Social engineering', icon: '🎭' }
+                    ],
+                    forensics: [
+                        { name: 'volatility', desc: 'Memory analysis', icon: '🧠' },
+                        { name: 'autopsy', desc: 'Digital forensics', icon: '🔍' },
+                        { name: 'binwalk', desc: 'Firmware analysis', icon: '🔧' },
+                        { name: 'foremost', desc: 'File carving', icon: '🗂️' },
+                        { name: 'ddrescue', desc: 'Data recovery', icon: '💾' }
+                    ],
+                    cryptography: [
+                        { name: 'hashcat', desc: 'Password cracker', icon: '🔓' },
+                        { name: 'john', desc: 'Password cracker', icon: '🗝️' },
+                        { name: 'hashid', desc: 'Hash identifier', icon: '🏷️' },
+                        { name: 'openssl', desc: 'Crypto toolkit', icon: '🔐' },
+                        { name: 'gpg', desc: 'Encryption tool', icon: '🔒' }
+                    ],
+                    reverse: [
+                        { name: 'gdb', desc: 'GNU debugger', icon: '🐛' },
+                        { name: 'radare2', desc: 'Reverse engineering', icon: '🔧' },
+                        { name: 'objdump', desc: 'Object dumper', icon: '📄' },
+                        { name: 'hexdump', desc: 'Hex viewer', icon: '📋' },
+                        { name: 'strings', desc: 'Extract strings', icon: '📝' }
+                    ],
+                    post_exploitation: [
+                        { name: 'mimikatz', desc: 'Credential extraction', icon: '👤' },
+                        { name: 'bloodhound', desc: 'AD reconnaissance', icon: '🩸' },
+                        { name: 'powerview', desc: 'PowerShell AD tool', icon: '💡' },
+                        { name: 'empire', desc: 'Post-exploitation', icon: '👑' },
+                        { name: 'covenant', desc: '.NET C2 framework', icon: '🔗' }
+                    ]
+                };
+            }
+
+            loadTools() {
+                const sidebar = document.getElementById('toolsSidebar');
+                let toolsHTML = '';
+
+                Object.entries(this.tools).forEach(([category, tools]) => {
+                    const categoryName = category.replace('_', ' ').toUpperCase();
+                    toolsHTML += `
+                        <div class="sidebar-section">
+                            <div class="sidebar-title">${categoryName}</div>
+                            <div class="tool-category">
+                                <div class="category-title" onclick="toggleCategory('${category}')">
+                                    <span>${categoryName} TOOLS</span>
+                                    <span>▼</span>
+                                </div>
+                                <div class="tools-list" id="tools-${category}">
+                                    ${tools.map(tool => `
+                                        <div class="tool-item" onclick="executeTool('${tool.name}')">
+                                            <span><span class="tool-icon">${tool.icon}</span>${tool.name}</span>
+                                            <span>${tool.desc}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                sidebar.innerHTML = toolsHTML;
+                this.updateToolsCount();
+            }
+
+            toggleCategory(category) {
+                const toolsList = document.getElementById(`tools-${category}`);
+                toolsList.classList.toggle('active');
+            }
+
+            initializeFileSystem() {
+                this.filesystem = {
+                    '/home/ai': ['documents/', 'downloads/', 'tools/', 'reports/', 'notes.txt'],
+                    '/home/ai/documents': ['pentest-plan.pdf', 'findings.docx', 'exploit-code/'],
+                    '/home/ai/tools': ['custom-scripts/', 'wordlists/', 'payloads/'],
+                    '/home/ai/tools/custom-scripts': ['port-scanner.py', 'web-crawler.sh', 'hash-cracker.py'],
+                    '/home/ai/tools/wordlists': ['rockyou.txt', 'common-passwords.txt', 'subdomains.txt'],
+                    '/home/ai/tools/payloads': ['reverse-shell.php', 'xss-payloads.txt', 'sql-injection.txt'],
+                    '/home/ai/reports': ['scan-results/', 'exploitation-logs/', 'final-report/'],
+                    '/home/ai/reports/scan-results': ['nmap-scan.txt', 'nikto-scan.txt', 'dirb-scan.txt'],
+                    '/root': ['.bashrc', '.ssh/', 'tools/', 'scripts/'],
+                    '/opt': ['metasploit/', 'burpsuite/', 'wireshark/'],
+                    '/usr/bin': ['nmap', 'sqlmap', 'dirb', 'hashcat', 'aircrack-ng']
+                };
+            }
+
+            startNetworkMonitoring() {
+                setInterval(() => {
+                    if (this.networkMonitorActive) {
+                        this.updateNetworkDevices();
+                    }
+                }, 3000);
+            }
+
+            updateNetworkDevices() {
+                // Simulate network device discovery
+                const devices = [
+                    { ip: '192.168.1.1', mac: '00:11:22:33:44:55', type: 'Router', status: 'online' },
+                    { ip: '192.168.1.100', mac: 'aa:bb:cc:dd:ee:ff', type: 'Computer', status: 'online' },
+                    { ip: '192.168.1.101', mac: '11:22:33:44:55:66', type: 'Phone', status: 'online' },
+                    { ip: '192.168.1.102', mac: '77:88:99:aa:bb:cc', type: 'IoT Device', status: 'offline' }
+                ];
+
+                this.networkDevices = devices;
+                
+                if (this.networkMonitorActive) {
+                    const monitor = document.getElementById('networkItems');
+                    monitor.innerHTML = devices.map(device => `
+                        <div class="network-item">
+                            ${device.status === 'online' ? '🟢' : '🔴'} ${device.ip} (${device.type})
+                        </div>
+                    `).join('');
+                }
+            }
+
+            startClock() {
+                setInterval(() => {
+                    const now = new Date();
+                    document.getElementById('systemTime').textContent = now.toLocaleTimeString();
+                }, 1000);
+            }
+
+            updateStatus() {
+                document.getElementById('currentPath').textContent = this.currentPath;
+                document.getElementById('connectionStatus').textContent = 'Online';
+                document.getElementById('netHunterMode').textContent = 'NetHunter Pro';
+            }
+
+            updateToolsCount() {
+                const totalTools = Object.values(this.tools).flat().length;
+                document.getElementById('toolsCount').textContent = `${totalTools} tools`;
+            }
+
+            setupEventListeners() {
+                const input = document.getElementById('terminalInput');
+                input.addEventListener('keydown', (e) => this.handleInput(e));
+                
+                // Auto-focus input
+                input.focus();
+                
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey && e.key === 'l') {
+                        e.preventDefault();
+                        this.clearTerminal();
+                    }
+                    if (e.ctrlKey && e.key === 'c') {
+                        e.preventDefault();
+                        this.interruptCommand();
+                    }
+                });
+            }
+
+            handleInput(e) {
+                if (e.key === 'Enter') {
+                    this.executeCommand();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    this.navigateHistory(-1);
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    this.navigateHistory(1);
+                } else if (e.key === 'Tab') {
+                    e.preventDefault();
+                    this.autocomplete();
+                }
+            }
+
+            executeCommand() {
+                const input = document.getElementById('terminalInput');
+                const command = input.value.trim();
+                
+                if (!command) return;
+
+                // Add to command history
+                this.commandHistory.push(command);
+                this.historyIndex = this.commandHistory.length;
+
+                // Display command
+                this.addOutput(`ai@nethunter-pro:~$ ${command}`, 'command');
+                
+                // Clear input
+                input.value = '';
+
+                // Execute command
+                this.processCommand(command);
+            }
+
+            processCommand(command) {
+                const parts = command.split(' ');
+                const cmd = parts[0].toLowerCase();
+                const args = parts.slice(1);
+
+                switch (cmd) {
+                    case 'help':
+                        this.showHelp();
+                        break;
+                    case 'clear':
+                        this.clearTerminal();
+                        break;
+                    case 'ls':
+                        this.listDirectory(args[0] || this.currentPath);
+                        break;
+                    case 'cd':
+                        this.changeDirectory(args[0]);
+                        break;
+                    case 'cat':
+                        this.displayFile(args[0]);
+                        break;
+                    case 'nmap':
+                        this.runNmap(args);
+                        break;
+                    case 'sqlmap':
+                        this.runSqlmap(args);
+                        break;
+                    case 'dirb':
+                        this.runDirb(args);
+                        break;
+                    case 'hashcat':
+                        this.runHashcat(args);
+                        break;
+                    case 'aircrack':
+                        this.runAircrack(args);
+                        break;
+                    case 'nikto':
+                        this.runNikto(args);
+                        break;
+                    case 'hydra':
+                        this.runHydra(args);
+                        break;
+                    case 'metasploit':
+                    case 'msfconsole':
+                        this.runMetasploit(args);
+                        break;
+                    case 'ai':
+                        this.launchAIAssistant();
+                        break;
+                    case 'network':
+                        this.showNetworkInfo();
+                        break;
+                    case 'status':
+                        this.showSystemStatus();
+                        break;
+                    case 'install':
+                        this.installTool(args[0]);
+                        break;
+                    case 'update':
+                        this.updateSystem();
+                        break;
+                    case 'scan':
+                        this.runQuickScan(args[0]);
+                        break;
+                    case 'exploit':
+                        this.runExploit(args);
+                        break;
+                    case 'history':
+                        this.showCommandHistory();
+                        break;
+                    case 'theme':
+                        this.switchTheme(args[0]);
+                        break;
+                    case 'whoami':
+                        this.showUserInfo();
+                        break;
+                    case 'pwd':
+                        this.showCurrentPath();
+                        break;
+                    case 'date':
+                        this.showDate();
+                        break;
+                    case 'uname':
+                        this.showSystemInfo();
+                        break;
+                    default:
+                        this.addOutput(`Command not found: ${cmd}. Type 'help' for available commands.`, 'error');
+                }
+            }
+
+            showHelp() {
+                this.addOutput('Available commands:', 'info');
+                this.addOutput('');
+                this.addOutput('📁 FILE OPERATIONS:', 'info');
+                this.addOutput('  ls [path]         - List directory contents');
+                this.addOutput('  cd <path>         - Change directory');
+                this.addOutput('  cat <file>        - Display file contents');
+                this.addOutput('');
+                this.addOutput('🔍 RECONNAISSANCE:', 'info');
+                this.addOutput('  nmap [opts]       - Network scanner');
+                this.addOutput('  scan <target>     - Quick network scan');
+                this.addOutput('  network           - Show network information');
+                this.addOutput('');
+                this.addOutput('🛡️ SECURITY TOOLS:', 'info');
+                this.addOutput('  nikto <url>       - Web vulnerability scanner');
+                this.addOutput('  sqlmap [opts]     - SQL injection tool');
+                this.addOutput('  dirb <url>        - Web directory scanner');
+                this.addOutput('  hydra [opts]      - Password brute force');
+                this.addOutput('  hashcat [opts]    - Password cracker');
+                this.addOutput('');
+                this.addOutput('🎯 EXPLOITATION:', 'info');
+                this.addOutput('  metasploit        - Metasploit framework');
+                this.addOutput('  msfconsole        - Metasploit console');
+                this.addOutput('  exploit <target>  - Run exploitation module');
+                this.addOutput('');
+                this.addOutput('🤖 AI ASSISTANT:', 'info');
+                this.addOutput('  ai                - Launch AI assistant');
+                this.addOutput('');
+                this.addOutput('⚙️ SYSTEM:', 'info');
+                this.addOutput('  status            - Show system status');
+                this.addOutput('  install <tool>    - Install security tool');
+                this.addOutput('  update            - Update tools');
+                this.addOutput('  theme <name>      - Change terminal theme');
+                this.addOutput('  history           - Show command history');
+                this.addOutput('  clear             - Clear terminal');
+                this.addOutput('  help              - Show this help');
+            }
+
+            listDirectory(path) {
+                const fullPath = this.resolvePath(path);
+                const contents = this.filesystem[fullPath] || [];
+                
+                this.addOutput(`${fullPath}:`);
+                contents.forEach(item => {
+                    const icon = item.endsWith('/') ? '📁' : '📄';
+                    this.addOutput(`${icon}  ${item}`);
+                });
+            }
+
+            changeDirectory(path) {
+                if (!path) {
+                    this.currentPath = '/home/ai';
+                } else {
+                    const fullPath = this.resolvePath(path);
+                    if (this.filesystem[fullPath]) {
+                        this.currentPath = fullPath;
+                    } else {
+                        this.addOutput(`cd: no such file or directory: ${path}`, 'error');
+                    }
+                }
+                this.updateStatus();
+            }
+
+            displayFile(filename) {
+                if (!filename) {
+                    this.addOutput('cat: missing filename', 'error');
+                    return;
+                }
+
+                const fullPath = this.resolvePath(filename);
+                const sampleFiles = {
+                    '/home/ai/notes.txt': `Security Testing Notes
+======================
+
+Target: example.com
+Date: ${new Date().toLocaleDateString()}
+
+Reconnaissance:
+- Nmap scan completed
+- Open ports: 22, 80, 443
+- OS: Linux
+
+Vulnerabilities Found:
+- Directory traversal
+- SQL injection possible
+- Weak authentication
+
+Next Steps:
+1. Exploit found vulnerabilities
+2. Privilege escalation
+3. Document findings
+`,
+                    '/home/ai/reports/scan-results/nmap-scan.txt': `Nmap scan results for example.com
+===================================
+
+Starting Nmap scan...
+Host is up (0.050s latency).
+
+PORT     STATE SERVICE    VERSION
+22/tcp   open  ssh        OpenSSH 8.0
+80/tcp   open  http       Apache 2.4.41
+443/tcp  open  ssl/http   Apache 2.4.41
+
+OS details: Linux 5.4 - 5.10
+`,
+                    '/home/ai/tools/custom-scripts/port-scanner.py': `#!/usr/bin/env python3
+import socket
+import sys
+
+def scan_port(host, port):
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(1)
+        result = sock.connect_ex((host, port))
+        sock.close()
+        return result == 0
+    except:
+        return False
+
+if __name__ == "__main__":
+    host = sys.argv[1] if len(sys.argv) > 1 else "localhost"
+    for port in range(1, 1025):
+        if scan_port(host, port):
+            print(f"Port {port} is open")
+`
+                };
+
+                const content = sampleFiles[fullPath];
+                if (content) {
+                    this.addOutput(content);
+                } else {
+                    this.addOutput(`cat: ${filename}: No such file`, 'error');
+                }
+            }
+
+            resolvePath(path) {
+                if (!path || path === '.') return this.currentPath;
+                if (path.startsWith('/')) return path;
+                return `${this.currentPath}/${path}`.replace('//', '/');
+            }
+
+            runNmap(args) {
+                const target = args[0] || '192.168.1.1';
+                this.addOutput(`Starting Nmap scan on ${target}...`, 'info');
+                this.addOutput('Nmap scan initiated...', 'network');
+                
+                setTimeout(() => {
+                    this.addOutput(`Host is up (0.045s latency).`, 'success');
+                    this.addOutput('');
+                    this.addOutput(`PORT     STATE SERVICE    VERSION`);
+                    this.addOutput(`22/tcp   open  ssh        OpenSSH 8.0`);
+                    this.addOutput(`80/tcp   open  http       Apache 2.4.41`);
+                    this.addOutput(`443/tcp  open  ssl/http   Apache 2.4.41`);
+                    this.addOutput('');
+                    this.addOutput(`OS details: Linux 5.4 - 5.10`, 'info');
+                    this.addOutput(`Nmap done: 1 IP address (1 host up) scanned in 2.34 seconds`, 'success');
+                }, 2000);
+            }
+
+            runSqlmap(args) {
+                const url = args[0] || 'http://example.com/vuln.php?id=1';
+                this.addOutput(`[*] starting sqlmap 1.7.2#stable`, 'info');
+                this.addOutput(`[+] testing connection to the target URL`, 'network');
+                
+                setTimeout(() => {
+                    this.addOutput(`[+] testing if the target is affected by an injection`, 'info');
+                    this.addOutput(`[*] testing if parameter 'id' is dynamic`, 'network');
+                    this.addOutput(`[+] parameter 'id' does not appear to be dynamic`, 'warning');
+                    this.addOutput(`[*] heuristic (basic) test shows that parameter 'id' might be injectable`, 'pentest');
+                    this.addOutput(`[+] testing for SQL injection on parameter 'id'`, 'info');
+                    this.addOutput(`[+] testing 'AND boolean-based blind - WHERE or HAVING clause'`, 'network');
+                    this.addOutput(`[+] parameter 'id' appears to be 'AND boolean-based blind - WHERE or HAVING clause' injectable`, 'success');
+                }, 3000);
+            }
+
+            runDirb(args) {
+                const url = args[0] || 'http://example.com';
+                this.addOutput(`DIRB v2.22    By The Dark Raver`, 'info');
+                this.addOutput(`+------------------------- START TIME: ${new Date().toLocaleString()}`, 'network');
+                this.addOutput(`+------------------------- LOADING: 100%`, 'info');
+                this.addOutput('');
+                this.addOutput(`+------------------------- SCAN RESULTS:`, 'pentest');
+                this.addOutput(`+ ------------------------ Apache Codeprotect ------------------------`, 'warning');
+                this.addOutput(`http://example.com/admin/        (CODE:403|SIZE:326)`, 'error');
+                this.addOutput(`http://example.com/cgi-bin/      (CODE:403|SIZE:326)`, 'error');
+                this.addOutput(`http://example.com/config/       (CODE:403|SIZE:326)`, 'error');
+                this.addOutput(`http://example.com/includes/     (CODE:403|SIZE:326)`, 'error');
+                this.addOutput(`http://example.com/tmp/          (CODE:403|SIZE:326)`, 'error');
+                this.addOutput(`+------------------------- END TIME: ${new Date().toLocaleString()}`, 'success');
+            }
+
+            runNikto(args) {
+                const url = args[0] || 'http://example.com';
+                this.addOutput(`- Nikto v2.1.6`, 'info');
+                this.addOutput(`---------------------------------------------------------------------------`, 'network');
+                this.addOutput(`Target IP:       192.168.1.100`, 'info');
+                this.addOutput(`Target Hostname: example.com`, 'info');
+                this.addOutput(`Target Port:     80`, 'info');
+                this.addOutput(`---------------------------------------------------------------------------`, 'network');
+                this.addOutput(`+ Server: Apache/2.4.41`, 'warning');
+                this.addOutput(`+ The anti-clickjacking X-Frame-Options header is not present.`, 'warning');
+                this.addOutput(`+ The X-XSS-Protection header is not defined.`, 'warning');
+                this.addOutput(`+ No CGI Directories found (use '-C all' to force check all possible dirs)`, 'info');
+                this.addOutput(`+ Apache/2.4.41 appears to be outdated (current is at least Apache/2.4.54).`, 'warning');
+                this.addOutput(`---------------------------------------------------------------------------`, 'success');
+            }
+
+            runHashcat(args) {
+                this.addOutput(`hashcat (v6.2.6) starting...`, 'info');
+                this.addOutput(`* Device #1: Intel(R) UHD Graphics 630, 1536/3072 MB, 1152Mhz`, 'network');
+                this.addOutput(`* Device #2: Intel(R) Core(TM) i7-8700K CPU @ 3.70GHz, 16384 MB, 3700Mhz`, 'network');
+                this.addOutput(`* Device #3: NVIDIA GeForce GTX 1070, 8192/8192 MB, 1683Mhz`, 'success');
+                this.addOutput(`* Device #4: NVIDIA GeForce GTX 1070, 8192/8192 MB, 1683Mhz`, 'success');
+                this.addOutput(`* Device #5: NVIDIA GeForce GTX 1070, 8192/8192 MB, 1683Mhz`, 'success');
+                this.addOutput(`* Device #6: NVIDIA GeForce GTX 1070, 8192/8192 MB, 1683Mhz`, 'success');
+                
+                setTimeout(() => {
+                    this.addOutput(`Hashes: 1 target (1 hash)`, 'pentest');
+                    this.addOutput(`Dictionary cache hit:`, 'network');
+                    this.addOutput(`* Filename..: rockyou.txt`, 'info');
+                    this.addOutput(`* Passwords.: 14344391`, 'info');
+                    this.addOutput(`* Bytes.....: 139921507`, 'info');
+                    this.addOutput(`* Keyspace..: 14344391`, 'info');
+                    this.addOutput(`* Runtime...: 5 mins, 21 secs`, 'warning');
+                    this.addOutput(`Approaching final keyspace - workload adjusted.`, 'info');
+                }, 2000);
+            }
+
+            runAircrack(args) {
+                this.addOutput(`Opening capture file 'capture.hccapx'...`, 'info');
+                this.addOutput(`Read 150802 packets.`, 'network');
+                this.addOutput('');
+                this.addOutput(`   #  BSSID                          ESSID                     Encryption`, 'info');
+                this.addOutput(`   1  AA:BB:CC:DD:EE:FF              NETGEAR-WiFi             WPA (1 handshake)`, 'pentest');
+                this.addOutput(`   2  11:22:33:44:55:66              Linksys_5G              WPA2 (1 handshake)`, 'pentest');
+                this.addOutput(`   3  77:88:99:AA:BB:CC              MyWiFiNetwork           WPA2 (1 handshake)`, 'pentest');
+                this.addOutput('');
+                this.addOutput(`Choosing first network as target.`, 'info');
+                this.addOutput(`Reading packets, please wait...`, 'network');
+                
+                setTimeout(() => {
+                    this.addOutput(`                                   Aircrack-ng 1.7`, 'success');
+                    this.addOutput(``, 'success');
+                    this.addOutput(`                   KEY FOUND! [ password123 ]`, 'success');
+                    this.addOutput(``, 'success');
+                    this.addOutput(`      Master Key     : A1 B2 C3 D4 E5 F6 01 23 45 67 89 AB CD EF`, 'pentest');
+                    this.addOutput(`      Transient Key  : 00 00 00 00 00 00 00 00 00 00 00 00 00 00`, 'pentest');
+                    this.addOutput(`      EAPOL HMAC     : 00 00 00 00 00 00 00 00 00 00 00 00 00 00`, 'pentest');
+                    this.addOutput(``, 'success');
+                    this.addOutput(`KEY COMPLETE!`, 'success');
+                }, 3000);
+            }
+
+            runHydra(args) {
+                this.addOutput(`Hydra v9.4 (c) 2022 by van Hauser/THC & David Maciejak - Please do not use in military or secret service organizations`, 'info');
+                this.addOutput(`Syntax: hydra [[[-l LOGIN|-L FILE]] [-p PASS|-P FILE]] [-e nsr] [-o FILE] [-f] [-F] [-M FILE] [-t TASKS] [-W TIME] [-w TIME] [-s] [-S] [-d]`, 'info');
+                this.addOutput(`Target: example.com Port: 22 Protocol: ssh`, 'network');
+                this.addOutput(`Login: admin Password: wordlist`, 'info');
+                this.addOutput(`Task: 16 Connection: 16 Timeouts: 0`, 'network');
+                
+                setTimeout(() => {
+                    this.addOutput(`[22][ssh] host: 192.168.1.100   login: admin   password: admin123`, 'success');
+                    this.addOutput(`[22][ssh] host: 192.168.1.100   login: root     password: password`, 'success');
+                    this.addOutput(`[22][ssh] host: 192.168.1.100   login: user     password: 123456`, 'success');
+                    this.addOutput(`1 of 1 target successfully completed, 3 valid passwords found`, 'success');
+                    this.addOutput(`Hydra (https://github.com/vanhauser-thc/thc-hydra) finished at ${new Date().toLocaleString()}`, 'info');
+                }, 4000);
+            }
+
+            runMetasploit(args) {
+                this.addOutput(`=[ metasploit v6.3.2+20230101-git-6b0f1e8ee3===================`, 'pentest');
+                this.addOutput(`+ -- --=[ 3272 exploits - 1080 auxiliary - 346 post       =`, 'pentest');
+                this.addOutput(`+ -- --=[ 1177 payloads - 46 encoders - 11 nops           =`, 'pentest');
+                this.addOutput(`+ -- --=[ 9 evasion                                        =`, 'pentest');
+                this.addOutput(`msf6 > use exploit/multi/handler`, 'command');
+                this.addOutput(`msf6 exploit(multi/handler) > set PAYLOAD windows/meterpreter/reverse_tcp`, 'command');
+                this.addOutput(`PAYLOAD => windows/meterpreter/reverse_tcp`, 'success');
+                this.addOutput(`msf6 exploit(multi/handler) > set LHOST 192.168.1.50`, 'command');
+                this.addOutput(`LHOST => 192.168.1.50`, 'success');
+                this.addOutput(`msf6 exploit(multi/handler) > set LPORT 4444`, 'command');
+                this.addOutput(`LPORT => 4444`, 'success');
+                this.addOutput(`msf6 exploit(multi/handler) > exploit`, 'command');
+                this.addOutput(`[*] Started reverse TCP handler on 192.168.1.50:4444`, 'info');
+                this.addOutput(`[*] Sending stage (175174 bytes) to 192.168.1.100`, 'network');
+                this.addOutput(`[*] Meterpreter session 1 opened (192.168.1.50:4444 -> 192.168.1.100:49210)`, 'success');
+                this.addOutput(`meterpreter >`, 'command');
+                
+                setTimeout(() => {
+                    this.addOutput(`meterpreter > sysinfo`, 'command');
+                    this.addOutput(`Computer     : WIN-7PROX64`, 'info');
+                    this.addOutput(`OS           : Windows 7 (Build 7601, Service Pack 1).`, 'info');
+                    this.addOutput(`Architecture : x86_64`, 'info');
+                    this.addOutput(`Meterpreter  : x64/windows`, 'info');
+                    this.addOutput(`meterpreter >`, 'command');
+                }, 2000);
+            }
+
+            launchAIAssistant() {
+                this.addOutput('🤖 AI Security Assistant activated!', 'ai');
+                this.addOutput('I can help you with penetration testing strategies, tool usage,', 'ai');
+                this.addOutput('vulnerability analysis, and security best practices.', 'ai');
+                this.addOutput('');
+                this.addOutput('Try asking me about:', 'ai');
+                this.addOutput('• "How to use nmap effectively"', 'ai');
+                this.addOutput('• "SQL injection techniques"', 'ai');
+                this.addOutput('• "Wireless security testing"', 'ai');
+                this.addOutput('• "Exploitation frameworks"', 'ai');
+                this.toggleAIAssistant();
+            }
+
+            showNetworkInfo() {
+                this.addOutput('Network Interface Information:', 'info');
+                this.addOutput('===============================', 'info');
+                this.addOutput('Interface: eth0', 'network');
+                this.addOutput('IP Address: 192.168.1.100', 'network');
+                this.addOutput('MAC Address: aa:bb:cc:dd:ee:ff', 'network');
+                this.addOutput('Subnet Mask: 255.255.255.0', 'network');
+                this.addOutput('Gateway: 192.168.1.1', 'network');
+                this.addOutput('DNS: 8.8.8.8, 8.8.4.4', 'network');
+                this.addOutput('');
+                this.addOutput('Connected Devices:', 'network');
+                this.networkDevices.forEach(device => {
+                    const status = device.status === 'online' ? '🟢' : '🔴';
+                    this.addOutput(`${status} ${device.ip} (${device.type})`, 'network');
+                });
+            }
+
+            showSystemStatus() {
+                this.addOutput('System Status Report:', 'info');
+                this.addOutput('=====================', 'info');
+                this.addOutput(`Platform: NetHunter Pro v2.0`, 'info');
+                this.addOutput(`Kernel: Linux 5.15.0-nethunter`, 'success');
+                this.addOutput(`Uptime: ${Math.floor(Math.random() * 24 + 1)}h ${Math.floor(Math.random() * 60)}m`, 'info');
+                this.addOutput(`Memory: ${Math.floor(Math.random() * 4000 + 2000)}MB / ${Math.floor(Math.random() * 8000 + 4000)}MB`, 'info');
+                this.addOutput(`Load: ${(Math.random() * 2 + 0.5).toFixed(2)}, ${(Math.random() * 2 + 0.5).toFixed(2)}, ${(Math.random() * 2 + 0.5).toFixed(2)}`, 'info');
+                this.addOutput(`Processes: ${Math.floor(Math.random() * 200 + 100)} running`, 'info');
+                this.addOutput('');
+                this.addOutput('Security Tools Status:', 'pentest');
+                this.addOutput(`✅ Nmap: Installed`, 'success');
+                this.addOutput(`✅ Metasploit: Ready`, 'success');
+                this.addOutput(`✅ SQLMap: Available`, 'success');
+                this.addOutput(`✅ Hashcat: GPU Accelerated`, 'success');
+                this.addOutput(`✅ Burp Suite: Pro License`, 'success');
+            }
+
+            installTool(toolName) {
+                if (!toolName) {
+                    this.addOutput('install: missing tool name', 'error');
+                    return;
+                }
+
+                this.addOutput(`Installing ${toolName}...`, 'info');
+                this.addOutput(`Downloading ${toolName} from repository...`, 'network');
+                
+                setTimeout(() => {
+                    this.addOutput(`Extracting files...`, 'info');
+                    this.addOutput(`Configuring ${toolName}...`, 'info');
+                    this.addOutput(`✅ ${toolName} installed successfully!`, 'success');
+                    this.addOutput(`Run '${toolName} --help' to get started.`, 'info');
+                }, 2000);
+            }
+
+            updateSystem() {
+                this.addOutput('Updating NetHunter tools...', 'info');
+                this.addOutput('Reading package lists...', 'network');
+                
+                setTimeout(() => {
+                    this.addOutput('Building dependency tree...', 'info');
+                    this.addOutput('Reading state information...', 'info');
+                    this.addOutput('The following packages will be upgraded:', 'info');
+                    this.addOutput('  nmap (7.92-1)', 'network');
+                    this.addOutput('  sqlmap (1.7.2-1)', 'network');
+                    this.addOutput('  hashcat (6.2.6-1)', 'network');
+                    this.addOutput('Setting up nmap (7.92-2)...', 'success');
+                    this.addOutput('Setting up sqlmap (1.7.3-1)...', 'success');
+                    this.addOutput('Setting up hashcat (6.2.7-1)...', 'success');
+                    this.addOutput('✅ System updated successfully!', 'success');
+                }, 3000);
+            }
+
+            runQuickScan(target) {
+                const scanTarget = target || '192.168.1.0/24';
+                this.addOutput(`Starting quick network scan on ${scanTarget}...`, 'info');
+                this.addOutput('Using Nmap with common ports...', 'network');
+                
+                setTimeout(() => {
+                    this.addOutput(`Host discovery disabled (-Pn). All hosts will be marked up.`, 'info');
+                    this.addOutput(`Starting Nmap scan...`, 'network');
+                    this.addOutput(`Nmap scan report for router.local (192.168.1.1)`, 'pentest');
+                    this.addOutput(`Host is up (0.0010s latency).`, 'success');
+                    this.addOutput(`PORT     STATE SERVICE`, 'info');
+                    this.addOutput(`22/tcp   open  ssh`, 'success');
+                    this.addOutput(`80/tcp   open  http`, 'success');
+                    this.addOutput(`443/tcp  open  https`, 'success');
+                    this.addOutput(`Nmap done: 256 IP addresses (1 host up) scanned in 3.42 seconds`, 'success');
+                }, 2500);
+            }
+
+            runExploit(args) {
+                const target = args[0] || '192.168.1.100';
+                this.addOutput(`🎯 Exploitation phase initiated for ${target}`, 'pentest');
+                this.addOutput('Loading exploitation modules...', 'info');
+                
+                setTimeout(() => {
+                    this.addOutput(`[*] Using exploit: exploit/windows/smb/ms17_010_eternalblue`, 'network');
+                    this.addOutput(`[*] 192.168.1.100:445 - Target OS: Windows 7`, 'pentest');
+                    this.addOutput(`[*] 192.168.1.100:445 - Vulnerable to MS17-010`, 'warning');
+                    this.addOutput(`[*] 192.168.1.100:445 - =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=`, 'info');
+                    this.addOutput(`[*] 192.168.1.100:445 - =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=`, 'info');
+                    this.addOutput(`[*] 192.168.1.100:445 - Got frag offset: 0x00000048`, 'network');
+                    this.addOutput(`[*] 192.168.1.100:445 - OOB memory arranged, bogon connection can be created`, 'success');
+                    this.addOutput(`[*] 192.168.1.100:445 - Sending exploit...`, 'warning');
+                    this.addOutput(`[+] 192.168.1.100:445     - =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=`, 'success');
+                    this.addOutput(`[+] 192.168.1.100:445     - =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=`, 'success');
+                    this.addOutput(`[+] 192.168.1.100:445     - WIN!`, 'success');
+                    this.addOutput(`[*] Meterpreter session 1 opened`, 'success');
+                    this.addOutput(`🎉 Exploitation successful! Session established.`, 'pentest');
+                }, 4000);
+            }
+
+            showCommandHistory() {
+                if (this.commandHistory.length === 0) {
+                    this.addOutput('No command history available.', 'info');
+                    return;
+                }
+
+                this.addOutput('Command History:', 'info');
+                this.addOutput('=================', 'info');
+                
+                this.commandHistory.slice(-10).forEach((cmd, index) => {
+                    this.addOutput(`${this.commandHistory.length - 10 + index + 1}: ${cmd}`);
+                });
+            }
+
+            switchTheme(themeName) {
+                const themes = {
+                    'nethunter': 'NetHunter Green',
+                    'matrix': 'Matrix Green',
+                    'hacker': 'Hacker Blue',
+                    'dark': 'Dark Mode',
+                    'cyber': 'Cyber Purple'
+                };
+
+                if (!themeName || !themes[themeName]) {
+                    this.addOutput('Available themes:', 'info');
+                    Object.entries(themes).forEach(([name, desc]) => {
+                        this.addOutput(`  ${name} - ${desc}`);
+                    });
+                    return;
+                }
+
+                this.addOutput(`Switching to ${themeName} theme...`, 'info');
+                this.currentTheme = themeName;
+                
+                // Apply theme colors (simplified for demo)
+                this.addOutput(`✅ Theme changed to: ${themes[themeName]}`, 'success');
+            }
+
+            showUserInfo() {
+                this.addOutput('ai', 'info');
+                this.addOutput('uid=1000(ai) gid=1000(ai) groups=1000(ai),27(sudo),999(netdev)', 'info');
+                this.addOutput('NetHunter Pro User', 'info');
+            }
+
+            showCurrentPath() {
+                this.addOutput(this.currentPath);
+            }
+
+            showDate() {
+                this.addOutput(new Date().toString());
+            }
+
+            showSystemInfo() {
+                this.addOutput('Linux nethunter-pro 5.15.0-nethunter #1 SMP PREEMPT', 'info');
+                this.addOutput('NetHunter Pro v2.0 Android-x86_64 GNU/Linux', 'info');
+            }
+
+            executeTool(toolName) {
+                this.addOutput(`Executing ${toolName}...`, 'info');
+                this.processCommand(toolName);
+            }
+
+            navigateHistory(direction) {
+                if (direction === -1 && this.historyIndex > 0) {
+                    this.historyIndex--;
+                } else if (direction === 1 && this.historyIndex < this.commandHistory.length) {
+                    this.historyIndex++;
+                }
+
+                const input = document.getElementById('terminalInput');
+                input.value = this.commandHistory[this.historyIndex] || '';
+            }
+
+            autocomplete() {
+                const input = document.getElementById('terminalInput');
+                const value = input.value.toLowerCase();
+                const commands = ['help', 'clear', 'ls', 'cd', 'cat', 'nmap', 'sqlmap', 'dirb', 'hashcat', 'aircrack', 'nikto', 'hydra', 'metasploit', 'ai', 'network', 'status', 'install', 'update', 'scan', 'exploit', 'history', 'theme', 'whoami', 'pwd', 'date', 'uname'];
+                
+                const matches = commands.filter(cmd => cmd.startsWith(value));
+                
+                if (matches.length === 1) {
+                    input.value = matches[0];
+                } else if (matches.length > 1) {
+                    this.addOutput(matches.join('  '));
+                }
+            }
+
+            clearTerminal() {
+                const output = document.getElementById('terminalOutput');
+                output.innerHTML = '';
+                this.addOutput('Terminal cleared.', 'info');
+                this.addOutput('ai@nethunter-pro:~$ <span class="cursor"></span>', 'command');
+            }
+
+            interruptCommand() {
+                this.addOutput('^C', 'error');
+                this.addOutput('ai@nethunter-pro:~$ <span class="cursor"></span>', 'command');
+            }
+
+            addOutput(text, type = 'normal') {
+                const output = document.getElementById('terminalOutput');
+                const line = document.createElement('div');
+                line.className = `output-line ${type}`;
+                line.innerHTML = text;
+                output.appendChild(line);
+                
+                // Auto scroll to bottom
+                output.scrollTop = output.scrollHeight;
+            }
+
+            toggleAIAssistant() {
+                const panel = document.getElementById('aiAssistantPanel');
+                panel.classList.toggle('active');
+                this.aiAssistantActive = panel.classList.contains('active');
+            }
+
+            toggleNetworkMonitor() {
+                const monitor = document.getElementById('networkMonitor');
+                monitor.classList.toggle('active');
+                this.networkMonitorActive = monitor.classList.contains('active');
+                
+                if (this.networkMonitorActive) {
+                    this.updateNetworkDevices();
+                }
+            }
+
+            toggleThemes() {
+                this.processCommand('theme');
+            }
+        }
+
+        // Global functions
+        let terminal;
+
+        function goHome() {
+            if (window.opener) {
+                window.close();
+            } else {
+                window.location.href = '../ADVANCED-AI-OS.html';
+            }
+        }
+
+        function clearTerminal() {
+            if (terminal) {
+                terminal.clearTerminal();
+            }
+        }
+
+        function executeCommand() {
+            if (terminal) {
+                terminal.executeCommand();
+            }
+        }
+
+        function toggleAIAssistant() {
+            if (terminal) {
+                terminal.toggleAIAssistant();
+            }
+        }
+
+        function toggleNetworkMonitor() {
+            if (terminal) {
+                terminal.toggleNetworkMonitor();
+            }
+        }
+
+        function toggleThemes() {
+            if (terminal) {
+                terminal.toggleThemes();
+            }
+        }
+
+        function installDependencies() {
+            if (terminal) {
+                terminal.processCommand('update');
+            }
+        }
+
+        function openSettings() {
+            if (terminal) {
+                terminal.addOutput('Settings panel opened.', 'info');
+                terminal.addOutput('Available options:', 'info');
+                terminal.addOutput('• Theme customization', 'info');
+                terminal.addOutput('• Tool preferences', 'info');
+                terminal.addOutput('• Network configuration', 'info');
+                terminal.addOutput('• AI assistant settings', 'info');
+            }
+        }
+
+        function executeTool(toolName) {
+            if (terminal) {
+                terminal.executeTool(toolName);
+            }
+        }
+
+        function switchTab(tabName) {
+            if (terminal) {
+                terminal.activeTab = tabName;
+                document.querySelectorAll('.terminal-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                event.target.closest('.terminal-tab').classList.add('active');
+                
+                // Update sidebar based on tab
+                if (tabName === 'tools') {
+                    document.getElementById('toolsSidebar').style.display = 'block';
+                } else {
+                    document.getElementById('toolsSidebar').style.display = 'none';
+                }
+            }
+        }
+
+        function addNewTab() {
+            if (terminal) {
+                terminal.addOutput('New terminal tab created.', 'info');
+                // In a real implementation, this would create a new tab
+            }
+        }
+
+        function sendAIMessage() {
+            const input = document.getElementById('aiInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            // Add user message to chat
+            const chatArea = document.getElementById('aiChatArea');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'ai-message user';
+            userMsg.textContent = message;
+            chatArea.appendChild(userMsg);
+
+            // Clear input
+            input.value = '';
+
+            // Generate AI response
+            setTimeout(() => {
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'ai-message ai';
+                aiMsg.innerHTML = generateAIResponse(message);
+                chatArea.appendChild(aiMsg);
+                
+                // Scroll to bottom
+                chatArea.scrollTop = chatArea.scrollHeight;
+            }, 1000);
+        }
+
+        function generateAIResponse(message) {
+            const responses = {
+                'nmap': 'Nmap is a powerful network scanner. For effective scanning: <br>• Use -sS for stealth SYN scans<br>• Add -sV for version detection<br>• Include --script vuln for vulnerability scripts<br>• Use -p- for full port range',
+                'sqlmap': 'SQLMap automates SQL injection detection and exploitation. Key features:<br>• Automatic detection of SQL injection flaws<br>• Database fingerprinting<br>• Data extraction<br>• Operating system access',
+                'wireless': 'Wireless security testing involves:<br>• Monitor mode with aircrack-ng<br>• Deauthentication attacks<br>• Handshake capture<br>• Password cracking with hashcat',
+                'exploitation': 'Exploitation strategies:<br>• Identify vulnerabilities first<br>• Select appropriate exploits<br>• Use Metasploit framework<br>• Consider post-exploitation techniques',
+                'help': 'I can assist with various security testing topics. Ask me about specific tools, techniques, or methodologies!',
+            };
+
+            const lowerMessage = message.toLowerCase();
+            for (const [key, response] of Object.entries(responses)) {
+                if (lowerMessage.includes(key)) {
+                    return response;
+                }
+            }
+
+            return `I understand you're asking about "${message}". In penetration testing, it's important to follow ethical guidelines and only test systems you own or have explicit permission to test. What specific aspect would you like to know more about?`;
+        }
+
+        function handleAIInput(event) {
+            if (event.key === 'Enter') {
+                sendAIMessage();
+            }
+        }
+
+        // Initialize terminal when page loads
+        // Initialize terminal with AI-OS Core integration
+        let aiOSIntegration;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('💻 Initializing Enhanced AI Terminal Shell...');
+            
+            // Wait for AI-OS Core to be available
+            const initTerminal = () => {
+                terminal = new EnhancedTerminal();
+                
+                // Setup AI-OS Core integration
+                if (window.aiOSCore && window.AIOSAppIntegration) {
+                    aiOSIntegration = new AIOSAppIntegration('terminal-shell', 'AI Terminal Shell', [
+                        'command_execution', 'ai_assistance', 'network_tools', 'security_tools'
+                    ]);
+                    
+                    // Listen for AI-OS events
+                    aiOSIntegration.on('appMessage', (data) => {
+                        if (data.from === 'aiOS-core') {
+                            handleAIOSCommand(data.data);
+                        }
+                    });
+                    
+                    aiOSIntegration.on('systemStateUpdate', (data) => {
+                        updateSystemStatus(data);
+                    });
+                    
+                    console.log('✅ Terminal integrated with AI-OS Core');
+                }
+            };
+            
+            if (window.aiOSCore) {
+                initTerminal();
+            } else {
+                setTimeout(initTerminal, 1000);
+            }
+        });
+        
+        function handleAIOSCommand(command) {
+            if (terminal) {
+                terminal.executeCommand(command.text);
+            }
+        }
+        
+        function updateSystemStatus(systemState) {
+            // Update terminal with system information
+            if (terminal) {
+                terminal.updateSystemInfo(systemState);
+            }
+        }
+    </script>
+</body>
+</html>

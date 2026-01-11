@@ -1,0 +1,21 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # Style rules
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - avoid_print
+    - prefer_single_quotes
+    - sort_constructors_first
+    
+    # Best practices
+    - avoid_empty_else
+    - unnecessary_statements
+    - prefer_interpolation_to_compose_strings
+    - unnecessary_null_comparisons
+    
+    # Error prevention
+    - always_declare_return_types
+    - annotate_overrides
+    - check_for_null_instances

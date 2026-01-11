@@ -1,0 +1,41 @@
+name: ai_os_flutter
+description: AI-OS Flutter Edition - A web-based OS simulation with Flutter shell
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.0.5
+  pointer_interceptor: ^0.10.1
+  shared_preferences: ^2.2.2
+  window_manager: ^0.3.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - web/assets/
+    - web/assets/apps/
+    - web/assets/core/
+    - web/assets/css/
+    - web/assets/js/
+    - web/assets/icons/
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: web/assets/fonts/Inter-Regular.ttf
+        - asset: web/assets/fonts/Inter-Bold.ttf
+          weight: 700
+    - family: JetBrainsMono
+      fonts:
+        - asset: web/assets/fonts/JetBrainsMono-Regular.ttf
